@@ -1,0 +1,215 @@
+/*
+--------------------------------Customer-------------------------------------------
+*/
+Customer:
+LOAD
+	'$(v_mandant)' as Standort,
+    Kundennummer as     No_,
+    "Adr. Anredekz.",
+    "Kundennummer VAP",
+    "Name 1" as     Name,
+    "Name 2",
+    "Adr. Straße" as     Address,
+    Landeskennzeichen as "Country Code",
+    "Landeskz.-Langbez.",
+    "Adr. Postleitzahl" as "Post Code",
+    Ortsname as City,
+    Hauptverkäufernr.  as     "Salesperson Code",
+    "1.Verk.Gebiet",
+    "Verk.Geb.1-Langbez.",
+    Kundentyp,
+    Matchcode,
+    Kundenart,
+    Adresscode,
+    Firmenverweisnr.,
+    Kontaktverkäufer,
+    Verk.Suchbegriff  as     "Search Name",
+    "Ansp. Anredekz.",
+    "Ansp. Name" as Contact,
+    "Ansp. Geburtstag",
+    "Ansp. Tel. Arbeit"  as     "Phone No_",
+    "Ansp. Tel. Privat" as     "Home Phone No_",
+    "Ansp. Tel. Fax" as     "Fax No_",
+    "Kunde seit",
+    "Le. Kontaktdatum",
+    "Nä. Kontaktdatum",
+    Kundengruppe,
+    Kundengruppenname,
+    Anlagedatum  as     "Creation Date",
+    "Angelegt von",
+    "F/T Änd.-Kennz.",
+    "F/T Änd.-Datum"  as     "Date of Update",
+    "F/T Änd.-Datum" as     "Last Date Modified",
+    Berufsgruppe,
+    Werbungssperrcode,
+    Filiale as Standorte,
+    "Gesperrt SA",
+    Serviceberater,
+    "DS Datum Erklärung",
+    "DS Datum Erfasst",
+    "DS Benutzer",
+    "DS Herkunft",
+    "DS Einwilligung",
+    //ApplyMap('DS_map', "DS Einwilligung",'keine Angabe') As DS_erfasst,
+    "DS Bemerkung 1",
+    "DS Bemerkung 2",
+    Adreßanrede,
+    Anrede,
+    Briefanrede,
+    Titelcode,
+    "Titel-Langbez.",
+    "Firma/Privat Kennz.",
+    Geschlecht,
+    Adressquelle,
+    "Adressquel-Langbez.",
+    Kundengruppennummer,
+    "Kunde gesperrt Auft." as Blocked,
+    "Select-Stufe-Langbez",
+    "Ansp. Autofon" as "Mobile Phone No_"
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KUN.CSV]
+(txt, codepage is 28591, embedded labels, delimiter is ';', no eof);
+Store * from Customer into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_Customer.qvd] (qvd);
+
+
+drop table Customer;
+
+/*
+----------------------------------------------------------Mail---------------------------------------------------------------------
+*/
+
+Mail:
+LOAD
+    Kundennummer  as   No_,
+    "E-Mail 1" as "Home E-Mail",
+    "E-Mail 2",
+    "E-Mail 3",
+    "E-Mail 4",
+    "E-Mail 5",
+    "E-Mail 6" as "E-Mail",
+    "E-Mail 7",
+    "E-Mail 8",
+    "E-Mail 9",
+    "E-Mail 10"
+//     nachgefragt,
+//     "E-Mail als Rechn. 1",
+//     "E-Mail als Rechn. 2",
+//     "E-Mail als Rechn. 3",
+//     "E-Mail als Rechn. 4",
+//     "E-Mail als Rechn. 5",
+//     "E-Mail als Rechn. 6",
+//     "E-Mail als Rechn. 7",
+//     "E-Mail als Rechn. 8",
+//     "E-Mail als Rechn. 9",
+//     "E-Mail als Rechn. 10"
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_MAIL.CSV]
+(txt, codepage is 28591, embedded labels, delimiter is ';', no eof);
+
+
+Store * from Mail into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_Mail.qvd] (qvd);
+drop table Mail;
+
+
+/*
+----------------------------------------------------Kundenart---------------------------------------------------------------------
+*/
+META_Kundenart:
+LOAD
+    "Kundenart-Code",
+    "Kundenart-Kontrolle",
+    "Kundenart-Kurzbez.",
+    "Kundenart-Langbez."
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KA.CSV]
+(txt, codepage is 28591, embedded labels, delimiter is ';', msq);
+
+Store * from META_Kundenart into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_META_Kundenart.qvd] (qvd);
+drop table META_Kundenart;
+
+
+/*
+---------------------------------------------------------------------Data Protection-------------------------------------------------------
+*/
+Data_Protection:
+LOAD
+	'$(v_mandant)' as Standort,
+    Kundennummer as     No_,
+    "Erst-Eingabe",
+    "Le-Eingabe",
+    "Hst-Kontakt-Brief" as     "Contact written BMW",
+    "Hst-Kontakt-Telefon" as     "Contact phone BMW",
+    "Hst-Kontakt-E-Mail" as     "Contact Email BMW",
+    "Hst-Kontakt-Fax",
+    "Hst-Kontakt-SMS",
+    "Hdl-Kontakt-Brief" as     "Contact written Dealership",
+    "Hdl-Kontakt-Telefon" as     "Contact phone Dealership",
+    "Hdl-Kontakt-E-Mail" as     "Contact Email Dealership",
+    "Hdl-Kontakt-Fax",
+    "Hdl-Kontakt-SMS",
+    Herkunft,
+    Bemerkung,
+    Bemerkung2,
+    Dummy,
+    Hersteller,
+    "Einverst. Übertrag.",
+    "Datum Erkl.Händler",
+    "Datum Erkl.Herst.",
+    "Erkl.erfasst Händler",
+    "Erkl.erfasst Herst.",
+    "Erkl.abgegeben von",
+    "Widerruf Erklärung",
+    "Sperre BMW AG",
+    "Sperre Autohaus",
+    "Zentr. Kunden-DB",
+    "Hst-bevorz. Kontakt",
+    "Hdl-bevorz. Kontakt",
+    Einv.Datenverarbeit,
+    "Händler Incar",
+    "Händler Bildung",
+    "Hersteller Incar",
+    "Hersteller Bildung",
+    Hst.Quellsystem
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_DS.CSV]
+//(txt, utf8, embedded labels, delimiter is ';', no eof);
+(txt, codepage is 28591, embedded labels, delimiter is ';', no eof);
+
+
+Store * from Data_Protection into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_Data_Protection.qvd] (qvd);
+drop table Data_Protection;
+
+
+/*
+-----------------------------------------------------Kundentyp-------------------------------------------
+*/
+META_Kundentyp:
+LOAD
+    "Kundentyp-Code",
+    "Kundentyp-Kontrolle",
+    "Kundentyp-Kurzbez.",
+    "Kundentyp-Langbez." as     "Customer Type"
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KT.CSV]
+(txt, codepage is 28591, embedded labels, delimiter is ';', msq);
+
+Store * from META_Kundentyp into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_META_Kundentyp.qvd] (qvd);
+drop table META_Kundentyp;
+
+
+/*
+--------------------------------------------------------------------Filiale-----------------------------------------------------------
+*/
+META_Filiale:
+LOAD
+    Filialnummer,
+    Filialbezeichnung,
+    "Externe Bezeichnung",
+    Straße,
+    PLZ,
+    Ort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_FIL.CSV]
+(txt, codepage is 28591, embedded labels, delimiter is ';', msq);
+
+Store * from META_Filiale into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_META_Filiale.qvd] (qvd);
+drop table META_Filiale;
+
+
+
+
+
