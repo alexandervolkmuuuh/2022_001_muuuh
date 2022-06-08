@@ -1,0 +1,122 @@
+Tabellen:
+Load * inline [
+	Table_org, Table_qlik, Alle_laden 
+    SpCity, SpCity, 1
+    SpProSubDep, SpProSubDep, 1
+    SpProAddress, SpProAddress, 1
+    AuEnumStatic, AuEnumStatic, 0
+    AuEnum, AuEnum, 0
+    SpStreet, SpStreet, 1
+    AuEmployee, AuEmployee, 1
+    SpConRep, SpConRep, 1
+    SpDiarySpec, SpDiarySpec, 1
+    SpConPlan, SpConPlan, 1
+    SpDiaryItem, SpDiaryItem, 1
+    SpPro, SpPro, 1
+    SpCurProCar, SpCurProCar, 1
+    SpProComm, SpProComm, 1
+    AuSubDep, AuSubDep, 1
+    SpProDataPrivacy, SpProDataPrivacy, 1
+];
+
+
+
+
+
+
+
+
+let v_anzahl_mandaten = noofrows('Mandanten');
+let v_anzahl_tabellen = noofrows('Tabellen');
+
+Trace Info:;
+Trace Mandanten: $(v_anzahl_mandaten);
+Trace Tabellen: $(v_anzahl_tabellen);
+
+//Prüfen ob alle Tabellen vorhanden sind
+
+Trace Pfad: lib://$(v_bereich):DataFiles/;
+
+Trace Folgende Tabellen fehlen:;
+
+let v_fehler = False();
+
+for t = 0 to $(v_anzahl_tabellen)-1
+	let v_table = peek('Table_org', t, 'Tabellen');
+    let v_table_store = peek('Table_qlik', t, 'Tabellen');
+    
+	for m = 0 to $(v_anzahl_mandaten)-1
+    	let v_mandant = peek('Kürzel', m, 'Mandanten');
+        let v_mandant_bez = peek('Bezeichnung', m, 'Mandanten');
+        
+        if IsNull(FileTime('lib://$(v_bereich):DataFiles/$(v_datei_name_load)_$(v_mandant)_$(v_table).qvd')) then
+        
+        	Trace $(v_datei_name_load)_$(v_mandant)_$(v_table).qvd;
+            
+            let v_fehler = True();
+        
+        end if
+       
+
+	next
+        
+    
+next
+
+if v_fehler then
+
+	Trace Nicht alle Tabellen gefunden!;
+	exit Script;
+else
+	Trace Keine;
+	Trace Tabellen werden geladen------------------------------------------------;
+end if
+
+
+
+
+
+//Tabellen laden
+for t = 0 to $(v_anzahl_tabellen)-1
+	let v_table = peek('Table_org', t, 'Tabellen');
+    let v_table_store = peek('Table_qlik', t, 'Tabellen');
+    
+    let v_table_alle_laden = peek('Alle_laden', t, 'Tabellen');
+    
+    Trace Tabelle: $(v_table) --------------------------------------;
+    Trace $(v_bereich):DataFiles/$(v_start_datei)_$(v_table).qvd;
+    
+	for m = 0 to $(v_anzahl_mandaten)-1
+    	let v_mandant = peek('Kürzel', m, 'Mandanten');
+        let v_mandant_bez = peek('Bezeichnung', m, 'Mandanten');
+        
+        Trace Mandant: $(v_mandant_bez);
+        
+        if m = 0 then
+        
+        Table:
+        Load
+        	*,
+        '$(v_mandant_bez)' as Standort
+        from [lib://$(v_bereich):DataFiles/$(v_datei_name_load)_$(v_mandant)_$(v_table).qvd](qvd);
+        
+        else
+        
+        Concatenate(Table)
+        Load
+        	*,
+        '$(v_mandant_bez)' as Standort
+        from [lib://$(v_bereich):DataFiles/$(v_datei_name_load)_$(v_mandant)_$(v_table).qvd](qvd);
+        
+        end if
+        
+        if $(v_table_alle_laden) = 0 then
+        	let m = $(v_anzahl_mandaten);
+        end if
+
+	next
+    
+	Store * from Table into [lib://$(v_bereich):DataFiles/$(v_start_datei)_$(v_table).qvd] (qvd);
+    drop Table Table;
+    
+next
