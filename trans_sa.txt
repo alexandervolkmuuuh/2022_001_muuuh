@@ -1,0 +1,1111 @@
+/*
+---------------------------------------------------SpProSubDep---------------------------------------------------
+*/
+SpProSubDep:
+LOAD
+    proId,
+    proId & '_' & Standort as %proId_standort,
+    subDepId,
+    classid,
+    creationDate,
+    customer,
+    temp,
+    mailing,
+    salesRegionId,
+    employeeId,
+    employeeId as %Verkäufer,
+    employee1stId,
+    origin,
+    proType,
+    carPark,
+    criteria,
+    criteria2,
+    remark,
+    marketAct1,
+    marketAct2,
+    marketAct3,
+    marketAct4,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    addressClass,
+    addrClModOn,
+    addrClModBy,
+    marketAct5,
+    marketAct6,
+    marketAct7,
+    marketAct8,
+    marketAct9,
+    marketAct10,
+    divaExport,
+    custType,
+    Standort,
+    /*
+    IF(customer = 0, 'I',
+	IF(customer = 1, 'K',
+    	IF(customer = 2, 'T',
+        	IF(customer = 3, 'W',
+            	IF(customer = 4, 'A',
+                	IF(customer = 5, 'P',
+                    	IF(customer = 6, 'S'))))))) AS %Kundengruppe
+                        */
+    customer as %Kundengruppe
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpProSubDep.qvd]
+(qvd);
+
+Store * from SpProSubDep into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpProSubDep.qvd];
+
+
+Drop table SpProSubDep;
+
+
+/*
+---------------------------------------------------AuEnumStatic---------------------------------------------------
+*/
+AuEnumStatic:
+LOAD
+    enumTypeId,
+    enumStaticId,
+    classid,
+    description,
+    constantName,
+    origin
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_AuEnumStatic.qvd]
+(qvd);
+
+Store * from AuEnumStatic into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnumStatic.qvd];
+
+Drop table AuEnumStatic;
+
+
+
+
+/*
+---------------------------------------------------AuEnum---------------------------------------------------
+*/
+AuEnum:
+LOAD
+    enumTypeId,
+    enumId,
+    classid,
+    description,
+    valid,
+    origin,
+    new,
+    validForAdrImport,
+    auEnum_Rights,
+    auEnum_Order
+//     Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_AuEnum.qvd]
+(qvd);
+
+Store * from AuEnum into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd];
+
+Drop table AuEnum;
+
+
+
+
+
+/*
+---------------------------------------------------AuEmployee---------------------------------------------------
+*/
+AuEmployee:
+LOAD
+    employeeId,
+//     employeeId & '_' & Standort as %Verkäufer,
+    employeeId as %Verkäufer,
+    classid,
+    subDepId,
+    subDepId & '_' & Standort as %subDepId_Standort,
+    name1,
+    firstName,
+    salesman,
+    phoneNo,
+    faxNo,
+    profession,
+    languageCode,
+    teamId,
+    title,
+    externId,
+    externId2,
+    externPw,
+    groupId1,
+    groupId2,
+    groupId3,
+    groupId4,
+    groupId5,
+    "password",
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    signGroup,
+    defActCount,
+    countActPerDay,
+    email,
+    inactive,
+    groupId6,
+    pastContacts,
+    assistant,
+    emplGrpIdForAss,
+    spassNo,
+    activateDivaExport,
+    groupId7,
+    groupId8,
+    mailAccName,
+    mailAccPassword,
+    managePrivacy,
+    manageConRecOrd,
+    enableBMWi,
+    browser,
+    passwordExpirationDate,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_AuEmployee.qvd]
+(qvd);
+
+Store * from AuEmployee into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEmployee.qvd];
+
+
+Drop table AuEmployee;
+
+
+
+/*
+---------------------------------------------------Kundenadressdaten---------------------------------------------------
+*/
+SpStreet_tmp:
+LOAD
+    streetId,
+    streetId &'_'& Standort as %streetId,
+    classid as Street_classid,
+    name as Streetname,
+    postCode as Street_postCode,
+//     cityId,
+      cityId & '_' & Standort as %cityId,
+    streetNumberFrom,
+    streetNumberTo
+//     createdBy,
+//     createdOn,
+//     modifiedBy,
+//     modifiedOn,
+//     Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpStreet.qvd]
+(qvd);
+
+Left Join (SpStreet_tmp)
+LOAD
+//     cityId,
+      cityId & '_' & Standort as %cityId,
+    classid as City_classid,
+    name as Cityname,
+    postCode as City_postCode,
+    countryId 
+//     specif,
+//     createdBy,
+//     createdOn,
+//     modifiedBy,
+//     modifiedOn,
+//     Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpCity.qvd]
+(qvd);
+
+
+Kundenadressdaten:
+LOAD
+    proAddressId,
+    proAddressId &'_'& Standort as %proAddressId_standort,
+    classid,
+    proId &'_'& Standort as %proId_standort,
+//     streetId,
+    streetId &'_'& Standort as %streetId,
+    streetNumber,
+    streetNumber2,
+    phoneNo,
+    faxNo,
+    poBox,
+    poBoxPostCode,
+    poBoxCityId,
+//     createdBy,
+//     createdOn,
+//     modifiedBy,
+//     modifiedOn,
+//     divaDblChk,
+    addressType,
+    blockCode,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpProAddress.qvd]
+(qvd);
+
+Left Join (Kundenadressdaten)
+Load
+*
+resident SpStreet_tmp;
+drop table SpStreet_tmp;
+
+Kundenadressdatenflags: 
+Load 
+	   %proId_standort,
+       [%proAddressId_standort],
+       %streetId,
+//     Streetname,
+          if(IsNull(Streetname) or len(Streetname) = 0,1,0) as Flag_Street_empty,
+
+          //Darf nur Buchstaben und bestimmte Sonderzeichen enthalten
+          if(len(PurgeChar(lower(Streetname), 'abcdefghijklmnopqrstuvwxyzüäöß.,()-/"`´ ')) = 0 and not IsNull(Streetname) and len(Streetname) > 0, 1,0) as Flag_Street_valid,
+          if(len(KeepChar(lower(Streetname), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Streetname) and len(Streetname) > 0, 1,0) as Flag_Street_länge,
+   
+//     Street_postCode,
+          if(IsNull("Street_postCode") or len("Street_postCode") = 0,1,0) as Flag_PostCode_empty,
+
+          //Muss min. 3 und max. 7 Zahlen enthalten
+          if(len(KeepChar("Street_postCode", '0123456789')) > 2 and len(KeepChar("Street_postCode", '0123456789')) < 8 and not IsNull("Street_postCode") and len("Street_postCode") > 0, 1, 0) as Flag_PostCode_Länge,
+          //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+          if(len(PurgeChar("Street_postCode", '0')) = 0 and len(KeepChar("Street_postCode", '0')) > 0 or len(PurgeChar("Street_postCode", '0123456789')) > 0 or IsNull("Street_postCode") or len("Street_postCode") = 0, 0,1) as Flag_PostCode_valideZahlen,
+
+        
+//     Cityname,
+          if(IsNull(Cityname) or len(Cityname) = 0,1,0) as Flag_City_empty,
+
+          //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+          if(len(Cityname)> 2 and not IsNull(Cityname) and len(Cityname) > 0,1,0) as City_Länge,
+          if(len(KeepChar(lower(Cityname), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0) as Flag_City_valid,
+ 
+//     City_postCode,
+//           if(IsNull("City_postCode") or len("City_postCode") = 0,1,0) as Flag_PostCode_empty,
+
+//           //Muss min. 3 und max. 7 Zahlen enthalten
+//           if(len(KeepChar("City_postCode", '0123456789')) > 2 and len(KeepChar("City_postCode", '0123456789')) < 8 and not IsNull("City_postCode") and len("City_postCode") > 0, 1, 0) as Flag_PostCode_Länge,
+//           //Darf nicht nur aus Nullen bestehen
+//           if(len(PurgeChar("City_postCode", '0')) = 0 and len(KeepChar("City_postCode", '0')) > 0 or IsNull("City_postCode") or len("City_postCode") = 0, 0,1) as Flag_PostCode_valideZahlen,
+   
+//     phoneNo,
+          if(IsNull(phoneNo) or len(phoneNo) = 0,1,0) as Flag_PhoneNo_empty,
+
+          //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+          if(len(PurgeChar(lower(phoneNo), '0123456789-/+() ')) = 0 and not IsNull(phoneNo) and len(phoneNo) > 0, 1,0) as Flag_PhoneNo_valid,
+          //Muss min. 6 Zahlen enthalten
+          if(len(KeepChar(phoneNo, '0123456789')) > 6 and not IsNull(phoneNo) and len(phoneNo) > 0, 1, 0) as Flag_PhoneNo_Länge,
+          //Darf maximal ein + enthalten
+          if(len(KeepChar(phoneNo, '+')) < 2 and not IsNull(phoneNo) and len(phoneNo) > 0, 1, 0) as Flag_PhoneNo_MaximalEinPlus,
+          //Darf nicht nur aus Nullen bestehen
+          if(len(PurgeChar(phoneNo, '0')) = 0 and len(KeepChar(phoneNo, '0')) > 0 or IsNull(phoneNo) or len(phoneNo) = 0, 0,1) as Flag_PhoneNo_valideZahlen,
+   
+//    streetNumber,
+          if(IsNull(streetNumber) or len(streetNumber) = 0,1,0) as Flag_streetNumber_empty,
+
+          //Address No_ darf nur Zahlen enthalten
+          if(len(PurgeChar(lower(streetNumber), '0123456789 ')) = 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0) as Flag_streetNumber_nur_Zahlen,
+          //Address No_ Zahl zwischen 0 und 999.999
+          if(streetNumber < 1000000 and streetNumber >= 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0) as Flag_streetNumber_valid,
+   
+//    poBoxPostCode,
+    
+   		  if(IsNull(poBoxPostCode) or len(poBoxPostCode) = 0,1,0) as Flag_poBoxPostCode_empty,   
+             
+//    faxNo,
+          if(IsNull(faxNo) or len(faxNo) = 0,1,0) as Flag_faxNo_empty,
+
+          //faxNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+          if(len(PurgeChar(lower(faxNo), '0123456789-/+() ')) = 0 and not IsNull(faxNo) and len(faxNo) > 0, 1,0) as Flag_faxNo_valid,
+          //Muss min. 6 Zahlen enthalten
+          if(len(KeepChar(faxNo, '0123456789')) > 6 and not IsNull(faxNo) and len(faxNo) > 0, 1, 0) as Flag_faxNo_Länge,
+          //Darf maximal ein + enthalten
+          if(len(KeepChar(faxNo, '+')) < 2 and not IsNull(faxNo) and len(faxNo) > 0, 1, 0) as Flag_faxNo_MaximalEinPlus,
+          //Darf nicht nur aus Nullen bestehen
+          if(len(PurgeChar(faxNo, '0')) = 0 and len(KeepChar(faxNo, '0')) > 0 or IsNull(faxNo) or len(faxNo) = 0, 0,1) as Flag_faxNo_valideZahlen
+
+Resident Kundenadressdaten where countryId = 'DE';
+
+Store * from Kundenadressdaten into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdaten.qvd];
+Drop table Kundenadressdaten;
+
+Store * from Kundenadressdatenflags into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdatenflags.qvd];
+Drop table Kundenadressdatenflags;
+
+
+
+/*
+---------------------------------------------------SpPro---------------------------------------------------
+*/
+SpPro:
+LOAD
+    proId,
+    proId &'_'& Standort as %proId_standort,
+    classid,
+    perCy,
+    firstName,
+    
+          if(IsNull(firstName) or len(firstName) = 0,1,0) as Flag_firstName_empty,
+
+          //firstName muss min. zwei Buchstaben enthalten
+          if(len(KeepChar(lower(firstName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(firstName) and len(firstName) > 0, 1,0) as Flag_firstName_valid,
+
+
+    name1,
+    
+          if(IsNull(name1) or len(name1) = 0,1,0) as Flag_name1_empty,
+
+          //Name1 muss min. zwei Buchstaben enthalten
+          if(len(KeepChar(lower(name1), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name1) and len(name1) > 0, 1,0) as Flag_name1_valid,
+
+    
+    name2,
+    
+          if(IsNull(name2) or len(name2) = 0,1,0) as Flag_name2_empty,
+
+          //Name2 muss min. zwei Buchstaben enthalten
+          if(len(KeepChar(lower(name2), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name2) and len(name2) > 0, 1,0) as Flag_name2_valid,
+
+    
+    defProAddrId,
+    defProAddrId & '_' & Standort as %proAddressId_standort,
+    cuId,
+    birthDay,
+    profPhoneNo,
+    
+          if(IsNull("profPhoneNo") or len("profPhoneNo") = 0,1,0) as Flag_profPhoneNo_empty,
+
+          //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+          if(len(PurgeChar(lower("profPhoneNo"), '0123456789-/+() ')) = 0 and not IsNull("profPhoneNo") and len("profPhoneNo") > 0, 1,0) as Flag_profPhoneNo_valid,
+          //Muss min. 6 Zahlen enthalten
+          if(len(KeepChar("profPhoneNo", '0123456789')) > 6 and not IsNull("profPhoneNo") and len("profPhoneNo") > 0, 1, 0) as Flag_profPhoneNo_Länge,
+          //Darf maximal ein + enthalten
+          if(len(KeepChar("profPhoneNo", '+')) < 2 and not IsNull("profPhoneNo") and len("profPhoneNo") > 0, 1, 0) as Flag_profPhoneNo_MaximalEinPlus,
+          //Darf nicht nur aus Nullen bestehen
+          if(len(PurgeChar("profPhoneNo", '0')) = 0 and len(KeepChar("profPhoneNo", '0')) > 0 or IsNull("profPhoneNo") or len("profPhoneNo") = 0, 0,1) as Flag_profPhoneNo_valideZahlen,
+
+  
+    
+    profFaxNo,
+    mobPhoneNo,
+    
+          if(IsNull(mobPhoneNo) or len(mobPhoneNo) = 0,1,0) as Flag_mobPhoneNo_empty,
+
+          //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+          if(len(PurgeChar(lower(mobPhoneNo), '0123456789-/+() ')) = 0 and not IsNull(mobPhoneNo) and len(mobPhoneNo) > 0, 1,0) as Flag_mobPhoneNo_valid,
+          //Muss min. 6 Zahlen enthalten
+          if(len(KeepChar(mobPhoneNo, '0123456789')) > 6 and not IsNull(mobPhoneNo) and len(mobPhoneNo) > 0, 1, 0) as Flag_mobPhoneNo_Länge,
+          //Darf maximal ein + enthalten
+          if(len(KeepChar(mobPhoneNo, '+')) < 2 and not IsNull(mobPhoneNo) and len(mobPhoneNo) > 0, 1, 0) as Flag_mobPhoneNo_MaximalEinPlus,
+          //Darf nicht nur aus Nullen bestehen
+          if(len(PurgeChar(mobPhoneNo, '0')) = 0 and len(KeepChar(mobPhoneNo, '0')) > 0 or IsNull(mobPhoneNo) or len(mobPhoneNo) = 0, 0,1) as Flag_mobPhoneNo_valideZahlen,
+
+
+    EMail,
+    
+           if(IsNull(EMail) or len(EMail) = 0,1,0) as Flag_EMail_empty,
+
+          //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+          if(len(EMail) < 255 and len(EMail) > 5 and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_Länge,
+          //E-Mail muss genau ein @ enthalten
+          if(len(KeepChar(lower(EMail), '@')) = 1 and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_@_valid,
+          //Darf nur gültige Zeichen enthalten
+          if(len(PurgeChar(lower(EMail), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_valid,
+          //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+          if(len(Left(EMail, Index( EMail,'@') -1 )) > 0 and len(Left(EMail, Index( EMail,'@') -1 )) < 65 and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_Lokalteil_valid,
+          //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+          if(len(Right(EMail, Index( EMail,'@') +1 )) > 1 and wildmatch(Right(EMail, Index(EMail,'@') +1), '*.*') and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_Domainteil_valid,
+
+    
+    profEMail,
+    
+           if(IsNull(profEMail) or len(profEMail) = 0,1,0) as Flag_profEMail_empty,
+
+          //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+          if(len(profEMail) < 255 and len(profEMail) > 5 and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_Länge,
+          //E-Mail muss genau ein @ enthalten
+          if(len(KeepChar(lower(profEMail), '@')) = 1 and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_@_valid,
+          //Darf nur gültige Zeichen enthalten
+          if(len(PurgeChar(lower(profEMail), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_valid,
+          //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+          if(len(Left(profEMail, Index( profEMail,'@') -1 )) > 0 and len(Left(profEMail, Index( profEMail,'@') -1 )) < 65 and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_Lokalteil_valid,
+          //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+          if(len(Right(profEMail, Index( profEMail,'@') +1 )) > 1 and wildmatch(Right(profEMail, Index(profEMail,'@') +1), '*.*') and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_Domainteil_valid,
+
+    
+    title,
+    title2,
+    salutation,
+    familySit,
+    cuProfessionGrpId,
+    cySize,
+    branchId,
+    branchId2,
+    hobby,
+    hobby2,
+    languageCode,
+    vatGrpType,
+    vatGrpId,
+    forCurTableId,
+    statisticCode,
+    divaCyType,
+    divaDblChk,
+    divaId,
+    majorAccountNo,
+    activity,
+    function,
+    cyType,
+    cyType2,
+    dvaNo,
+    vipStatus,
+    blockCode,
+    createdBy,
+    createdOn,
+//     left(num(date(createdOn)), 5) as %DatumNum,
+    modifiedBy,
+    modifiedOn,
+    custSince,
+    modByDMS,
+    modByDiva,
+    conPersDms,
+    blockCodeDMS,
+    divaStatus,
+    profMobPhoneNo,
+    
+          if(IsNull(profMobPhoneNo) or len(profMobPhoneNo) = 0,1,0) as Flag_profMobPhoneNo_empty,
+
+          //Home Mobile Phone No_ darf nur Zahlen und bestimmte Sonderzeichen enthalten
+          if(len(PurgeChar(lower(profMobPhoneNo), '0123456789-/+() ')) = 0 and not IsNull(profMobPhoneNo) and len(profMobPhoneNo) > 0, 1,0) as Flag_profMobPhoneNo_valid,
+          //Muss min. 6 Zahlen enthalten
+          if(len(KeepChar(profMobPhoneNo, '0123456789')) > 6 and not IsNull(profMobPhoneNo) and len(profMobPhoneNo) > 0, 1, 0) as Flag_profMobPhoneNo_Länge,
+          //Darf maximal ein + enthalten
+          if(len(KeepChar(profMobPhoneNo, '+')) < 2 and not IsNull(profMobPhoneNo) and len(profMobPhoneNo) > 0, 1, 0) as Flag_profMobPhoneNo_MaximalEinPlus,
+          //Darf nicht nur aus Nullen bestehen
+          if(len(PurgeChar(profMobPhoneNo, '0')) = 0 and len(KeepChar(profMobPhoneNo, '0')) > 0 or IsNull(profMobPhoneNo) or len(profMobPhoneNo) = 0, 0,1) as Flag_profMobPhoneNo_valideZahlen,
+
+    
+    taxPayeridentcode,
+    blockContacts,
+    blockMarketing,
+    blockPhone,
+    salesRegionId,
+    placeOfBirth,
+    cityOfRegist,
+    registrationNo,
+    regBoardNo,
+    taxNoComp,
+    isTaxPayer,
+    firstNameToUpper,
+
+            if(IsNull(firstNameToUpper) or len(firstNameToUpper) = 0,1,0) as Flag_firstNameToUpper_empty,
+
+          //firstNameToUpper muss min. zwei Buchstaben enthalten
+          if(len(KeepChar(lower(firstNameToUpper), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(firstNameToUpper) and len(firstNameToUpper) > 0, 1,0) as Flag_firstNameToUpper_valid,
+    
+    
+    name1ToUpper,
+
+          if(IsNull(name1ToUpper) or len(name1ToUpper) = 0,1,0) as Flag_name1ToUpper_empty,
+
+          //name1ToUpper muss min. zwei Buchstaben enthalten
+          if(len(KeepChar(lower(name1ToUpper), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name1ToUpper) and len(name1ToUpper) > 0, 1,0) as Flag_name1ToUpper_valid,
+
+    
+    isDeleted,
+    lastConDate,
+    proType,
+    mailing,
+    manAddrImpOn,
+    autAddrImpOn,
+    addrImpBy,
+    blockAddrTransfer,
+    addrExport,
+    activateDivaExport,
+    manAddrExpOn,
+    blockManAddrTransfer,
+    createdHobbyOn,
+    createdHobbyBy,
+    modifiedHobbyOn,
+    modifiedHobbyBy,
+    createdHobby2On,
+    createdHobby2By,
+    modifiedHobby2On,
+    modifiedHobby2By,
+    origin,
+    betZykSt,
+    hobby3,
+    hobby4,
+    createdHobby3On,
+    createdHobby3By,
+    modifiedHobby3On,
+    modifiedHobby3By,
+    createdHobby4On,
+    createdHobby4By,
+    modifiedHobby4On,
+    modifiedHobby4By,
+    divaStatusHobby,
+    businessAccountNo,
+    personDataChanged,
+    compDataChanged,
+    adressDataChanged,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpPro.qvd]
+(qvd);
+
+Store * from SpPro into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpPro.qvd];
+
+Drop table SpPro;
+
+
+
+
+
+
+/*
+---------------------------------------------------SpConRep---------------------------------------------------
+*/
+SpConRep:
+LOAD
+    diaryItemId,
+//     diaryItemId &'_'& Standort as %diaryItemId_standort,
+    classid,
+    itemType,
+    dateTimeFrom,
+    dateTimeTo,
+    employeeId as %Verkäufer,
+    description,
+    proId,
+//     proId &'_'& Standort as %proId_standort,
+    subDepId,
+    diarySpecId,
+    conInfoId,
+    actDefId,
+    docDefId,
+    proCarId,
+    done,
+    status,
+    result1,
+    result2,
+    result3,
+    reportType,
+    temp,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    divaDblChk,
+    modByDMS,
+    dateTime,
+    num(left(dateTime, 10)) as %DatumNum_ConRep,
+    isPeriod,
+    employeeGroupId,
+    planDiaryItemId,
+    addrExport,
+    manAddrImpOn,
+    autAddrImpOn,
+    pfNr,
+    modByAms,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpConRep.qvd]
+(qvd)
+// where date([dateTime]) >= addyears(today(),-2);
+;
+
+Store * from SpConRep into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpConRep.qvd];
+
+Drop table SpConRep;
+
+
+/*
+---------------------------------------------------SpConPlan---------------------------------------------------
+*/
+SpConPlan:
+LOAD
+    diaryItemId,
+    classid,
+    itemType,
+    dateTimeFrom,
+    dateTimeTo,
+    employeeId,
+    employeeId as %Verkäufer,
+    description,
+    proId,
+    subDepId,
+    diarySpecId,
+    conInfoId,
+    actDefId,
+    docDefId,
+    proCarId,
+    done,
+    status,
+    result1,
+    result2,
+    result3,
+    reportType,
+    temp,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    divaDblChk,
+    modByDMS,
+    dateTime as %DatumNum_ConPlan,
+    if(num(floor(dateTimeTo)) < num(date(today()))and date(dateTimeTo)>= '01.01.2017', 1, 0) as Flag_Mahntermin,
+    isPeriod,
+    employeeGroupId,
+    planDiaryItemId,
+    addrExport,
+    manAddrImpOn,
+    autAddrImpOn,
+    isQuotation,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpConPlan.qvd]
+(qvd);
+
+Store * from SpConPlan into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpConPlan.qvd];
+
+Drop table SpConPlan;
+
+
+/*
+---------------------------------------------------SpDiaryItem---------------------------------------------------
+*/
+SpDiaryItem:
+LOAD
+    diaryItemId,
+    diaryItemId &'_'& Standort as %diaryItemId_standort,
+    classid,
+    itemType,
+    dateTimeFrom,
+    dateTimeTo,
+    employeeId,
+    description,
+    proId,
+    subDepId,
+    diarySpecId,
+    diarySpecId &'_'& Standort as %diarySpecId_standort,
+    conInfoId,
+    actDefId,
+    docDefId,
+    proCarId,
+    done,
+    status,
+    result1,
+    result2,
+    result3,
+    reportType,
+    temp,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    divaDblChk,
+    modByDMS,
+    dateTime,
+    isPeriod,
+    employeeGroupId,
+    planDiaryItemId,
+    addrExport,
+    manAddrImpOn,
+    autAddrImpOn,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpDiaryItem.qvd]
+(qvd);
+
+Store * from SpDiaryItem into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpDiaryItem.qvd];
+
+Drop table SpDiaryItem;
+
+
+
+/*
+---------------------------------------------------SpDiarySpec---------------------------------------------------
+*/
+SpDiarySpec:
+LOAD
+    diarySpecId,
+    diarySpecId &'_'& Standort as %diarySpecId_standort,
+    classid,
+    category,
+    description,
+    itemType,
+    systemItem,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpDiarySpec.qvd]
+(qvd);
+
+Store * from SpDiarySpec into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpDiarySpec.qvd];
+
+Drop table SpDiarySpec;
+
+
+/*
+---------------------------------------------------SpProComm---------------------------------------------------
+*/
+SpProComm:
+LOAD
+    proCommId,
+    proAddressId,
+    proAddressId &'_'& Standort as %proAddressId_standort,
+    classid,
+    comType,
+    defComValue,
+    comValue,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpProComm.qvd]
+(qvd);
+
+Store * from SpProComm into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpProComm.qvd];
+
+Drop table SpProComm;
+
+
+
+
+/*
+---------------------------------------------------SpProDataPrivacy---------------------------------------------------
+*/
+SpProDataPrivacy:
+LOAD
+    proId,
+    proId &'_'& Standort as %proId_standort,
+    existsDeclOfConsent,
+    subDep_ContactByMail,
+    subDep_ContactBySMSPhone,
+    subDep_ContactByEMail,
+    subDep_TransferToBMW,
+    subDep_DateOfDecl,
+    subDep_SourceOfDecl,
+    subDep_SourceSystem,
+    subDep_DeclDeliveredFrom,
+    subDep_Remark,
+    BMW_ContactByMail,
+    BMW_ContactBySMSPhone,
+    BMW_ContactByEMail,
+    BMW_CancelOfDecl,
+    BMW_BlockCodeBMW,
+    BMW_BlockCodeSubDep,
+    BMW_DateOfDecl,
+    BMW_SourceOfDecl,
+    mailing,
+    blockContacts,
+    blockPhone,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    divaStatus,
+    dmsExport,
+    subDep_AgreeDataProc,
+    subDep_InCar,
+    subDep_CustomerProfile,
+    BMW_InCar,
+    BMW_CustomerProfile,
+    BMW_SourceSystem,
+    dmsExportDs,
+    expirationDate,
+    expirationDateDirty,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpProDataPrivacy.qvd]
+(qvd);
+
+Store * from SpProDataPrivacy into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpProDataPrivacy.qvd];
+
+Drop table SpProDataPrivacy;
+
+
+
+/*
+---------------------------------------------------SpCurProcar---------------------------------------------------
+*/
+SpCurProCar:
+LOAD
+    proCarId,
+    classid,
+    carTypeId,
+    proId,
+    proId &'_'& Standort as %proId_standort,
+    payerProId,
+    chassisNo,
+    colour,
+    comCarTypeName,
+    fuelType,
+    kindOfGear,
+    kindOfUse,
+    lastRegDate,
+    licenceNo,
+    mileage,
+    modelYear,
+    regDate,
+    finType,
+    finCompany,
+    finAmount,
+    newUsed,
+    remark,
+    state,
+    saPrice,
+    discount,
+    discPerc,
+    puPrice,
+    puPriceDate,
+    ownSale,
+    emissionTestDate,
+    inspectionDate,
+    deliveryDate,
+    warrantyDate,
+    warrantyMileage,
+    dateLastRepair,
+    carMilesYear,
+    expReplDate,
+    expReplMileage,
+    estimatedValue,
+    purchaseDate,
+    damageState,
+    subDepId,
+    ownMake,
+    transactionStatus,
+    conInfoId,
+    bodyStyle,
+    capacity,
+    cylinders,
+    powerWatt,
+    productionDate,
+    reservedTill,
+    purchaserId,
+    purchaseState,
+    salesManId,
+    salesState,
+    salesNewUsed,
+    locationId,
+    carPuPrice,
+    carSaPrice,
+    carSaPriceIncl,
+    optPuPriceSum,
+    optSaPriceSum,
+    optSaPriceSumIncl,
+    accPuPriceSum,
+    accSaPriceSum,
+    accSaPriceSumIncl,
+    originalCarId,
+    vatCodeId,
+    vatType,
+    configDate,
+    divaDblChk,
+    accident,
+    demoState,
+    deRegDate,
+    differenceVat,
+    noOfPrevOwners,
+    orderNo,
+    stockNo,
+    totalCosts,
+    mileageDate,
+    lastInspecDate,
+    lastInspecMileage,
+    prevOwner,
+    card,
+    cardDateFrom,
+    cardDateTo,
+    carPaperId,
+    comparisonClass,
+    privBusUse,
+    usedCarWarranty,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    modByDMS,
+    dmsId,
+    accLiPriceSum,
+    carLiPrice,
+    optLiPriceSum,
+    estpuDate,
+    accLiPriceSumIncl,
+    carLiPriceIncl,
+    optLiPriceSumIncl,
+    leasEnd,
+    "trim",
+    reservedBy,
+    manChanged,
+    mmPictGrpId,
+    orderNoDMS,
+    invoiceDate,
+    acceptCu,
+    supplyDate,
+    currStatus,
+    driveType,
+    carSaPriceOrig,
+    blockCode,
+    lastRepairMileage,
+    planRegDate,
+    origBPM,
+    ESPTransportCosts,
+    mesaInStrada,
+    offerNo,
+    addrExport,
+    manAddrImpOn,
+    autAddrImpOn,
+    reportDate,
+    salesmanCode,
+    offerNoOv,
+    rootQuotationId,
+    optPuPriceSumBsi,
+    optSaPriceSumBsi,
+    optLiPriceSumBsi,
+    optLiPriceSumBsiIncl,
+    optSaPriceSumBsiIncl,
+    ownerProId,
+    inactive,
+    activateDivaExport,
+    createdExpReplDateOn,
+    createdExpReplDateBy,
+    modifiedExpReplDateOn,
+    modifiedExpReplDateBy,
+    mailing,
+    quotationId,
+    PreisGueltigab,
+    Schadenstext,
+    Abwertung,
+    AnzahlTueren,
+    Sichtbarkeitstufe,
+    Preisaenderungskennzeichen,
+    EUAbgasstufe,
+    UrspruenglNeupreis,
+    KalkVKnetto,
+    Nutzungsart,
+    Bestandsart,
+    KalkInstKostennetto,
+    Hinweistext,
+    KalkGarantiekostennetto,
+    BestandsartText,
+    Haendlerpreis,
+    Eingangskanal,
+    Garantieart,
+    KBATypschluessel,
+    GAHerkunftskennzeichen,
+    Schaetzwert,
+    Schadenshoehe,
+    GarantieText,
+    BusinessNummer,
+    Aufbereitungskostennetto,
+    isCapacityManEntry,
+    isPowWattManEntry,
+    rentCar,
+    prtTelematic,
+    ZHupdate,
+    isCylindersManEntry,
+    modelCode,
+    BMWAccLiPriceSum,
+    BMWAccPuPriceSum,
+    BMWAccSaPriceSum,
+    BMWAccLiPriceSumIncl,
+    BMWAccSaPriceSumIncl,
+    BMWAccAssLiPriceSum,
+    BMWAccAssPuPriceSum,
+    BMWAccAssSaPriceSum,
+    BMWAccAssLiPriceSumIncl,
+    BMWAccAssSaPriceSumIncl,
+    omframe,
+    segmentId,
+    leasEndToWMZFlag,
+    efficiencyClass,
+    efficiencyCo2,
+    wltpFlag,
+    Standort,
+    
+    iF(not isnull(expReplDate) OR expReplDate>1 , 1, 0) as Flag_wmz_vorhanden,
+    date(date#(expReplDate, 'YYYYMMDD')) 												  		as WMZ,
+    date(date#(leasEnd, 'YYYYMMDD')) 												  	as LeasingEnde,
+      IF( leasEnd>1 AND leasEnd<>expReplDate, '1', '0')										as Flag_Leasingende_ungleich_WMZ
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_SpCurProCar.qvd]
+(qvd);
+
+Store * from SpCurProCar into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpCurProCar.qvd];
+
+Drop table SpCurProCar;
+
+
+
+
+/*
+---------------------------------------------------AuSubDep---------------------------------------------------
+*/
+AuSubDep:
+LOAD
+    subDepId,
+    subDepId &'_'& Standort as %subDepId_Standort,
+    classid,
+    companyId,
+    subsidiaryId,
+    name1,
+    name2,
+    makeId,
+    subDepTypeWs,
+    subDepTypeCs,
+    subDepTypePs,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    marketDescr1,
+    marketDescr2,
+    marketDescr3,
+    marketDescr4,
+    city,
+    postCode,
+    street,
+    dealerCode,
+    orderReportMailAddress,
+    dealerCodeDiva,
+    email,
+    marketDescr5,
+    marketDescr6,
+    marketDescr7,
+    marketDescr8,
+    marketDescr9,
+    marketDescr10,
+    printName1,
+    printName2,
+    account1,
+    bankCode1,
+    bankName1,
+    iban1,
+    bic1,
+    account2,
+    bankCode2,
+    bankName2,
+    iban2,
+    bic2,
+    account3,
+    bankCode3,
+    bankName3,
+    iban3,
+    bic3,
+    financeBusinessNo,
+    financePassword,
+    lockDiva,
+    regCourt,
+    tradeRegNo,
+    execMan,
+    useTradeTempl,
+    tradeInfoTemplFile,
+    rptTxt,
+    rptTxtCenter,
+    mailTxt,
+    defaultVehicleType,
+    defaultMake,
+    lockAmsBmw,
+    lockAmsMini,
+    lockAmsBmwi,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_01_SA_AuSubDep.qvd]
+(qvd);
+
+Store * from AuSubDep into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuSubDep.qvd];
+
+Drop table AuSubDep;
+
+
+
+
+
