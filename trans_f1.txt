@@ -1,0 +1,799 @@
+/*
+----------------------------------------------------------------Customer----------------------------------------------------------------
+*/
+Customer_tmp1:
+
+LOAD
+    *
+
+   // substring('Am großen Peter 12a',' ',SubStringCount('Am großen Peter 12a', ' ')) as Hausnummer
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_Customer.qvd]
+(qvd);
+
+Left Join (Customer_tmp1)
+Load
+	No_,
+    "Home E-Mail",
+    "E-Mail"
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_Mail.qvd]
+(qvd);
+
+
+
+Customer_tmp2:
+LOAD
+
+	//*,
+    //"timestamp",
+    No_,
+    
+    if(IsNull(No_) or len(No_) = 0,1,0) as Flag_No_empty,
+    
+    //Kundennummer nur 6stellig
+    if(len(No_) = 6 and not IsNull(No_) and len(No_) > 0,1,0) as Flag_No_6stellig,
+    
+    Standort,
+    
+    Name,
+
+    if(IsNull(Name) or len(Name) = 0,1,0) as Flag_Name_empty,
+    
+    //if(len(PurgeChar(lower(Name), 'abcdefghijklmnopqrstuvwxyzüäöß ')) = 0, 1,0) as Name_Nur_Buchstaben,
+    //if(len(PurgeChar(lower(Name), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.-/ ')) = 0, 1,0) as Name_valid,
+    //if(len(PurgeChar(lower(Name), '0123456789.,-/%&<>+*#"''()=?!" ')) > 2, 1,0) as Name_valid,
+    
+    //Name muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(Name), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Name) and len(Name) > 0, 1,0) as Flag_Name_valid,
+    //if(len(Name)> 2,1,0) as Name_Länge,
+       
+    "Search Name",
+    
+    if(IsNull("Search Name") or len("Search Name") = 0 and not IsNull("Search Name") and len("Search Name") > 0,1,0) as Flag_SearchName_empty,
+
+    //Search Name muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower("Search Name"), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull("Search Name") and len("Search Name") > 0, 1,0) as Flag_SearchName_valid,    
+    
+    "Name 2",
+    Address,
+    
+    if(IsNull(Address) or len(Address) = 0,1,0) as Flag_Address_empty,
+    
+    //Addresse muss mindestens zwei Buchstaben enthalten
+    if(len(KeepChar(lower(Address), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Address) and len(Address) > 0, 1,0) as Flag_Address_valid,
+
+	//Enthält einer der letzten beiden Teile der Adresse eine Zahl? (Nur für deutsche Adressen geeignet)
+	if(
+        len(KeepChar(Lower(SubField(Address, ' ',-1)), '0123456789')) > 0 and not IsNull(SubField(Address, ' ',-1)) and len(SubField(Address, ' ',-1)) > 0 or
+        len(KeepChar(Lower(SubField(Address, ' ',-2)), '0123456789')) > 0 and not IsNull(SubField(Address, ' ',-1)) and len(SubField(Address, ' ',-1)) > 0, 
+     1,0) as Flag_Address_Zahl_enthalten,
+
+
+    //"Address 2",
+    City,
+    
+    if(IsNull(City) or len(City) = 0,1,0) as Flag_City_empty,
+    
+    //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+   	if(len(City)> 2 and not IsNull(City) and len(City) > 0,1,0) as City_Länge,
+    if(len(KeepChar(lower(City), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(City) and len(City) > 0, 1,0) as Flag_City_valid,
+ 
+    Contact,
+    
+    if(IsNull(Contact) or len(Contact) = 0,1,0) as Flag_Contact_empty,
+    
+    if(len(KeepChar(lower(Contact), 'abcdefghijklmnopqrstuvwxyzüäöß0123456789 ')) > 2 and not IsNull(Contact) and len(Contact) > 0, 1,0) as Flag_Contact_valid,
+    
+    "Phone No_",
+    
+    if(IsNull("Phone No_") or len("Phone No_") = 0,1,0) as Flag_PhoneNo_empty,
+    
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower("Phone No_"), '0123456789-/+() ')) = 0 and not IsNull("Phone No_") and len("Phone No_") > 0, 1,0) as Flag_PhoneNo_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar("Phone No_", '0123456789')) > 6 and not IsNull("Phone No_") and len("Phone No_") > 0, 1, 0) as Flag_PhoneNo_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar("Phone No_", '+')) < 2 and not IsNull("Phone No_") and len("Phone No_") > 0, 1, 0) as Flag_PhoneNo_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar("Phone No_", '0')) = 0 and len(KeepChar("Phone No_", '0')) > 0 or IsNull("Phone No_") or len("Phone No_") = 0, 0,1) as Flag_PhoneNo_valideZahlen,
+
+//     "Telex No_",
+//     "Our Account No_",
+//     "Territory Code",
+//     "Department Code",
+//     "Make Code",
+//     "Chain Name",
+//     "Budgeted Amount",
+//     "Credit Limit (LCY)",
+//     "Customer Posting Group",
+    
+//     if(IsNull("Customer Posting Group") or len("Customer Posting Group") = 0, 1,0) as Flag_PostingGroup_empty,
+    
+//     //Muss einem der fünf Fälle entsprechen
+//     if(match("Customer Posting Group", 'BSI', 'FINANZ','KUNDE','LEASING','PKW_GWL') and not IsNull("Customer Posting Group") and len("Customer Posting Group") > 0, 1, 0) as Flag_PostingGroup_valid,
+
+//     "Currency Code",
+//     "Price Group Code",
+//     "Language Code",
+//     "Statistics Group",
+//     "Payment Terms Code",
+    
+//     if(IsNull("Payment Terms Code") or len("Payment Terms Code") = 0,1,0) as Flag_PaymentTermsCode_empty,
+    
+//     //Muss einem der zehn Fälle entsprechen
+//     if(match("Payment Terms Code", '14TAGE', '21TAGE','30TAGE','60TAGE','90TAGE', 'BAR', 'BAR1', 'EINZUG', 'MON', 'NETTO') and not IsNull("Payment Terms Code") and len("Payment Terms Code") > 0, 1, 0) as Flag_PaymentTermsCode_valid,
+
+//     "Fin_ Charge Terms Code",
+    "Salesperson Code",
+    
+    if(IsNull("Salesperson Code") or len("Salesperson Code") = 0,1,0) as Flag_SalespersonCode_empty,
+    
+    //Code darf nur aus Zahlen bestehen
+    if(len(PurgeChar("Salesperson Code", '0123456789')) = 0 and not IsNull("Salesperson Code") and len("Salesperson Code") > 0, 1,0) as Flag_SalespersonCode_nur_Zahlen,
+    //Code muss dreistellig sein
+    if(len(KeepChar("Salesperson Code", '0123456789')) = 3 and not IsNull("Salesperson Code") and len("Salesperson Code") > 0, 1,0) as Flag_SalespersonCode_3stellig,
+    
+    
+//     "Shipment Method Code",
+//     "Shipping Agent Code",
+//     "Place of Export",
+//     "Invoice Disc_ Code",
+//     "Cust__Item Disc_ Gr_",
+	   "Country Code",
+//     "Collection Method",
+//     Amount,
+//     Blocked,
+	
+//     if(IsNull(Blocked) or len(Blocked) = 0 ,1,0) as Flag_Blocked_empty,
+    
+//     //Blocked darf nur 0 oder 1 sein
+//     if(Blocked = '0' or '1' and not IsNull(Blocked) and len(Blocked) > 0, 1,0) as Flag_Blocked_valid,
+    
+//     "Invoice Copies",
+//     "Last Statement No_",
+//     "Print Statements",
+//     "Bill-to Customer No_",
+//     Priority,
+    
+//     if(IsNull(Priority) or len(Priority) = 0,1,0) as Flag_Priority_empty,
+    
+//     //Priority darf nur 0 oder 1 sein
+//     if(Priority = '0' or '1' and not IsNull(Priority) and len(Priority) > 0, 1,0) as Flag_Priority_valid,
+    
+//     "Payment Method Code",
+    
+//     if(IsNull("Payment Method Code") or len("Payment Method Code") = 0,1,0) as Flag_PaymentMethodCode_empty,
+    
+//     //Muss einem der sechs Fälle entsprechen
+//     if(match("Payment Method Code", 'BANK', 'BAR','EINZUG','KASSE','ÜBERWEIS', 'VERRECH') and not IsNull("Payment Method Code") and len("Payment Method Code") > 0, 1, 0) as Flag_PaymentMethodCode_valid,
+    
+    "Last Date Modified",
+    
+    if(IsNull("Last Date Modified") or len("Last Date Modified") = 0, 1,0) as Flag_LastDateModified_empty,
+    
+    if(year("Last Date Modified") > '1999' and not IsNull("Last Date Modified") and len("Last Date Modified") > 0, 1, 0) as Flag_LastDateModified_valid,   
+    
+//     "Application Method",
+//     "Allow Quantity Disc_",
+//     "Prices Including VAT",
+//     "Location Code",
+    "Fax No_",
+//     "Telex Answer Back",
+//     "VAT Registration No_",
+    
+//     if(IsNull("VAT Registration No_") or len("VAT Registration No_") = 0, 1,0) as Flag_VATRegistrationNo_empty,
+    
+//     //VAT No muss min. sechs Zeichen lang sein
+//     if(len("VAT Registration No_") > 6 and not IsNull("VAT Registration No_") and len("VAT Registration No_") > 0, 1,0) as Flag_VATRegistrationNo_Länge,
+//     //VAT No darf nur Zahlen und bestimmte Sonderzeichen enthalten
+//     if(len(PurgeChar(lower("VAT Registration No_"), 'abcdefghijklmnopqrstuvwxyz0123456789-/ ')) = 0 and not IsNull("VAT Registration No_") and len("VAT Registration No_") > 0, 1,0) as Flag_VATRegistrationNo_valid,
+    
+//     "Combine Shipments",
+//     "Gen_ Bus_ Posting Group",
+//     Picture,
+    "Post Code",
+    
+    if(IsNull("Post Code") or len("Post Code") = 0,1,0) as Flag_PostCode_empty,
+    
+    //Muss min. 3 und max. 7 Zahlen enthalten
+    if(len(KeepChar("Post Code", '0123456789')) > 2 and len(KeepChar("Post Code", '0123456789')) < 8 and not IsNull("Post Code") and len("Post Code") > 0, 1, 0) as Flag_PostCode_Länge,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar("Post Code", '0')) = 0 and len(KeepChar("Post Code", '0')) > 0 or IsNull("Post Code") or len("Post Code") = 0, 0,1) as Flag_PostCode_valideZahlen,
+    
+    //County,
+    "E-Mail",
+    
+    if(IsNull("E-Mail") or len("E-Mail") = 0,1,0) as Flag_EMail_empty,
+    
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len("E-Mail") < 255 and len("E-Mail") > 5 and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower("E-Mail"), '@')) = 1 and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower("E-Mail"), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left("E-Mail", Index( "E-Mail",'@') -1 )) > 0 and len(Left("E-Mail", Index( "E-Mail",'@') -1 )) < 65 and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_Lokalteil_valid,
+	//Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+    if(len(Right("E-Mail", Index( "E-Mail",'@') +1 )) > 1 and wildmatch(Right("E-Mail", Index("E-Mail",'@') +1), '*.*') and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_Domainteil_valid,	
+    
+//     "Home Page",
+//     "Reminder Terms Code",
+//     "No_ Series",
+//     "Tax Area Code",
+//     "Tax Liable",
+//     "VAT Bus_ Posting Group",
+//     Reserve,
+    "Home Phone No_",
+    
+    if(IsNull("Home Phone No_") or len("Home Phone No_") = 0,1,0) as Flag_HomePhoneNo_empty,
+    
+    //Home Phone No_ darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower("Home Phone No_"), '0123456789-/+() ')) = 0 and not IsNull("Home Phone No_") and len("Home Phone No_") > 0, 1,0) as Flag_HomePhoneNo_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar("Home Phone No_", '0123456789')) > 6 and not IsNull("Home Phone No_") and len("Home Phone No_") > 0, 1, 0) as Flag_HomePhoneNo_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar("Home Phone No_", '+')) < 2 and not IsNull("Home Phone No_") and len("Home Phone No_") > 0, 1, 0) as Flag_HomePhoneNo_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar("Home Phone No_", '0')) = 0 and len(KeepChar("Home Phone No_", '0')) > 0 or IsNull("Home Phone No_") or len("Home Phone No_") = 0, 0,1) as Flag_HomePhoneNo_valideZahlen,
+       
+    "Mobile Phone No_",
+    
+    if(IsNull("Mobile Phone No_") or len("Mobile Phone No_") = 0,1,0) as Flag_MobilePhoneNo_empty,
+    
+    //Home Phone No_ darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower("Mobile Phone No_"), '0123456789-/+() ')) = 0 and not IsNull("Mobile Phone No_") and len("Mobile Phone No_") > 0, 1,0) as Flag_MobilePhoneNo_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar("Mobile Phone No_", '0123456789')) > 6 and not IsNull("Mobile Phone No_") and len("Mobile Phone No_") > 0, 1, 0) as Flag_MobilePhoneNo_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar("Mobile Phone No_", '+')) < 2 and not IsNull("Mobile Phone No_") and len("Mobile Phone No_") > 0, 1, 0) as Flag_MobilePhoneNo_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar("Mobile Phone No_", '0')) = 0 and len(KeepChar("Mobile Phone No_", '0')) > 0 or IsNull("Mobile Phone No_") or len(No_) = 0, 0,1) as Flag_MobilePhoneNo_valideZahlen,
+    
+//     "Service Advisor No_",
+//     "Branch Posting Group",
+//     "Address No_",
+	
+//     if(IsNull("Address No_") or len("Address No_") = 0,1,0) as Flag_AddressNo_empty,
+    
+//     //Address No_ darf nur Zahlen enthalten
+//     if(len(PurgeChar(lower("Address No_"), '0123456789 ')) = 0 and not IsNull("Address No_") and len("Address No_") > 0, 1,0) as Flag_AddressNo_nur_Zahlen,
+//     //Address No_ Zahl zwischen 0 und 999.999
+//     if("Address No_" < 1000000 and "Address No_" >= 0 and not IsNull("Address No_") and len("Address No_") > 0, 1,0) as Flag_AddressNo_valid,
+    
+    "Date of Update",
+    
+    if(IsNull("Date of Update") or len("Date of Update") = 0,1,0) as Flag_DateUpdate_empty,
+    
+    if(year("Date of Update") > '1999' and not IsNull("Date of Update") and len("Date of Update") > 0, 1, 0) as Flag_DateUpdate_valid,   
+    
+//     "Time of Update",
+//     "Updated by User ID",
+//     "Update Company",
+//     "Last Name",
+//     "First Name",
+//     "Address Salutation Code",
+//     "Letter Salutation Code",
+    
+//     if(IsNull("Letter Salutation Code") or len("Letter Salutation Code") = 0,1,0) as Flag_LetterSalutationCode_empty,
+    
+//     //Muss einem der sieben Fälle entsprechen
+//     if(match("Letter Salutation Code", 'FSGF','FSGH','HF','SGDH','SGF','SGH','SGHF') and not IsNull("Letter Salutation Code") and len("Letter Salutation Code") > 0, 1, 0) as Flag_LetterSalutationCode_valid,
+    
+//     "Bulk Customer No_",
+//     "Title Code",
+    
+//     if(IsNull("Title Code") or len("Title Code") = 0,1,0) as Flag_TitleCode_empty,
+    
+//     //Darf nur Buchstaben,Bindestrich und Punkt enthalten
+//     if(len(PurgeChar(lower("Title Code"), 'abcdefghijklmnopqrstuvwxyzüäöß.- ')) = 0 and not IsNull("Title Code") and len("Title Code") > 0, 1,0) as Flag_TitleCode_valid,
+//     //Länge >= 2
+//     if(len("Title Code") >= 2 and not IsNull("Title Code") and len("Title Code") > 0, 1,0) as Flag_TitleCode_länge,
+    
+    	Kundentyp,
+    
+//     "Customer Type", //Muss ich noch suchen. mann,frau,firma,gewerblich selbständig
+    
+//     if(IsNull("Customer Type") or len("Customer Type") = 0,1,0) as Flag_CustomerType_empty,
+    
+//     //Type darf nur 0 oder 1 oder 2 sein
+//     if("Customer Type" = '0' or '1' or '2' and not IsNull("Customer Type") and len("Customer Type") > 0, 1,0) as Flag_CustomerType_valid,
+    
+//     "Labor Price Group",
+//     "Ext_ Service Price Group",
+//     "Vehicle Sales Price Group",
+//     "Item Sales Price Group",
+//     "Employee No_",
+//     "Home Fax No_",
+//     "Home Mobile Phone No_",
+    
+//     if(IsNull("Home Mobile Phone No_") or len("Home Mobile Phone No_") = 0,1,0) as Flag_HomeMobilePhoneNo_empty,
+    
+//     //Home Mobile Phone No_ darf nur Zahlen und bestimmte Sonderzeichen enthalten
+//     if(len(PurgeChar(lower("Home Mobile Phone No_"), '0123456789-/+() ')) = 0 and not IsNull("Home Mobile Phone No_") and len("Home Mobile Phone No_") > 0, 1,0) as Flag_HomeMobilePhoneNo_valid,
+//     //Muss min. 6 Zahlen enthalten
+//     if(len(KeepChar("Home Mobile Phone No_", '0123456789')) > 6 and not IsNull("Home Mobile Phone No_") and len("Home Mobile Phone No_") > 0, 1, 0) as Flag_HomeMobilePhoneNo_Länge,
+//     //Darf maximal ein + enthalten
+//     if(len(KeepChar("Home Mobile Phone No_", '+')) < 2 and not IsNull("Home Mobile Phone No_") and len("Home Mobile Phone No_") > 0, 1, 0) as Flag_HomeMobilePhoneNo_MaximalEinPlus,
+//     //Darf nicht nur aus Nullen bestehen
+//     if(len(PurgeChar("Home Mobile Phone No_", '0')) = 0 and len(KeepChar("Home Mobile Phone No_", '0')) > 0 or IsNull("Home Mobile Phone No_") or len("Home Mobile Phone No_") = 0, 0,1) as Flag_HomeMobilePhoneNo_valideZahlen,
+    
+    "Home E-Mail",
+    
+    if(IsNull("Home E-Mail") or len("Home E-Mail") = 0,1,0) as Flag_HomeEMail_empty,
+    
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len("Home E-Mail") < 255 and len("Home E-Mail") > 5 and not IsNull("Home E-Mail") and len("Home E-Mail") > 0, 1,0) as Flag_HomeEMail_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower("Home E-Mail"), '@')) = 1 and not IsNull("Home E-Mail") and len("Home E-Mail") > 0, 1,0) as Flag_HomeEMail_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower("Home E-Mail"), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull("Home E-Mail") and len("Home E-Mail") > 0, 1,0) as Flag_HomeEMail_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left("Home E-Mail", Index( "Home E-Mail",'@') -1 )) > 0 and len(Left("Home E-Mail", Index( "Home E-Mail",'@') -1 )) < 65 and not IsNull("Home E-Mail") and len("Home E-Mail") > 0, 1,0) as Flag_HomeEMail_Lokalteil_valid,
+	//Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+    if(len(Right("Home E-Mail", Index( "Home E-Mail",'@') +1 )) > 1 and wildmatch(Right("Home E-Mail", Index("Home E-Mail",'@') +1), '*.*') and not IsNull("Home E-Mail") and len("Home E-Mail") > 0, 1,0) as Flag_HomeEMail_Domainteil_valid,
+	
+//     "Home Page 2",
+//     "Date 1",
+//     "Date 2",
+//     "Extra Code 1",
+//     "Extra Code 2",
+//     "Extra Code 3",
+//     "Text 1",
+//     "Text 2",
+//     "Text 3",
+//     "Text 4",
+//     "Text 5",
+//     "Text 6",
+//     "Show Discount",
+//     "Inv_ Discount %",
+//     "Option Sales Price Group",
+//     "Customer Group Code",
+//     "Add Service Surcharges",
+    "Creation Date",
+    
+    if(IsNull("Creation Date") or len("Creation Date") = 0,1,0) as Flag_CreationDate_empty,
+    
+    //Nicht älter als 01/01/1989
+    if(year("Creation Date") > '1988' and not IsNull("Creation Date") and len("Creation Date") > 0, 1, 0) as Flag_CreationDate_valid,   
+    
+//     "Respect Inv_ Buffer Quantity",
+//     "Transfer Method",
+//     "Partner Code",
+//     "EU Business Customer",
+//     "Action triggered by Card form",
+//     "Disable for Requisition",
+//     "Bulkcust_ Gen_ Bus_ Post_ Grp",
+//     "Bulkcust_ VAT Bus_ Post_ Grp",
+//     "Bulkcust_ Labor Price Group",
+//     "Bulkcust_ Ser_ Sales Price Grp",
+//     "Bulkcust_ Item Sales Price Grp",
+//     "Bulkcust_ Veh_ Sales Price Grp",
+//     "Bulkcust_ Opt_ Sales Price Grp",
+//     "Contact 1",
+//     "Contact 2",
+//     "Contact 3",
+//     "Contact to fleet veh_ leader",
+//     Street,
+    
+//     if(IsNull(Street) or len(Street) = 0,1,0) as Flag_Street_empty,
+    
+//     //Darf nur Buchstaben und bestimmte Sonderzeichen enthalten
+//     if(len(PurgeChar(lower(Street), 'abcdefghijklmnopqrstuvwxyzüäöß.,()-/"`´ ')) = 0 and not IsNull(Street) and len(Street) > 0, 1,0) as Flag_Street_valid,
+//     if(len(KeepChar(lower(Street), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Street) and len(Street) > 0, 1,0) as Flag_Street_länge,
+      
+//     "House No_",
+   
+//    	if(IsNull("House No_") or len("House No_") = 0, 1,0) as Flag_HouseNo_empty,
+    
+//     //Nur bestimmte Ziffern
+//     if(len(PurgeChar(lower("House No_"), '0123456789abcdefghijklmnopqrstuvwxyzüäöß-+/., ')) = 0 and not IsNull("House No_") and len("House No_") > 0, 1,0) as Flag_HouseNo_valid,
+//     //Min. eine Zahl
+//     if(len(KeepChar(Lower("House No_"), '0123456789')) > 0 and not IsNull("House No_") and len("House No_") > 0, 1,0) as Flag_HouseNo_Zahl_enthalten,
+    
+//     "Block for SA",
+//     "Block for aftersales",
+//     "Block for advertising",
+//     "KIA MIS Cust_ Infos blocked",
+//     "Former Address No_",
+//     "Anz_ Posten für Begleitbrief",
+//     "Planned TKP Export",
+//     "Last TKP Export",
+//     "Auto Planned TKP Export",
+//     "Invoice E-Mail",
+//     "SEPA Type",
+//     "SMS Phone",
+//     "SMS Home Phone",
+//     "SMS Mobile Phone",
+//     "SMS Home Mobile Phone",
+//     "Street Sa",
+//     "House No_ Sa",
+//     "Post Code Sa",
+//     "City Sa",
+//     "Address Sa",
+//     "Country Code Sa",
+//     "Main Address",
+//     "Address 2 Sa",
+//     ExportToRSP,
+//     Anonym,
+//     "Werbesperre AH",
+//     "E-Invoicing",
+//     Qualitext,
+//     CommercialSelfEmployed,
+//     "First Name Com_ Self Employed",
+//     LFILD,
+    Standorte,
+    Kundenart,
+    Werbungssperrcode,
+    If(Werbungssperrcode = 0, 0, 1) as Flag_Werbung_Blocked,
+    Blocked,
+    "DS Einwilligung"
+    //DS_erfasst
+    
+    
+//     if(IsNull(LFILD) or len(LFILD) = 0,1,0) as Flag_LFILD_empty,
+    
+//     LFIL
+resident Customer_tmp1;
+
+Drop table Customer_tmp1;
+
+
+left join(Customer_tmp2)
+Load
+if(count(No_) > 1, 1, 0) as Flag_Kunde_Mehrfach,
+    Address & '_'& "Post Code" &'_'& Name &'_'& Standort as Key_Kunde_mehrfach,
+    Address,
+    "Post Code",
+    Name,
+    Standort,
+    Blocked
+Resident Customer_tmp2 where Blocked = '0' Group by "Post Code", Standort, Address, Name, Blocked;
+
+
+ 
+Customer:
+
+LOAD
+   No_ & '_' & Standort as %Kundennummer_Standort, 
+   No_ &'_'& Standort as %kunde_tkp_Standort,
+   No_ as %Kundennummer,
+    "Standorte" as %Standorte,
+    *,
+   // "Address No_" &'_'& Standort as %kunde_sa_standort,
+    left(num(date("Creation Date")),5)  as %DatumNum,
+
+
+    if(	Flag_Address_empty = 0 and
+    	Flag_Address_valid = 1 and
+        Flag_Address_Zahl_enthalten = 1 and
+//      Flag_Street_empty = 0 and 
+//     	Flag_Street_valid = 1 and 
+//      Flag_Street_länge = 1 and
+//      Flag_HouseNo_empty = 0 and
+// 		Flag_HouseNo_valid = 1 and
+// 		Flag_HouseNo_Zahl_enthalten = 1 and
+        Flag_PostCode_empty = 0 and
+		Flag_PostCode_Länge = 1 and
+// 		Flag_PostCode_NurNullen = 0 and
+        Flag_City_empty = 0 and
+		City_Länge = 1 and 
+		Flag_City_valid = 1
+    , 1, 0) as Flag_Adresse_vollständig,
+    
+   
+    
+    if(	Flag_Address_empty = 0 and
+    	Flag_Address_valid = 1 and
+        Flag_Address_Zahl_enthalten = 1 and
+//     	Flag_Street_empty = 0 and 
+//     	Flag_Street_valid = 1 and 
+//      Flag_Street_länge = 1 and
+//      Flag_HouseNo_empty = 0 and
+// 		Flag_HouseNo_valid = 1 and
+// 		Flag_HouseNo_Zahl_enthalten = 1 and
+        Flag_PostCode_empty = 0 and
+		Flag_PostCode_Länge = 1 and
+// 		Flag_PostCode_NurNullen = 0 and
+        Flag_City_empty = 0 and
+		City_Länge = 1 and 
+		Flag_City_valid = 1 and
+        ((
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+        )
+        or
+        (
+        Flag_HomeEMail_empty = 0 and
+		Flag_HomeEMail_Länge = 1 and
+		Flag_HomeEMail_@_valid = 1 and
+		Flag_HomeEMail_valid = 1 and
+		Flag_HomeEMail_Lokalteil_valid = 1 and
+		Flag_HomeEMail_Domainteil_valid = 1 
+		))
+
+        and
+        ((
+        
+        Flag_PhoneNo_empty = 0 and
+        Flag_PhoneNo_valid = 1 and
+        Flag_PhoneNo_Länge = 1 and
+        Flag_PhoneNo_MaximalEinPlus = 1 
+//         Flag_PhoneNo_NurNullen = 0 
+		)
+        or
+        (
+        Flag_HomePhoneNo_empty = 0 and
+        Flag_HomePhoneNo_valid = 1 and
+        Flag_HomePhoneNo_Länge = 1 and
+        Flag_HomePhoneNo_MaximalEinPlus = 1 
+//         Flag_HomePhoneNo_NurNullen = 0 
+		)
+        or
+        (
+        Flag_MobilePhoneNo_empty = 0 and
+        Flag_MobilePhoneNo_valid = 1 and
+        Flag_MobilePhoneNo_Länge = 1 and
+        Flag_MobilePhoneNo_MaximalEinPlus = 1 
+//         Flag_MobilePhoneNo_NurNullen = 0 
+		)
+//         or
+//         (
+//         Flag_HomeMobilePhoneNo_empty = 0 and
+//         Flag_HomeMobilePhoneNo_valid = 1 and
+//         Flag_HomeMobilePhoneNo_Länge = 1 and
+//         Flag_HomeMobilePhoneNo_MaximalEinPlus = 1 
+// //         Flag_HomeMobilePhoneNo_NurNullen = 0 
+//      )
+        )
+    , 1, 0) as Flag_Kontakt_vollständig,
+
+    if(
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+     ,1,0) as Flag_Email_vollständig,
+     
+     if(
+        Flag_HomeEMail_empty = 0 and
+		Flag_HomeEMail_Länge = 1 and
+		Flag_HomeEMail_@_valid = 1 and
+		Flag_HomeEMail_valid = 1 and
+		Flag_HomeEMail_Lokalteil_valid = 1 and
+		Flag_HomeEMail_Domainteil_valid = 1 
+	,1,0) as Flag_HomeEmail_vollständig,
+    
+    if(
+        Flag_PhoneNo_empty = 0 and
+        Flag_PhoneNo_valid = 1 and
+        Flag_PhoneNo_Länge = 1 and
+        Flag_PhoneNo_MaximalEinPlus = 1 
+//         Flag_PhoneNo_NurNullen = 0 
+	,1,0) as Flag_Phone_vollständig,
+    
+    if(
+        Flag_HomePhoneNo_empty = 0 and
+        Flag_HomePhoneNo_valid = 1 and
+        Flag_HomePhoneNo_Länge = 1 and
+        Flag_HomePhoneNo_MaximalEinPlus = 1 
+//         Flag_HomePhoneNo_NurNullen = 0 
+	,1,0) as Flag_HomePhone_vollständig,
+   
+    if(
+        Flag_MobilePhoneNo_empty = 0 and
+        Flag_MobilePhoneNo_valid = 1 and
+        Flag_MobilePhoneNo_Länge = 1 and
+        Flag_MobilePhoneNo_MaximalEinPlus = 1 
+//         Flag_MobilePhoneNo_NurNullen = 0 
+	,1,0) as Flag_MobilePhone_vollständig
+/*     
+    if(
+        Flag_HomeMobilePhoneNo_empty = 0 and
+        Flag_HomeMobilePhoneNo_valid = 1 and
+        Flag_HomeMobilePhoneNo_Länge = 1 and
+        Flag_HomeMobilePhoneNo_MaximalEinPlus = 1 
+//         Flag_HomeMobilePhoneNo_NurNullen = 0 
+        ,1,0) as Flag_HomeMobilePhone_vollständig
+
+*/
+Resident Customer_tmp2;
+
+
+Store Customer into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_04_F1_Customer.qvd]
+(qvd);
+drop Table Customer_tmp2;
+
+/*
+----------------------------------------------------------------Data_Protection----------------------------------------------------------------
+*/
+Data_Protection:
+LOAD
+	No_ as %Kundennummer,
+    No_,
+    "Erst-Eingabe",
+    "Le-Eingabe",
+    "Contact written BMW",
+    "Contact phone BMW",
+    "Contact Email BMW",
+    "Hst-Kontakt-Fax",
+    "Hst-Kontakt-SMS",
+    "Contact written Dealership",
+    "Contact phone Dealership",
+    "Contact Email Dealership",
+    "Hdl-Kontakt-Fax",
+    "Hdl-Kontakt-SMS",
+    Herkunft,
+    Bemerkung,
+    Bemerkung2,
+    Dummy,
+    Hersteller,
+    "Einverst. Übertrag.",
+    "Datum Erkl.Händler",
+    "Datum Erkl.Herst.",
+    "Erkl.erfasst Händler",
+    "Erkl.erfasst Herst.",
+    "Erkl.abgegeben von",
+    "Widerruf Erklärung",
+    "Sperre BMW AG",
+    "Sperre Autohaus",
+    "Zentr. Kunden-DB",
+    "Hst-bevorz. Kontakt",
+    "Hdl-bevorz. Kontakt",
+    Einv.Datenverarbeit,
+    "Händler Incar",
+    "Händler Bildung",
+    "Hersteller Incar",
+    "Hersteller Bildung",
+    Hst.Quellsystem
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_Data_Protection.qvd]
+(qvd);
+
+
+
+Store Data_Protection into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_04_F1_Data_Protection.qvd]
+(qvd);
+drop Table Data_Protection;
+
+
+/*
+----------------------------------------------------------------Fehler Mail----------------------------------------------------------------
+*/
+// taucht nicht auf im Datenmodell obwohl kein drop table?
+
+
+
+
+NoConcatenate
+Mail_Fehler_tmp:
+Load
+	%Kundennummer_Standort,
+	No_,
+    "E-Mail",
+    Flag_EMail_empty,
+    Flag_EMail_Länge ,
+    Flag_EMail_@_valid,
+    Flag_EMail_valid ,
+    Flag_EMail_Lokalteil_valid ,
+    Flag_EMail_Domainteil_valid 
+ resident Customer;
+ 
+ 
+Concatenate(Mail_Fehler_tmp)
+Load
+	%Kundennummer_Standort,
+    "Home E-Mail" as "E-Mail",
+    Flag_HomeEMail_empty as Flag_EMail_empty,
+    Flag_HomeEMail_Länge as Flag_EMail_Länge ,
+    Flag_HomeEMail_@_valid  as Flag_EMail_@_valid,
+    Flag_HomeEMail_valid  as Flag_EMail_valid ,
+    Flag_HomeEMail_Lokalteil_valid as Flag_EMail_Lokalteil_valid ,
+    Flag_HomeEMail_Domainteil_valid as Flag_EMail_Domainteil_valid 
+ resident Customer;  
+ 
+ 
+ NoConcatenate
+ Mail_Fehler:
+ Load Distinct
+ 	*,
+    if(
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+     ,1,0) as Flag_Email_vollständig
+ Resident Mail_Fehler_tmp;
+    
+Store Mail_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_04_F1_Mail_Fehler.qvd]
+(qvd);
+    
+    
+drop table Mail_Fehler_tmp;
+Drop Table Mail_Fehler;
+
+
+
+/*
+----------------------------------------------------------------Fehler Telefon----------------------------------------------------------------
+*/
+// Nicht im modell zu finden nach dem laden?
+
+
+NoConcatenate
+Telefon_Fehler_tmp:
+Load
+	%Kundennummer_Standort,
+    "Phone No_" as "Phone No_",
+    Flag_PhoneNo_empty as Flag_PhoneNo_empty ,
+    Flag_PhoneNo_valid as Flag_PhoneNo_valid ,
+    Flag_PhoneNo_Länge as Flag_PhoneNo_Länge,
+    Flag_PhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+ resident Customer;
+ 
+ 
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %Kundennummer_Standort,
+        "Home Phone No_" as "Phone No_",
+        Flag_HomePhoneNo_empty as Flag_PhoneNo_empty ,
+        Flag_HomePhoneNo_valid as Flag_PhoneNo_valid ,
+        Flag_HomePhoneNo_Länge as Flag_PhoneNo_Länge,
+        Flag_HomePhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident Customer;
+
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %Kundennummer_Standort,
+        "Mobile Phone No_" as "Phone No_",
+        Flag_MobilePhoneNo_empty as Flag_PhoneNo_empty ,
+        Flag_MobilePhoneNo_valid as Flag_PhoneNo_valid ,
+        Flag_MobilePhoneNo_Länge as Flag_PhoneNo_Länge,
+        Flag_MobilePhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident Customer;
+/*
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %Kundennummer_Standort,
+        "Home Mobile Phone No_" as "Phone No_",
+        Flag_HomeMobilePhoneNo_empty as Flag_PhoneNo_empty ,
+        Flag_HomeMobilePhoneNo_valid as Flag_PhoneNo_valid ,
+        Flag_HomeMobilePhoneNo_Länge as Flag_PhoneNo_Länge,
+        Flag_HomeMobilePhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident Customer;
+*/ 
+ 
+ 
+ NoConcatenate
+ Telefon_Fehler:
+ Load Distinct
+ 	*,
+   if(
+        Flag_PhoneNo_empty = 0 and
+        Flag_PhoneNo_valid = 1 and
+        Flag_PhoneNo_Länge = 1 and
+        Flag_PhoneNo_MaximalEinPlus = 1 
+	,1,0) as Flag_Phone_vollständig
+ Resident Telefon_Fehler_tmp;
+    
+    
+Store Telefon_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_04_F1_Telefon_Fehler.qvd]
+(qvd);
+        
+    
+drop table Telefon_Fehler_tmp;
+drop table Customer;
+drop table Telefon_Fehler;
+
+
+
+
+
+
+
+
