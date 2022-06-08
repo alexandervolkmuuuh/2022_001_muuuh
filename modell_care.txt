@@ -1,0 +1,543 @@
+/*
+----------------------------------------------------Customer----------------------------------------------------
+*/
+Customer:
+LOAD
+    Name,
+    Address,
+    "Post Code",
+    Standort,
+//     Standort AS %Standort,
+    Firma,
+    Kundenmerkmal & '_' & Firma as  %Kundenmerkmal, 
+    No_,
+     No_ as %Kunden_Nr,
+     No_ &'_'& Firma as %Kunden_Nr_Firma,
+    Flag_No_empty,
+    Flag_No_6stellig,
+    %kunde,
+//     %kunde_sa_standort,
+//     %kunde_tkp_Standort,
+    %Kundennummer_Standort,
+    "Letter Salutation Code",
+    Flag_LetterSalutationCode_empty,
+    Flag_Name_empty,
+    Flag_Name_valid,
+    "First Name",
+    Flag_FirstName_empty,
+    Flag_FirstName_valid,
+    "Last Name",
+    Flag_LastName_empty,
+    Flag_LastName_valid,
+    Branche,
+    Flag_Address_empty,
+    Flag_Address_valid,
+    Postfach,
+    Land_KZ,
+    Flag_PostCode_empty,
+    Flag_PostCode_Länge,
+    Flag_PostCode_valideZahlen,
+    PLZ_Zusatzziffer,
+    City,
+    Flag_City_empty,
+    Flag_City_Länge,
+    Flag_City_valid,
+    Contact,
+    Flag_Contact_empty,
+    Flag_Contact_valid,
+    "Title Code",
+    Flag_TitleCode_empty,
+    Flag_TitleCode_valid,
+    Flag_TitleCode_länge,
+    KZ_Firma_Person,
+    "Customer Type",
+    Flag_CustomerType_empty,
+    Flag_CustomerType_valid,
+    Fibu_verwalten,
+    Sperr_Kz,
+    Kundenmerkmal,
+    SalesPro_Kundenart,
+    Kundenkennzahl_errechnet,
+    Konto_Nr,
+    Kostenstelle,
+    Debitorensammelkonto,
+    "VAT Registration No_",
+    Flag_VATRegistrationNo_empty,
+    Flag_VATRegistrationNo_Länge,
+    Flag_VATRegistrationNo_valid,
+    UST_ID_Nr2,
+    Untervertreter_Nr,
+    KZ_Untervertreter,
+    Kunden_Nr_nummerisch,
+    Externe_Kunden_Nr,
+    Kreditoren_Nr_Fibu,
+    "Home Phone No_",
+    Flag_HomePhoneNo_empty,
+    Flag_HomePhoneNo_valid,
+    Flag_HomePhoneNo_Länge,
+    Flag_HomePhoneNo_MaximalEinPlus,
+    Flag_HomePhoneNo_NurNullen,
+    "Phone No_",
+    Flag_PhoneNo_empty,
+    Flag_PhoneNo_valid,
+    Flag_PhoneNo_Länge,
+    Flag_PhoneNo_MaximalEinPlus,
+    Flag_PhoneNo_NurNullen,
+    "Mobile Phone No_",
+    Flag_MobilePhoneNo_empty,
+    Flag_MobilePhoneNo_valid,
+    Flag_MobilePhoneNo_Länge,
+    Flag_MobilePhoneNo_MaximalEinPlus,
+    Flag_MobilePhoneNo_NurNullen,
+    Fax,
+    "E-Mail",
+    Flag_EMail_empty,
+    Flag_EMail_Länge,
+    Flag_EMail_@_valid,
+    Flag_EMail_valid,
+    Flag_EMail_Lokalteil_valid,
+    Flag_EMail_Domainteil_valid,
+    Datum_letzte_Rechnung,
+    "Search Name",
+    Flag_SearchName_empty,
+    Flag_SearchName_valid,
+    Kundengruppe,
+    Teile_Preisstufe,
+    Absatzkanal,
+    Steuerschlüssel,
+    MWST_Pflicht,
+    Vorsteuer_Steuerschlüssel,
+    "Rechnung_An (Von Kunde)",
+    Ist_Kunde_von_Kunden_Nr,
+    Personal_Nr,
+    "Salesperson Code",
+    Flag_SalespersonCode_empty,
+    Flag_SalespersonCode_nur_Zahlen,
+    Flag_SalespersonCode_3stellig,
+    ET_Berater_Personal_Nr,
+    "Payment Method Code",
+    Flag_PaymentMethodCode_empty,
+    Flag_PaymentMethodCode_valid,
+    Verkauf_Zahlungsart,
+    Rechnungskategorie,
+    Sprachcode,
+    "Textfeld-1",
+    "Textfeld-2",
+    "Textfeld-3",
+    Hinweis_Auftrag,
+    Default_Formular_Sprachcode,
+    Werkstatt_Verkauf_KZ,
+    Formularcode,
+    Filiale,
+    Filiale as %Standort,
+    Anzahl_Rechnungskopien,
+    Belege_in_interner_Währung,
+    Währungscode,
+    Kundenkontaktprogramm,
+    KDE_Satzänderung_melden,
+    Satz_Export,
+    Satz_Import,
+    Export_Import_1,
+    Export_Import_2,
+    Export_Import_3,
+    Großabnehmer,
+    KZ_Schnell,
+    KDE_RES_Code_1,
+    KDE_RES_Code_2,
+    KDE_RES_Code_3,
+    KDE_RES_Nr_1,
+    KDE_RES_Nr_2,
+    KDE_RES_Nr_3_R6,
+    KDE_RES_STS_2,
+    Datenschutz,
+    KDE_FLS_KDK,
+    KDE_FLS_KM,
+    KDE_FLS_FZEIT,
+    KDE_FLS_STD,
+    KDE_FLS_VSTD,
+    Änderungsstatus,
+    Reorgaausschluss,
+    Eröffnungsdatum,
+    Benutzerkennung_Eröffnung,
+    "Last Date Modified",
+    Flag_LastDateModified_empty,
+    Flag_LastDateModified_valid,
+    %DatumNum as [%DatumNum_CARE],
+    Änderungszeit,
+    Benutzerkennung,
+    Änderungsprogramm,
+    LKZ,
+    Flag_Kunde_Mehrfach,
+    Key_Kunde_mehrfach,
+    Flag_Adresse_vollständig,
+    Flag_Kontakt_vollständig,
+    Flag_Email_vollständig,
+    Flag_Phone_vollständig,
+    Flag_HomePhone_vollständig,
+    Flag_MobilePhone_vollständig
+FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_02_Trans_04_CARE_Customer.qvd]
+(qvd);
+
+
+/*
+----------------------------------------------------Kunden_Datenschutz----------------------------------------------------
+*/
+Kunden_Datenschutz:
+LOAD
+    Firma,
+    Kunden_Nr,
+    Kunden_Nr &'_'& Firma as %Kunden_Nr_Firma,
+    Datenschutz_Nr,
+    Filiale,
+    Auftragsart,
+    Auftrag_Nr,
+    Auftragsfolge,
+    KZ_Datennutzung,
+    Weitergabe_an_Dritte,
+    Datum_DS_Erklärung_vom,
+    Gültigkeitdatum_Ab,
+    Datum_Erst_Datennutzung,
+    Datum_Änd_Datennutzung,
+    Kontakt_Brief_intern,
+    Kontakt_Brief_extern,
+    Datum_Letzt_Brief_intern,
+    Kontakt_Telefon_intern,
+    Kontakt_Telefon_extern,
+    Datum_Letzt_Tel_intern,
+    Kontakt_Email_intern,
+    Kontakt_Email_extern,
+    Datum_Letzt_Email_intern,
+    Kontakt_SMS_intern,
+    Kontakt_SMS_extern,
+    Datum_Letzt_SMS_intern,
+    Kontakt_Fax_intern,
+    Kontakt_Fax_extern,
+    Datum_Letzt_Fax_intern,
+//     BUTASV,
+//     BUTBSV,
+//     BUDCDZ,
+//     BUTCSV,
+//     BUTDSV,
+//     BUDDDZ,
+//     BUTESV,
+//     BUDEDZ,
+    Kontakt_Res1_intern,
+    Kontakt_Res1_extern,
+//     BUTGSV,
+//     BUTHSV,
+    Kontakt_Res2_intern,
+    Kontakt_Res2_extern,
+    Datum_Letzt_Res2_intern,
+    Datum_Letzt_Res1_intern,
+    Datenversand_extern,
+    KZ_Verw_Weiterg_Nachfolg,
+    Herkunft,
+//     BUTISV,
+//     BUDFDZ,
+//     BUDGDZ,
+//     BUDHDZ,
+//     BUDIDZ,
+//     BUVLTT,
+//     BUVMTT,
+//     BUVNTT,
+//     BUVOTT,
+    Bemerkung_Datenschutz,
+//     BULGTT,
+//     BULHTT,
+    Datum_Letzt_Kundenkontakt,
+    Datum_Letzt_Kundenkontakt_vOrt,
+    Sprachcode,
+    KZ_Druckauswahl,
+    Eröffnung_Datum,
+    Benutzerkennung_Eröffnung,
+    Änderung_Datum,
+    Änderungszeit,
+    Benutzerkennung,
+    Änderungsprogramm
+FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_01_Ext_04_CARE_Kunden_Datenschutz.qvd]
+(qvd);
+
+
+/*
+----------------------------------------------------Fehler Mail----------------------------------------------------
+*/
+Mail_Fehler:
+LOAD
+    %Kundennummer_Standort,
+    "E-Mail",
+    Flag_EMail_empty,
+    Flag_EMail_Länge,
+    Flag_EMail_@_valid,
+    Flag_EMail_valid,
+    Flag_EMail_Lokalteil_valid,
+    Flag_EMail_Domainteil_valid,
+    Flag_Email_vollständig
+FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_02_Trans_04_CARE_Mail_Fehler.qvd]
+(qvd);
+
+
+
+
+/*
+----------------------------------------------------Fehler Telefon----------------------------------------------------
+*/
+Telefon_Fehler:
+LOAD
+    %Kundennummer_Standort,
+    "Phone No_",
+    Flag_PhoneNo_empty,
+    Flag_PhoneNo_valid,
+    Flag_PhoneNo_Länge,
+    Flag_PhoneNo_MaximalEinPlus,
+    Flag_Phone_vollständig
+FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_02_Trans_04_CARE_Telefon_Fehler.qvd]
+(qvd);
+
+
+
+
+/*
+----------------------------------------------------Kundengruppe----------------------------------------------------
+*/
+Kundengruppe_Care:
+LOAD
+    Firma,
+    Kundengruppenbezeichnung,
+    Kundengruppe,
+    Kundengruppenbezeichnung & '_' & Firma as  %Kundenmerkmal
+FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_01_Ext_04_CARE_Kundengruppe.qvd]
+(qvd);
+
+
+/*
+----------------------------------------------------Fehler Care----------------------------------------------------
+*/
+Unqualify*;
+
+Fehler_Care:
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'E-Mail' as Fehler_Care.Fehler
+    
+resident Customer where Customer.Flag_Email_vollständig = 0;
+
+
+Concatenate(Fehler_Care)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Telefon' as Fehler_Care.Fehler
+    
+resident Customer where  [Customer.Flag_HomePhone_vollständig] = 0 and [Customer.Flag_MobilePhone_vollständig] = 0 and [Customer.Flag_Phone_vollständig] =0;
+
+
+Concatenate(Fehler_Care)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Anschrift' as Fehler_Care.Fehler
+    
+resident Customer where [Customer.Flag_Adresse_vollständig] = 0;
+
+/*
+Concatenate(Fehler_Care)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Kundenart' as Fehler_Care.Fehler
+    
+resident Customer where isNull(%Kundenart_NAV);
+*/
+/*
+Concatenate(Fehler_Care)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Kundengruppe' as Fehler_Care.Fehler
+    
+resident Customer where isNull(%Kundengruppe_NAV);
+*/
+
+Concatenate(Fehler_Care)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Name' as Fehler_Care.Fehler
+    
+resident Customer where [Customer.Flag_Name_empty] = 1 or [Customer.Flag_Name_valid] = 0;
+
+
+Concatenate(Fehler_Care)
+Load distinct 
+	%Kundennummer_Standort,
+    
+    'Mehrfachanlage' as Fehler_Care.Fehler
+    
+resident Customer where Customer.Flag_Kunde_Mehrfach = 1;
+
+
+
+
+
+//DSE
+
+NoConcatenate    
+DSE_temp:
+Load distinct 
+		%Kundennummer_Standort,
+        %Kunden_Nr_Firma
+resident Customer;
+
+Left join (DSE_temp)
+Load distinct 
+  	 %Kunden_Nr_Firma,
+    '1' as Flag_DSE_EMail
+Resident Kunden_Datenschutz where [Kunden_Datenschutz.Kontakt_Email_intern] = 1;
+
+Left join (DSE_temp)
+Load distinct 
+   %Kunden_Nr_Firma,
+    '1' as Flag_DSE_Post
+Resident Kunden_Datenschutz where [Kunden_Datenschutz.Kontakt_Brief_intern] = 1;
+
+Left join (DSE_temp)
+Load distinct 
+    %Kunden_Nr_Firma,
+    '1' as Flag_DSE_Tel
+Resident Kunden_Datenschutz where [Kunden_Datenschutz.Kontakt_Telefon_intern] = 1;
+
+
+
+
+NoConcatenate
+Temp_b:
+Load Distinct
+	[%Kundennummer_Standort],
+    max(num(Flag_DSE_Tel)) as Flag_DSE_Tel,
+    max(num(Flag_DSE_EMail)) as Flag_DSE_EMail,
+    max(num(Flag_DSE_Post)) as Flag_DSE_Post
+    resident DSE_temp group by [%Kundennummer_Standort];
+
+drop table DSE_temp;
+
+Concatenate(Fehler_Care)
+Load distinct 
+		%Kundennummer_Standort,
+    'DSE E-Mail' as Fehler_Care.Fehler
+resident Temp_b where IsNull(Flag_DSE_EMail);
+
+Concatenate(Fehler_Care)
+Load distinct 
+	[%Kundennummer_Standort],
+    'DSE Post' as Fehler_Care.Fehler
+resident Temp_b where IsNull(Flag_DSE_Post);
+
+Concatenate(Fehler_Care)
+Load distinct 
+	[%Kundennummer_Standort],
+    'DSE Telefon' as Fehler_Care.Fehler
+resident Temp_b where IsNull(Flag_DSE_Tel);
+
+// Qualify *;
+// Unqualify '%*';
+
+drop table Temp_b;
+
+
+
+
+   Qualify *;
+Unqualify '%*';
+
+
+    
+/*
+----------------------------------------------------Standort----------------------------------------------------
+*/
+Standorte:
+LOAD
+    Nummer,
+    Nummer as %Standort,
+    Name
+FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_Standorte.xlsx]
+(ooxml, embedded labels, table is Tabelle1);
+
+/*
+----------------------------------------------------Kal----------------------------------------------------
+*/
+Unqualify *;
+
+//*************** Kalender ***************
+LET v_Starttag =  left(num(date(YearStart(AddYears(Today(), -5)))), 5);
+//LET v_Endetag = left(num(date('09.11.2021')), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_Endetag = left(num(date(today())), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_AnzTage = $(v_Endetag) - $(v_Starttag);
+
+Let v_Heute=num(today());
+
+KalenderTMP:
+LOAD
+	$(v_Starttag) + RowNo() - 1 as %DatumNum
+AUTOGENERATE($(v_AnzTage));
+
+
+// GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE 
+
+
+Kalender_CARE_temp:
+LOAD
+	*,
+	'KW ' & week(%DatumNum) & '/' & weekyear(%DatumNum) as EindeutigeWoche,
+	weekyear(%DatumNum) * 100 +  week(%DatumNum)		as EindeutigeWocheNum,
+	Jahr & '-' & Monat									as EindeutigerMonat,
+	Jahr * 100 + Monat									as EindeutigerMonatNum,
+// 	Jahr & '-' & Quartal								as EindeutigesQuartal,
+	
+	%DatumNum - $(v_Heute)											as TageVonHeute,
+	(weekstart(%DatumNum) - weekstart($(v_Heute))) / 7				as WochenVonHeute,
+	(Jahr - year($(v_Heute))) * 12 + (Monat - month($(v_Heute))) 	as MonateVonHeute,
+	Jahr - year($(v_Heute))											as JahreVonHeute,
+	
+	KWJahr - weekyear($(v_Heute))									as KWJahreVonHeute,
+	-networkdays(%DatumNum, $(v_Heute))	+ 1				as ArbeitstageVonHeute,
+	
+	InYearToDate(%DatumNum, $(v_Heute), 0) * -1			as Flag_YTDAktuellesJahr,
+	InYearToDate(%DatumNum, $(v_Heute), -1) * -1		as Flag_YTDVorigesJahr,
+	
+	1													as Anz_Tage
+	;
+LOAD
+	%DatumNum,
+    %DatumNum												as %DatumNum_CARE,
+	date(%DatumNum)										as Datum,
+	weekday(%DatumNum) & ' ' & date(%DatumNum, 'DD.MM.')as WochentagDatum,
+	weekday(%DatumNum)									as Wochentag,
+	month(%DatumNum)									as Monat,
+// 	applymap('Map_Quartale', month(%DatumNum), '---') 	as Quartal,
+	year(%DatumNum)										as Jahr,
+	week(%DatumNum)										as Woche,
+	weekyear(%DatumNum)									as KWJahr
+RESIDENT KalenderTMP; 
+
+drop Field [%DatumNum] from Kalender_CARE_temp;
+
+ drop table KalenderTMP;
+ 
+ Qualify*;
+Unqualify '%*';
+
+
+ NoConcatenate
+Kalender_CARE:
+Load
+	*
+Resident Kalender_CARE_temp;
+
+drop table Kalender_CARE_temp;
+
+
+
+
+
+
