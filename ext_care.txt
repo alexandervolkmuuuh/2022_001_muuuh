@@ -1,0 +1,488 @@
+/*
+------------------------------------------------Filliale------------------------------------------------
+*/
+Filliale:
+
+LOAD
+    FIFACD AS Firma,
+    '$(v_mandant)' AS Standort,
+    FIFICD AS Filiale,
+    FIFINM AS Name,
+    FIBRCH AS Branche,
+    FISTRS AS Strasse,
+    FILAKZ AS Land_Kz,
+    FIPLZ  AS PLZ,
+    FIORT  AS Ort,
+    FITEL  AS Telefon,
+    FIBTX  AS Mobiltelefon,
+    FITEFX AS Telefax,
+    FIQCTX AS Internet_Adresse,
+    FIMAIL AS Email,
+    FIABNB AS Letzte_Journalnr_Reausg,
+    FIEJNB AS Letzt_Journalnr_Loeschung,
+    FIEONB AS Nachste_NR_Bestellvor,
+    FIQ8CD AS Ust_ID_NR,
+    FIQCST AS Hauptmarke,
+    FIQDST AS KZ_Kassenmodul,
+    FIP4TX AS Install_Identifikation,
+    FIP2ST AS Install_Identifikation_KZ,
+    FIF4SU AS Install_Marken_Ident_KZ,
+    FIMOTX AS Vesr_Bankadr_1,
+    FIMPTX AS Vesr_Bankadr_2,
+    FIARTY AS Vesr_Bankadr_3,
+    FISBCD AS Vesr_Teiln_NR, 
+    FISCCD AS Vesr_Teiln_CD,
+    FISDCD AS Vesr_Belegart,
+    FISECD AS Vesr_Ref_Nr,
+    FISFCD AS Vesr_Ref_Buch,
+    FIXZTX AS Bankverbindung_1,
+    FIX0TX AS Bankverbindung_2,
+    FIX1TX AS Bankverbindung_3,
+    FIX2TX AS Gerichtsstand,
+    FIX3TX AS Geschaeftsfuehrer_1,
+    FIX4TX AS Geschaeftsfuehrer_2,
+    FIX5TX AS Geschaeftsfuehrer_3,
+    FIEODT AS Eroeffnungsdatum
+  
+FROM [lib://$(v_bereich):DataFiles/Care_$(v_mandant_kurz)_RPABREP.qvd]
+(qvd);
+
+
+
+Store * from Filliale into [lib://$(v_bereich):DataFiles/$(v_start_datei)Filliale.qvd] (qvd);
+drop Table Filliale;
+
+
+
+
+/*
+------------------------------------------------Kunde------------------------------------------------
+*/
+Customer:
+LOAD
+    KDFACD AS Firma,
+    '$(v_mandant)' AS Standort,
+    KDKDCD AS Kunden_Nr,
+    KDANCD AS Anredecode,
+    KDKDNM AS Ku_Name,
+    KDVONM AS Vorname, 
+    KDNANM AS Nachname,
+    KDBRCH AS Branche,
+    KDSTRS AS Straße,
+    KDRFCD AS Postfach,
+    KDLAKZ AS Land_KZ,
+    KDPLZ  AS PLZ,
+    KDAPCE AS PLZ_Zusatzziffer,
+    KDORT  AS Ort,
+    KDANSP AS Ansprechpartner,
+    KDQGTX AS Titel,
+    KDK6SU AS KZ_Firma_Person,
+    KDB8ST AS Kundenart,
+    KDFGST AS Fibu_verwalten,
+    KDCAST AS Sperr_Kz,
+    KDQITX AS Kundenmerkmal,
+    KDQNST AS SalesPro_Kundenart,
+    KDUOVA AS Kundenkennzahl_errechnet,
+    KDKNTO AS Konto_Nr,
+    KDKSCD AS Kostenstelle,
+    KDJ4CE AS Debitorensammelkonto,
+    KDQ8CD AS UST_ID_Nr,
+    KDJHCE AS UST_ID_Nr2,
+    KDJUNB AS Untervertreter_Nr,
+    KDQIST AS KZ_Untervertreter,
+    KDJYNB AS Kunden_Nr_nummerisch,
+    KDQHTX AS Externe_Kunden_Nr,
+    KDHKNB AS Kreditoren_Nr_Fibu,
+    KDTELP AS Tel_Privat,
+    KDTELG AS Tel_Geschäftlich,
+    KDBTX  AS Mobiltelefon,
+    KDTEFX AS Fax,
+    KDMAIL AS Email,
+    KDLRDT AS Datum_letzte_Rechnung,
+    KDKDKN AS Kunden_Suchbegriff,
+    KDKGCD AS Kundengruppe,
+    KDXETX AS Teile_Preisstufe,
+    KDJ3CE AS Absatzkanal,
+    KDSTCD AS Steuerschlüssel,
+    KDCVSU AS MWST_Pflicht,
+    KDHHCD AS Vorsteuer_Steuerschlüssel,
+    KDAACD AS [Rechnung_An (Von Kunde)],
+    KDAQCE AS Ist_Kunde_von_Kunden_Nr,
+    KDMNCD AS Personal_Nr,
+    KDC3CD AS Kundenberater,
+    KDARCE AS ET_Berater_Personal_Nr,
+    KDZACD AS Zahlungsart,
+    KDIQCD AS Verkauf_Zahlungsart,
+    KDCWSU AS Rechnungskategorie,
+    KDSPCD AS Sprachcode,
+    KDG6TX AS [Textfeld-1],
+    KDG7TX AS [Textfeld-2],
+    KDQFTX AS [Textfeld-3],
+    KDG8TX AS Hinweis_Auftrag,
+    KDIOST AS Default_Formular_Sprachcode,
+    KDEKST AS Werkstatt_Verkauf_KZ,
+    KDEUCD AS Formularcode,
+    KDFICD AS Filiale,
+    KDJVNB AS Anzahl_Rechnungskopien,
+    KDQHST AS Belege_in_interner_Währung,
+    KDKCCE AS Währungscode,
+    KDQJST AS Kundenkontaktprogramm,
+    KDQKST AS KDE_Satzänderung_melden,
+    KDQLST AS Satz_Export,
+    KDAOCE AS Satz_Import,
+    KDQJTX AS Export_Import_1,
+    KDQKTX AS Export_Import_2,
+    KDQLTX AS Export_Import_3,
+    KDQMST AS Großabnehmer,
+    KDC6SU AS KZ_Schnell,
+    KDJICE AS KDE_RES_Code_1,
+    KDJJCE AS KDE_RES_Code_2,
+    KDRGCD AS KDE_RES_Code_3,
+    KDMVNB AS KDE_RES_Nr_1,
+    KDMWNB AS KDE_RES_Nr_2,
+    KDSXNB AS KDE_RES_Nr_3_R6,
+    KDQOST AS KDE_RES_STS_2,
+    KDQPST AS Datenschutz,
+    KDRECD AS KDE_FLS_KDK,
+    KDJXNB AS KDE_FLS_KM,
+    KDMYVA AS KDE_FLS_FZEIT,
+    KDJWNB AS KDE_FLS_STD,
+    KDMZVA AS KDE_FLS_VSTD,
+    KDB7ST AS Änderungsstatus,
+    KDC4SU AS Reorgaausschluss,
+    KDEODT AS Eröffnungsdatum,
+    KDQWCE AS Benutzerkennung_Eröffnung,
+    KDBDDT AS Änderungsdatum,
+    KDAJTM AS Änderungszeit,
+    KDJPCD AS Benutzerkennung,
+    KDQETX AS Änderungsprogramm,
+    KDGHST AS LKZ
+FROM [lib://$(v_bereich):DataFiles/Care_$(v_mandant_kurz)_RPAIREP.qvd]
+(qvd);
+
+// Customer:
+// Load *,
+// ApplyMap('MappingMandant', Firma, 'Kein Mandant') AS Standort
+// Resident Customer_tmp;
+
+// drop table Customer_tmp;
+
+Store * from Customer into [lib://$(v_bereich):DataFiles/$(v_start_datei)Customer.qvd] (qvd);
+Drop Table Customer;
+
+/*
+------------------------------------------------Kundengruppe------------------------------------------------
+*/
+Kundengruppe:
+LOAD
+    KGFACD AS Firma,
+    '$(v_mandant)' AS Standort,
+    KGKGCD AS Kundengruppenbezeichnung,
+    KGKGBZ AS Kundengruppe
+FROM [lib://$(v_bereich):DataFiles/Care_$(v_mandant_kurz)_RPAFREP.qvd]
+(qvd);
+
+Store * from Kundengruppe into [lib://$(v_bereich):DataFiles/$(v_start_datei)Kundengruppe.qvd] (qvd);
+Drop Table Kundengruppe;
+/*
+------------------------------------------------Personal------------------------------------------------
+*/
+Personal:
+LOAD
+    MNFACD AS Firmencode,
+    MNMNCD AS Mitarbeiternummer,
+    MNE8ST AS Personalart,
+    MNELCD AS Personal_Nr_Lohn,
+    MNMNNA AS Name,
+    MNSTRS AS Straße,
+    MNLAKZ AS Land_KZ,
+    MNPLZ AS PLZ,
+    MNAPCE AS PLZ_Zusatzziffer,
+    MNORT AS Ort,
+    MNTEL AS Telefon,
+    MNBTX AS Mobiltelefon,
+    MNPDRK AS Druckfeld,
+    MNKSCD AS Kostenstelle,
+    MNZKCE AS Personal_Abteilung,
+    MNSICD AS Schicht_Nr,
+    MNMLSA AS Soll_AW_STD,
+    MNI4VA AS VK_Preis_STD,
+    MNVRCD AS Verrechnungsart,
+    MNI5VA AS EK_Preis_Std,
+    MNE7ST AS Zeitwirtschaft,
+    MNEHST AS Gleitzeitkz,
+    MNIQST AS Marketing,
+    MNRJCD AS PIN_Marketing,
+    MNLBDZ AS Letztes_Bearb_Datum_Zeiten,
+    MNFICD AS Filiale,
+    MNACCE AS Zeitfaktor_Code,
+    MNPFTX AS Personalgruppe,
+    MNPGTX AS Personalart2,
+    MNPHTX AS Pers_Statistik_Code1,
+    MNPITX AS Pers_Statistik_Code2,
+    MNABDZ AS Pers_Geburtstdatum,
+    MNACDZ AS Pers_Entrittsdatum,
+    MNAEDZ AS Pers_Austrittsdatum,
+    MNPJTX AS Pers_Res_Txt1,
+    MNPKTX AS Pers_Res_Txt2,
+    MNPLTX AS Pers_Res_Txt3,
+    MNPPST AS Pers_Res_Sts1,
+    MNPQST AS Pers_Res_Sts2,
+    MNPRST AS Stempelt_Ist_Zeit,
+    MNPSST AS Pers_Res_Sts4,
+    MNMMNB AS Pers_Res_Num1,
+    MNMNNB AS Pers_Res_Num2,
+    MNMONB AS Pers_Res_Num3,
+    MND0DT AS Pers_Res_Dat2,
+    MND1DT AS Pers_Res_Dat3,
+    MNAHDZ AS Pers_Res_Dat4,
+    MNAIDZ AS Pers_Res_Dat5,
+    MNB7ST AS Änderungstatus,
+    MNEODT AS Eröffnung_Datum,
+    MNQWCE AS Benutzerkennung_Eröffnung,
+    MNBDDT AS Änderung_Datum,
+    MNAJTM AS Änderungszeit,
+    MNJPCD AS Benutzerkennung,
+    MNQETX AS Änderungsprogramm,
+    MNGHST AS LKZ
+FROM [lib://$(v_bereich):DataFiles/Care_$(v_mandant_kurz)_RPBBREP.qvd]
+(qvd);
+
+
+Store * from Personal into [lib://$(v_bereich):DataFiles/$(v_start_datei)Personal.qvd] (qvd);
+Drop Table Personal;
+
+/*
+------------------------------------------------Kundenanrede------------------------------------------------
+*/
+Kundenanrede:
+LOAD
+    KNFACD AS Firma,
+    '$(v_mandant)' AS Standort,
+    KNANCD AS Anredeschlüssel,
+    KNANRD AS Anrede,
+    KNQDTX AS Briefanrede_Präfixx,
+    KNK6SU AS KZ_FIrma_Person
+FROM [lib://$(v_bereich):DataFiles/Care_$(v_mandant_kurz)_RPCJREP.qvd]
+(qvd);
+
+
+Store * from Kundenanrede into [lib://$(v_bereich):DataFiles/$(v_start_datei)Kundenanrede.qvd] (qvd);
+Drop Table Kundenanrede;
+
+/*
+------------------------------------------------Kunden-Datenschutz------------------------------------------------
+*/
+Kunden_Datenschutz:
+LOAD
+    BUFACD AS Firma,
+    '$(v_mandant)' AS Standort,
+    BUKDCD AS Kunden_Nr,
+    BUICCF AS Datenschutz_Nr,
+    BUFICD AS Filiale,
+    BUA7CD AS Auftragsart,
+    BUAKNR AS Auftrag_Nr,
+    BUAKFG AS Auftragsfolge,
+    BUGCSV AS KZ_Datennutzung,
+    BUG1SV AS Weitergabe_an_Dritte,
+    BUBVDZ AS Datum_DS_Erklärung_vom,
+    BUBJDZ AS Gültigkeitdatum_Ab,
+    BUBUDZ AS Datum_Erst_Datennutzung,
+    BUBKDZ AS Datum_Änd_Datennutzung,
+    BUGDSV AS Kontakt_Brief_intern,
+    BUGESV AS Kontakt_Brief_extern,
+    BUBLDZ AS Datum_Letzt_Brief_intern,
+    BUGFSV AS Kontakt_Telefon_intern,
+    BUGGSV AS Kontakt_Telefon_extern,
+    BUBMDZ AS Datum_Letzt_Tel_intern,
+    BUGHSV AS Kontakt_Email_intern,
+    BUGISV AS Kontakt_Email_extern,
+    BUBNDZ AS Datum_Letzt_Email_intern,
+    BUGJSV AS Kontakt_SMS_intern,
+    BUGKSV AS Kontakt_SMS_extern,
+    BUBODZ AS Datum_Letzt_SMS_intern,
+    BUGLSV AS Kontakt_Fax_intern,
+    BUGMSV AS Kontakt_Fax_extern,
+    BUBPDZ AS Datum_Letzt_Fax_intern,
+//     BUTASV,
+//     BUTBSV,
+//     BUDCDZ,
+//     BUTCSV,
+//     BUTDSV,
+//     BUDDDZ,
+//     BUTESV,
+//     BUTESV,
+    BUDEDZ,
+    BUGNSV AS Kontakt_Res1_intern,
+    BUGOSV AS Kontakt_Res1_extern,
+//     BUTGSV,
+//     BUTHSV,
+    BUGPSV AS Kontakt_Res2_intern,
+    BUGQSV AS Kontakt_Res2_extern,
+    BUBQDZ AS Datum_Letzt_Res2_intern,
+    BUBRDZ AS Datum_Letzt_Res1_intern,
+    BUGRSV AS Datenversand_extern,
+    BUGSSV AS KZ_Verw_Weiterg_Nachfolg,
+    BUGTSV AS Herkunft,
+//     BUTISV,
+//     BUDFDZ,
+//     BUDGDZ,
+//     BUDHDZ,
+//     BUDIDZ,
+//     BUVLTT,
+//     BUVMTT,
+//     BUVNTT,
+//     BUVOTT,
+    BUDCTT AS Bemerkung_Datenschutz,
+//     BULGTT,
+//     BULHTT,
+    BUBSDZ AS Datum_Letzt_Kundenkontakt,
+    BUBTDZ AS Datum_Letzt_Kundenkontakt_vOrt,
+    BUSPCD AS Sprachcode,
+    BUG6SV AS KZ_Druckauswahl,
+    BUEODT AS Eröffnung_Datum,
+    BUQWCE AS Benutzerkennung_Eröffnung,
+    BUBDDT AS Änderung_Datum,
+    BUAJTM AS Änderungszeit,
+    BUJPCD AS Benutzerkennung,
+    BUQETX AS Änderungsprogramm
+FROM [lib://$(v_bereich):DataFiles/Care_$(v_mandant_kurz)_RRBUREP.qvd]
+(qvd);
+
+Store * from Kunden_Datenschutz into [lib://$(v_bereich):DataFiles/$(v_start_datei)Kunden_Datenschutz.qvd] (qvd);
+Drop Table Kunden_Datenschutz;
+
+
+/*
+------------------------------------------------Datenschutz------------------------------------------------
+*/
+Datenschutz:
+LOAD
+    CXFACD AS Firma,
+    '$(v_mandant)' AS Standort,
+    CXICCF AS Datenschutz_Nr,
+    CXD3TT AS Datenschutz_Bezeichnung,
+    CXGCSV AS KZ_Datennutzung,
+    CXG1SV AS Weitergabe_an_Dritte,
+    CXGDSV AS Kontakt_Brief_intern,
+    CXGESV AS Kontakt_Brief_extern,
+    CXGFSV AS Kontakt_Telefon_intern,
+    CXGGSV AS Kontakt_Telefon_extern,
+    CXGHSV AS Kontakt_Email_intern,
+    CXGISV AS Kontakt_Email_extern,
+    CXGJSV AS Kontakt_SMS_intern,
+    CXGKSV AS Kontakt_SMS_extern,
+    CXGLSV AS Kontakt_Fax_intern,
+    CXGMSV AS Kontakt_Fax_extern,
+    CXTASV,
+    CXTBSV,
+    CXTCSV,
+    CXTDSV,
+    CXTESV,
+    CXTFSV,
+    CXGNSV AS Kontakt_Res1_intern,
+    CXGOSV AS Kontakt_Res1_extern,
+    CXTGSV,
+    CXTHSV,
+    CXGPSV AS Kontakt_Res2_intern,
+    CXGQSV AS Kontakt_Res2_extern,
+    CXGSSV AS KZ_Verw_Weiterg_Nachfolg,
+    CXGTSV AS Herkunft,
+    CXSPCD AS Sprachcode,
+    CXEUCD AS Formularcode,
+    CXG6SV AS KZ_Druckauswahl
+FROM [lib://$(v_bereich):DataFiles/Care_$(v_mandant_kurz)_RRCXREP.qvd]
+(qvd);
+
+
+Store * from Datenschutz into [lib://$(v_bereich):DataFiles/$(v_start_datei)Datenschutz.qvd] (qvd);
+Drop Table Datenschutz;
+
+/*
+------------------------------------------------Rename & Store------------------------------------------------
+*/
+//FLKO 2021 - Tabellen und Felder aus der definierten Excel automatisch einlesen und Umbenennen
+//Einlesen der Quelltabelle mit nur relevanten Tabellen. Relevant: "Tabelle_einlesen" = 1
+Tabelleneinlesen:
+      LOAD distinct
+          Tabellenname
+      FROM [lib://$(vConnectionName):DataFiles/Tabellen_Felder_Einlesen.xlsx]
+	(ooxml, embedded labels, table is Tabellen)
+      Where Tabelle_einlesen = 1;
+
+//Einlesen der Quelltabelle mit nur relevanten Feldern. Relevant: "Feld_einlesen" = 1
+      Left Join
+	  LOAD 
+      	 Tabellenname, 
+	     Feldname_CARE, 
+	     Feldname_Qlik,  
+	     Feld_Einlesen
+      FROM [lib://$(vConnectionName):DataFiles/Tabellen_Felder_Einlesen.xlsx]
+	  (ooxml, embedded labels, table is [CARE zu NAV])
+      Where Feld_Einlesen = 1;
+      
+Trace 'Tabelle eingelesen';
+//Definiert die Zeilenanzahl in dem Excel-Arbeitsblatt
+      LET v_ZaehlerTabellen = FieldValueCount('Feldname_Qlik');
+
+Trace $(v_ZaehlerTabellen);
+
+  //********************************************************************************
+
+Trace 'Each Folder';
+
+//Schleife wiederholt sich nach der Zeilenanzahl
+          FOR j = 0 to v_ZaehlerTabellen
+                
+                
+                //Führt die Schleife für jede QVD mit Präfix "02_BK_01_Ext" aus 
+          		FOR Each v_file in Filelist ('[Lib://$(vConnectionName):DataFiles/$(vDocName)*.qvd')
+
+
+Trace $(v_file);
+//Nimmt den Tabellennamen aus dem QVD-Namen, Bsp.: [lib://BMW VDB:DataFiles/02_BK_01_Ext_04_CARE_Kunde.qvd] = "Kunde"
+                  LET v_filename = IF(SubStringCount('$(v_file)', '_') = 6 + '$(vConnectionCount)',
+                  				   	subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1),
+                                    IF(SubStringCount('$(v_file)', '_') = 7 + '$(vConnectionCount)',
+                                   		subfield(Subfield(SubField('$(v_file)','/', -1),'_',7), '.', 1)& '_' & 
+                                        subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1),  
+                 						IF(SubStringCount('$(v_file)', '_') = 8 + '$(vConnectionCount)',
+                                        	subfield(Subfield(SubField('$(v_file)','/', -1),'_',8), '.', 1)& '_' & 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',7), '.', 1) & '_'& 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1),
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',9), '.', 1)& '_' & 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',8), '.', 1)& '_' & 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',7), '.', 1) & ' _ '& 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1))));
+
+Trace $(v_filename);
+					//Wenn der Tabellenname der QVD sich mit dem Tabellennamen aus der Excel deckt, wird der nächste Schleifenteil ausgeführt. Bsp.: "Kunde" = "Kunde"
+                  IF '$(v_filename)' = FieldValue('Tabellenname',j) THEN 
+     				  Trace Tabelle: $(v_filename);
+                      
+                      //Erstellt eine Mappingtabelle, die die entsprechenden Felder umbenennt
+  					  MAP_$(v_filename):
+					  Mapping
+					  LOAD 
+					  		Feldname_CARE, 
+                            //Tabellenpräfix wird entfernt. Bsp.: "Fahrzeug.VIN" => "VIN"
+					    	Subfield(Feldname_Qlik, '.', -1) AS Feldname_Qlik
+				 	  Resident Tabelleneinlesen
+					  Where Feld_Einlesen=1 AND Tabellenname = '$(v_filename)';                    
+					  
+                      //Lädt die intiale QVD erneut
+                      $(v_filename):
+                      LOAD 
+                          *
+                      FROM $(v_file)(qvd);
+                      
+					  //Benennt Felder mit der Mappingtabelle um
+                      RENAME Fields using 'MAP_$(v_filename)';
+                      //STORE '$(v_filename)' into '[Lib://BMW VDB:DataFiles/02_BK_01_Ext_04_CARE_Kunde.qvd'](qvd);
+                      STORE '$(v_filename)' into '[Lib://$(vConnectionName):DataFiles/$(vDocName)$(v_filename).qvd'](qvd);
+                      DROP Table '$(v_filename)';		
+                      
+                  end if
+              NEXT v_file;	
+          NEXT j;		
+exit Script;
