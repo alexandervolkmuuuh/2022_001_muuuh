@@ -1,0 +1,1598 @@
+/*
+------------------------------------------------------------SpPro Trans------------------------------------------------------------
+*/
+SpPro:
+LOAD
+    proId,
+    %proId_standort,
+    left(num(date(createdOn)), 5) as %DatumNum_SA,
+    hobby as %hobby ,
+    branchId as %branchId,
+    cyType as %cyType,
+	cyType2 as %cyType2,
+    classid,
+    perCy,
+    firstName,
+    Flag_firstName_empty,
+    Flag_firstName_valid,
+    name1,
+    Flag_name1_empty,
+    Flag_name1_valid,
+    name2,
+    Flag_name2_empty,
+    Flag_name2_valid,
+    defProAddrId,
+    %proAddressId_standort,
+    cuId,
+    birthDay as birthDay_org,
+    date(date#(birthDay, 'YYYYMMDD')) as birthDay,
+//     date((timestamp((25569+(num(birthDay & '000')+3600000)/(1000*24*3600)))), 'dd.MM.yyyy') as birthDay,
+    profPhoneNo,
+    Flag_profPhoneNo_empty,
+    Flag_profPhoneNo_valid,
+    Flag_profPhoneNo_Länge,
+    Flag_profPhoneNo_MaximalEinPlus,
+    Flag_profPhoneNo_valideZahlen,
+    profFaxNo,
+    mobPhoneNo,
+    Flag_mobPhoneNo_empty,
+    Flag_mobPhoneNo_valid,
+    Flag_mobPhoneNo_Länge,
+    Flag_mobPhoneNo_MaximalEinPlus,
+    Flag_mobPhoneNo_valideZahlen,
+    EMail,
+    Flag_EMail_empty,
+    Flag_EMail_Länge,
+    Flag_EMail_@_valid,
+    Flag_EMail_valid,
+    Flag_EMail_Lokalteil_valid,
+    Flag_EMail_Domainteil_valid,
+    profEMail,
+    Flag_profEMail_empty,
+    Flag_profEMail_Länge,
+    Flag_profEMail_@_valid,
+    Flag_profEMail_valid,
+    Flag_profEMail_Lokalteil_valid,
+    Flag_profEMail_Domainteil_valid,
+    title,
+    title2,
+    salutation,
+    familySit,
+    cuProfessionGrpId,
+    cySize,
+    branchId,
+    branchId2,
+    hobby,
+    hobby2,
+    languageCode,
+    vatGrpType,
+    vatGrpId,
+    forCurTableId,
+    statisticCode,
+    divaCyType,
+    divaDblChk,
+    divaId,
+    majorAccountNo,
+    activity,
+    function,
+    cyType,
+    cyType2,
+    dvaNo,
+    vipStatus,
+    blockCode,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    custSince,
+    modByDMS,
+    modByDiva,
+    conPersDms,
+    blockCodeDMS,
+    divaStatus,
+    profMobPhoneNo,
+    Flag_profMobPhoneNo_empty,
+    Flag_profMobPhoneNo_valid,
+    Flag_profMobPhoneNo_Länge,
+    Flag_profMobPhoneNo_MaximalEinPlus,
+    Flag_profMobPhoneNo_valideZahlen,
+    taxPayeridentcode,
+    blockContacts,
+    blockMarketing,
+    blockPhone,
+    salesRegionId,
+    placeOfBirth,
+    cityOfRegist,
+    registrationNo,
+    regBoardNo,
+    taxNoComp,
+    isTaxPayer,
+    firstNameToUpper,
+    Flag_firstNameToUpper_empty,
+    Flag_firstNameToUpper_valid,
+    name1ToUpper,
+    Flag_name1ToUpper_empty,
+    Flag_name1ToUpper_valid,
+    isDeleted,
+    lastConDate,
+    proType,
+    proType as %Kundenart,
+    mailing,
+    manAddrImpOn,
+    autAddrImpOn,
+    addrImpBy,
+    blockAddrTransfer,
+    addrExport,
+    activateDivaExport,
+    manAddrExpOn,
+    blockManAddrTransfer,
+    createdHobbyOn,
+    createdHobbyBy,
+    modifiedHobbyOn,
+    modifiedHobbyBy,
+    createdHobby2On,
+    createdHobby2By,
+    modifiedHobby2On,
+    modifiedHobby2By,
+    origin,
+    betZykSt,
+    hobby3,
+    hobby4,
+    createdHobby3On,
+    createdHobby3By,
+    modifiedHobby3On,
+    modifiedHobby3By,
+    createdHobby4On,
+    createdHobby4By,
+    modifiedHobby4On,
+    modifiedHobby4By,
+    divaStatusHobby,
+    businessAccountNo,
+    personDataChanged,
+    compDataChanged,
+    adressDataChanged,
+    Standort,
+    
+    
+    
+//     if(	Flag_Street_empty = 0 and 
+//     	Flag_Street_valid = 1 and 
+//         Flag_Street_länge = 1 and
+//         Flag_HouseNo_empty = 0 and
+// 		Flag_HouseNo_valid = 1 and
+// 		Flag_HouseNo_Zahl_enthalten = 1 and
+//         Flag_PostCode_empty = 0 and
+// 		Flag_PostCode_Länge = 1 and
+// // 		Flag_PostCode_NurNullen = 0 and
+//         Flag_City_empty = 0 and
+// 		City_Länge = 1 and 
+// 		Flag_City_valid = 1
+//     , 1, 0) as Flag_Adresse_vollständig,
+    
+    
+    /*
+    if(	
+//     Flag_Street_empty = 0 and 
+//     	Flag_Street_valid = 1 and 
+//         Flag_Street_länge = 1 and
+//         Flag_HouseNo_empty = 0 and
+// 		Flag_HouseNo_valid = 1 and
+// 		Flag_HouseNo_Zahl_enthalten = 1 and
+//         Flag_PostCode_empty = 0 and
+// 		Flag_PostCode_Länge = 1 and
+// // 		Flag_PostCode_NurNullen = 0 and
+//         Flag_City_empty = 0 and
+// 		City_Länge = 1 and 
+// 		Flag_City_valid = 1 and
+        ((
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+        )
+        or
+        (
+        Flag_profEMail_empty = 0 and
+		Flag_profEMail_Länge = 1 and
+		Flag_profEMail_@_valid = 1 and
+		Flag_profEMail_valid = 1 and
+		Flag_profEMail_Lokalteil_valid = 1 and
+		Flag_profEMail_Domainteil_valid = 1 
+		))
+
+        and
+        ((
+        
+        Flag_profPhoneNo_empty = 0 and
+        Flag_profPhoneNo_valid = 1 and
+        Flag_profPhoneNo_Länge = 1 and
+        Flag_profPhoneNo_MaximalEinPlus = 1 
+//         Flag_profPhoneNo_NurNullen = 0 
+		)
+        or
+        (
+        Flag_mobPhoneNo_empty = 0 and
+        Flag_mobPhoneNo_valid = 1 and
+        Flag_mobPhoneNo_Länge = 1 and
+        Flag_mobPhoneNo_MaximalEinPlus = 1 
+//         Flag_mobPhoneNo_NurNullen = 0 
+		)
+        or
+        (
+        Flag_profMobPhoneNo_empty = 0 and
+        Flag_profMobPhoneNo_valid = 1 and
+        Flag_profMobPhoneNo_Länge = 1 and
+        Flag_profMobPhoneNo_MaximalEinPlus = 1 
+//         Flag_profMobPhoneNo_NurNullen = 0 
+        ))
+    , 1, 0) as Flag_Kontakt_vollständig,
+    
+    */
+    
+    if(
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+     ,1,0) as Flag_Email_vollständig,
+     
+     if(
+        Flag_profEMail_empty = 0 and
+		Flag_profEMail_Länge = 1 and
+		Flag_profEMail_@_valid = 1 and
+		Flag_profEMail_valid = 1 and
+		Flag_profEMail_Lokalteil_valid = 1 and
+		Flag_profEMail_Domainteil_valid = 1 
+	,1,0) as Flag_profEMail_vollständig,
+    
+      if((
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+    )
+     or
+     (
+        Flag_profEMail_empty = 0 and
+		Flag_profEMail_Länge = 1 and
+		Flag_profEMail_@_valid = 1 and
+		Flag_profEMail_valid = 1 and
+		Flag_profEMail_Lokalteil_valid = 1 and
+		Flag_profEMail_Domainteil_valid = 1
+        )
+	,1,0) as Flag_EMail_gesamt_vollständig,
+    
+    
+    
+    
+    if(
+        Flag_profPhoneNo_empty = 0 and
+        Flag_profPhoneNo_valid = 1 and
+        Flag_profPhoneNo_Länge = 1 and
+        Flag_profPhoneNo_MaximalEinPlus = 1 
+//         Flag_profPhoneNo_NurNullen = 0 
+	,1,0) as Flag_profPhoneNo_vollständig,
+    
+    if(
+        Flag_mobPhoneNo_empty = 0 and
+        Flag_mobPhoneNo_valid = 1 and
+        Flag_mobPhoneNo_Länge = 1 and
+        Flag_mobPhoneNo_MaximalEinPlus = 1 
+//         Flag_mobPhoneNo_NurNullen = 0 
+	,1,0) as Flag_mobPhoneNo_vollständig,
+    
+    if(
+        Flag_profMobPhoneNo_empty = 0 and
+        Flag_profMobPhoneNo_valid = 1 and
+        Flag_profMobPhoneNo_Länge = 1 and
+        Flag_profMobPhoneNo_MaximalEinPlus = 1 
+//         Flag_profMobPhoneNo_NurNullen = 0 
+        ,1,0) as Flag_profMobPhoneNo_vollständig,
+        
+        
+        
+         if((
+        Flag_profPhoneNo_empty = 0 and
+        Flag_profPhoneNo_valid = 1 and
+        Flag_profPhoneNo_Länge = 1 and
+        Flag_profPhoneNo_MaximalEinPlus = 1 
+    )
+    or(
+        Flag_mobPhoneNo_empty = 0 and
+        Flag_mobPhoneNo_valid = 1 and
+        Flag_mobPhoneNo_Länge = 1 and
+        Flag_mobPhoneNo_MaximalEinPlus = 1 
+    )
+    or(
+        Flag_profMobPhoneNo_empty = 0 and
+        Flag_profMobPhoneNo_valid = 1 and
+        Flag_profMobPhoneNo_Länge = 1 and
+        Flag_profMobPhoneNo_MaximalEinPlus = 1
+        )
+        ,1,0) as Flag_Phone_gesamt_vollständig,
+        
+        if((
+        Flag_firstName_empty = 0 and 
+        Flag_firstName_valid = 1) 
+        or 
+        (Flag_name1_empty = 0 and 
+        Flag_name1_valid = 1) 
+        or 
+        (Flag_name2_empty = 0 and 
+        Flag_name2_valid = 1)
+        ,1,0) as Name_vollständig
+        
+        
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpPro.qvd]
+(qvd);
+
+
+/*
+------------------------------------------------------------Fehler Mail SA------------------------------------------------------------
+*/
+Unqualify *;
+
+NoConcatenate
+Mail_Fehler_tmp:
+Load
+	%proId_standort,
+    "SpPro.EMail" as "E-Mail",
+    SpPro.Flag_EMail_empty as Flag_EMail_empty,
+    SpPro.Flag_EMail_Länge as Flag_EMail_Länge ,
+   SpPro.Flag_EMail_@_valid  as Flag_EMail_@_valid,
+   SpPro.Flag_EMail_valid  as Flag_EMail_valid ,
+    SpPro.Flag_EMail_Lokalteil_valid as Flag_EMail_Lokalteil_valid ,
+    SpPro.Flag_EMail_Domainteil_valid as Flag_EMail_Domainteil_valid 
+ resident SpPro;
+ 
+ 
+Concatenate(Mail_Fehler_tmp)
+Load
+	%proId_standort,
+    "SpPro.profEMail" as "E-Mail",
+    SpPro.Flag_profEMail_empty as Flag_EMail_empty,
+    SpPro.Flag_profEMail_Länge as Flag_EMail_Länge ,
+   SpPro.Flag_profEMail_@_valid  as Flag_EMail_@_valid,
+   SpPro.Flag_profEMail_valid  as Flag_EMail_valid ,
+    SpPro.Flag_profEMail_Lokalteil_valid as Flag_EMail_Lokalteil_valid ,
+    SpPro.Flag_profEMail_Domainteil_valid as Flag_EMail_Domainteil_valid 
+ resident SpPro;  
+ 
+ Qualify *;
+ Unqualify '%*';
+ 
+ 
+ NoConcatenate
+ Mail_Fehler_SA:
+ Load Distinct
+ 	*,
+    if(
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+     ,1,0) as Flag_Email_vollständig
+ Resident Mail_Fehler_tmp;
+    
+    
+    
+drop table Mail_Fehler_tmp;
+/*
+------------------------------------------------------------Fehler Telefon SA------------------------------------------------------------
+*/
+Unqualify *;
+
+NoConcatenate
+Telefon_Fehler_tmp:
+Load
+	%proId_standort,
+    "SpPro.profMobPhoneNo" as "Phone No_",
+    SpPro.Flag_profMobPhoneNo_empty as Flag_PhoneNo_empty ,
+    SpPro.Flag_profMobPhoneNo_valid as Flag_PhoneNo_valid ,
+    SpPro.Flag_profMobPhoneNo_Länge as Flag_PhoneNo_Länge,
+    SpPro.Flag_profMobPhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+ resident SpPro;
+ 
+ 
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %proId_standort,
+        "SpPro.mobPhoneNo" as "Phone No_",
+        SpPro.Flag_mobPhoneNo_empty as Flag_PhoneNo_empty ,
+        SpPro.Flag_mobPhoneNo_valid as Flag_PhoneNo_valid ,
+        SpPro.Flag_mobPhoneNo_Länge as Flag_PhoneNo_Länge,
+        SpPro.Flag_mobPhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident SpPro;
+
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %proId_standort,
+        "SpPro.profPhoneNo" as "Phone No_",
+        SpPro.Flag_profPhoneNo_empty as Flag_PhoneNo_empty ,
+        SpPro.Flag_profPhoneNo_valid as Flag_PhoneNo_valid ,
+        SpPro.Flag_profPhoneNo_Länge as Flag_PhoneNo_Länge,
+        SpPro.Flag_profPhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident SpPro;
+ 
+ 
+ Qualify *;
+ Unqualify '%*';
+ 
+ 
+ NoConcatenate
+ Telefon_Fehler_SA:
+ Load Distinct
+ 	*,
+   if(
+        Flag_PhoneNo_empty = 0 and
+        Flag_PhoneNo_valid = 1 and
+        Flag_PhoneNo_Länge = 1 and
+        Flag_PhoneNo_MaximalEinPlus = 1 
+	,1,0) as Flag_Phone_vollständig
+ Resident Telefon_Fehler_tmp;
+    
+    
+    
+drop table Telefon_Fehler_tmp;
+
+
+/*
+------------------------------------------------------------Kundenadressdaten------------------------------------------------------------
+*/
+Kundenadressdaten:
+LOAD
+    %streetId,
+    proAddressId,
+        %proAddressId_standort,
+    classid,
+    %proId_standort,
+    streetNumber,
+    streetNumber2,
+    phoneNo,
+    faxNo,
+    poBox,
+    poBoxPostCode,
+    poBoxCityId,
+    addressType,
+    blockCode,
+    Standort,
+    %cityId,
+    streetId,
+    Street_classid,
+    Streetname,
+    Street_postCode,
+    streetNumberFrom,
+    streetNumberTo,
+    City_classid,
+    Cityname,
+    City_postCode,
+    countryId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdaten.qvd]
+(qvd);
+
+Kundenadressdatenflags:
+LOAD
+    %proId_standort,
+    Flag_Street_empty,
+    Flag_Street_valid,
+    Flag_Street_länge,
+    Flag_PostCode_empty,
+    Flag_PostCode_Länge,
+    Flag_PostCode_valideZahlen,
+    Flag_City_empty,
+    City_Länge,
+    Flag_City_valid,
+    Flag_PhoneNo_empty,
+    Flag_PhoneNo_valid,
+    Flag_PhoneNo_Länge,
+    Flag_PhoneNo_MaximalEinPlus,
+    Flag_PhoneNo_valideZahlen,
+    Flag_streetNumber_empty,
+    Flag_streetNumber_nur_Zahlen,
+    Flag_streetNumber_valid,
+    Flag_poBoxPostCode_empty,
+    Flag_faxNo_empty,
+    Flag_faxNo_valid,
+    Flag_faxNo_Länge,
+    Flag_faxNo_MaximalEinPlus,
+    Flag_faxNo_valideZahlen
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdatenflags.qvd]
+(qvd);
+
+/*
+------------------------------------------------------------Adresse Flags------------------------------------------------------------
+*/
+Unqualify *;
+
+NoConcatenate
+SpPro_temp:
+Load
+	%proId_standort,
+//      %proAddressId_standort,
+     SpPro.Flag_Email_vollständig,
+     SpPro.Flag_profEMail_vollständig,
+     SpPro.Flag_profPhoneNo_vollständig ,
+     SpPro.Flag_mobPhoneNo_vollständig,
+     SpPro.Flag_profMobPhoneNo_vollständig
+Resident SpPro;     
+
+left join(SpPro_temp)
+Load distinct 
+	[%proId_standort],
+    Kundenadressdatenflags.Flag_streetNumber_empty as Flag_streetNumber_empty ,
+    Kundenadressdatenflags.Flag_streetNumber_nur_Zahlen as Flag_streetNumber_nur_Zahlen,
+    Kundenadressdatenflags.Flag_streetNumber_valid as Flag_streetNumber_valid,
+    Kundenadressdatenflags.Flag_Street_empty as Flag_Street_empty,
+    Kundenadressdatenflags.Flag_Street_valid as Flag_Street_valid,
+    Kundenadressdatenflags.Flag_Street_länge as Flag_Street_länge,
+    Kundenadressdatenflags.Flag_PostCode_empty as Flag_PostCode_empty,
+    Kundenadressdatenflags.Flag_PostCode_Länge as Flag_PostCode_Länge,
+    Kundenadressdatenflags.Flag_PostCode_valideZahlen as Flag_PostCode_valideZahlen,
+    Kundenadressdatenflags.Flag_City_empty as Flag_City_empty,
+    Kundenadressdatenflags.City_Länge as City_Länge,
+    Kundenadressdatenflags.Flag_City_valid as Flag_City_valid
+resident Kundenadressdatenflags;
+
+
+left join (SpPro)
+Load
+	%proId_standort,
+//      %proAddressId_standort,
+      if(
+    Flag_streetNumber_empty = '0' and 
+    Flag_streetNumber_nur_Zahlen = '1' and 
+    Flag_streetNumber_valid = '1' and 
+    
+    Flag_Street_empty  = '0' and 
+    Flag_Street_valid  = '1' and 
+    Flag_Street_länge  = '1' and 
+    
+    Flag_PostCode_empty  = '0' and 
+    Flag_PostCode_Länge  = '1' and 
+    Flag_PostCode_valideZahlen  = '1' and 
+    
+    Flag_City_empty   = '0' and 
+    City_Länge   = '1' and 
+    Flag_City_valid   = '1' 
+    
+    ,1, 0) as SpPro.Flag_Adresse_vollständig, 
+    
+    
+       if(	
+        Flag_streetNumber_empty = '0' and 
+        Flag_streetNumber_nur_Zahlen = '1' and 
+        Flag_streetNumber_valid = '1' and
+
+        Flag_Street_empty  = '0' and 
+        Flag_Street_valid  = '1' and 
+        Flag_Street_länge  = '1' and 
+
+        Flag_PostCode_empty  = '0' and 
+        Flag_PostCode_Länge  = '1' and 
+        Flag_PostCode_valideZahlen  = '1' and 
+
+        Flag_City_empty   = '0' and 
+        City_Länge   = '1' and 
+        Flag_City_valid   = '1' and 
+
+        (
+        SpPro.Flag_Email_vollständig = 1
+        or
+        SpPro.Flag_profEMail_vollständig = 1
+		)
+
+        and
+        (
+        SpPro.Flag_profPhoneNo_vollständig = 1
+        or
+       SpPro.Flag_mobPhoneNo_vollständig= 1
+        or
+        SpPro.Flag_profMobPhoneNo_vollständig= 1
+        )
+    , 1,0) as SpPro.Flag_Kontakt_vollständig
+     
+
+resident SpPro_temp;
+
+drop table SpPro_temp;
+
+Qualify*;
+Unqualify '%*';
+/*
+------------------------------------------------------------SpProDataPrivacy------------------------------------------------------------
+*/
+SpProDataPrivacy:
+LOAD
+    proId,
+//     proId &'_'& Standort as %proId_standort,
+%proId_standort,
+    existsDeclOfConsent,
+    subDep_ContactByMail,
+    subDep_ContactBySMSPhone,
+    subDep_ContactByEMail,
+//     subDep_TransferToBMW,
+    subDep_DateOfDecl,
+    
+//     subDep_SourceOfDecl,
+//     subDep_SourceSystem,
+//     subDep_DeclDeliveredFrom,
+//     subDep_Remark,
+//     BMW_ContactByMail,
+//     BMW_ContactBySMSPhone,
+//     BMW_ContactByEMail,
+//     BMW_CancelOfDecl,
+//     BMW_BlockCodeBMW,
+//     BMW_BlockCodeSubDep,
+//     BMW_DateOfDecl,
+//     BMW_SourceOfDecl,
+//     mailing,
+//     blockContacts,
+//     blockPhone,
+//     createdBy,
+//     createdOn,
+//     modifiedBy,
+//     modifiedOn,
+//     divaStatus,
+//     dmsExport,
+//     subDep_AgreeDataProc,
+//     subDep_InCar,
+//     subDep_CustomerProfile,
+//     BMW_InCar,
+//     BMW_CustomerProfile,
+//     BMW_SourceSystem,
+//     dmsExportDs,
+    expirationDate,
+    expirationDateDirty,
+    Standort
+// FROM [lib://BMW VDB:DataFiles/$(v_start_datei)_01_Ext_01_SA_SpProDataPrivacy.qvd]
+// (qvd);
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpProDataPrivacy.qvd]
+(qvd);
+
+
+/*
+------------------------------------------------------------SpCurProCar------------------------------------------------------------
+*/
+SpCurProCar:
+LOAD
+    proCarId,
+    classid,
+    carTypeId,
+    proId,
+//     proId &'_'& Standort as %proId_standort,
+    %proId_standort,
+    payerProId,
+    chassisNo,
+    colour,
+    comCarTypeName,
+    fuelType,
+    kindOfGear,
+    kindOfUse,
+    lastRegDate,
+    licenceNo,
+    mileage,
+    modelYear,
+    regDate,
+    finType,
+    finCompany,
+    finAmount,
+    newUsed,
+    remark,
+    state,
+    saPrice,
+    discount,
+    discPerc,
+    puPrice,
+    puPriceDate,
+    ownSale,
+    emissionTestDate,
+    inspectionDate,
+    deliveryDate,
+    warrantyDate,
+    warrantyMileage,
+    dateLastRepair,
+    carMilesYear,
+    expReplDate,
+    expReplMileage,
+    estimatedValue,
+    purchaseDate,
+    damageState,
+    subDepId,
+    ownMake,
+    transactionStatus,
+    conInfoId,
+    bodyStyle,
+    capacity,
+    cylinders,
+    powerWatt,
+    productionDate,
+    reservedTill,
+    purchaserId,
+    purchaseState,
+    salesManId,
+    salesState,
+    salesNewUsed,
+    locationId,
+    carPuPrice,
+    carSaPrice,
+    carSaPriceIncl,
+    optPuPriceSum,
+    optSaPriceSum,
+    optSaPriceSumIncl,
+    accPuPriceSum,
+    accSaPriceSum,
+    accSaPriceSumIncl,
+    originalCarId,
+    vatCodeId,
+    vatType,
+    configDate,
+    divaDblChk,
+    accident,
+    demoState,
+    deRegDate,
+    differenceVat,
+    noOfPrevOwners,
+    orderNo,
+    stockNo,
+    totalCosts,
+    mileageDate,
+    lastInspecDate,
+    lastInspecMileage,
+    prevOwner,
+    card,
+    cardDateFrom,
+    cardDateTo,
+    carPaperId,
+    comparisonClass,
+    privBusUse,
+    usedCarWarranty,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    modByDMS,
+    dmsId,
+    accLiPriceSum,
+    carLiPrice,
+    optLiPriceSum,
+    estpuDate,
+    accLiPriceSumIncl,
+    carLiPriceIncl,
+    optLiPriceSumIncl,
+    leasEnd,
+    "trim",
+    reservedBy,
+    manChanged,
+    mmPictGrpId,
+    orderNoDMS,
+    invoiceDate,
+    acceptCu,
+    supplyDate,
+    currStatus,
+    driveType,
+    carSaPriceOrig,
+    blockCode,
+    lastRepairMileage,
+    planRegDate,
+    origBPM,
+    ESPTransportCosts,
+    mesaInStrada,
+    offerNo,
+    addrExport,
+    manAddrImpOn,
+    autAddrImpOn,
+    reportDate,
+    salesmanCode,
+    offerNoOv,
+    rootQuotationId,
+    optPuPriceSumBsi,
+    optSaPriceSumBsi,
+    optLiPriceSumBsi,
+    optLiPriceSumBsiIncl,
+    optSaPriceSumBsiIncl,
+    ownerProId,
+    inactive,
+    activateDivaExport,
+    createdExpReplDateOn,
+    createdExpReplDateBy,
+    modifiedExpReplDateOn,
+    modifiedExpReplDateBy,
+    mailing,
+    quotationId,
+    PreisGueltigab,
+    Schadenstext,
+    Abwertung,
+    AnzahlTueren,
+    Sichtbarkeitstufe,
+    Preisaenderungskennzeichen,
+    EUAbgasstufe,
+    UrspruenglNeupreis,
+    KalkVKnetto,
+    Nutzungsart,
+    Bestandsart,
+    KalkInstKostennetto,
+    Hinweistext,
+    KalkGarantiekostennetto,
+    BestandsartText,
+    Haendlerpreis,
+    Eingangskanal,
+    Garantieart,
+    KBATypschluessel,
+    GAHerkunftskennzeichen,
+    Schaetzwert,
+    Schadenshoehe,
+    GarantieText,
+    BusinessNummer,
+    Aufbereitungskostennetto,
+    isCapacityManEntry,
+    isPowWattManEntry,
+    rentCar,
+    prtTelematic,
+    ZHupdate,
+    isCylindersManEntry,
+    modelCode,
+    BMWAccLiPriceSum,
+    BMWAccPuPriceSum,
+    BMWAccSaPriceSum,
+    BMWAccLiPriceSumIncl,
+    BMWAccSaPriceSumIncl,
+    BMWAccAssLiPriceSum,
+    BMWAccAssPuPriceSum,
+    BMWAccAssSaPriceSum,
+    BMWAccAssLiPriceSumIncl,
+    BMWAccAssSaPriceSumIncl,
+    omframe,
+    segmentId,
+    leasEndToWMZFlag,
+    efficiencyClass,
+    efficiencyCo2,
+    wltpFlag,
+    Standort,
+    
+//     iF(not isnull(expReplDate) OR expReplDate>1 , 1, 0) as Flag_wmz_vorhanden,
+//     date(date#(expReplDate, 'YYYYMMDD')) 												  		as WMZ,
+//     date(date#(leasEnd, 'YYYYMMDD')) 												  	as LeasingEnde,
+//       IF( leasEnd>1 AND leasEnd<>expReplDate, '1', '0')										as Flag_Leasingende_ungleich_WMZ
+      
+      Flag_wmz_vorhanden,
+      WMZ,
+      LeasingEnde,
+      Flag_Leasingende_ungleich_WMZ
+      
+// FROM [lib://BMW VDB:DataFiles/$(v_start_datei)_01_Ext_01_SA_SpCurProCar.qvd]
+// (qvd);
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpCurProCar.qvd]
+(qvd);
+
+
+/*
+------------------------------------------------------------AuSubDep------------------------------------------------------------
+*/
+AuSubDep:
+LOAD
+    subDepId,
+//     subDepId &'_'& Standort as %subDepId_Standort,
+%subDepId_Standort,
+    classid,
+    companyId,
+    subsidiaryId,
+    name1,
+    name2,
+    makeId,
+    subDepTypeWs,
+    subDepTypeCs,
+    subDepTypePs,
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    marketDescr1,
+    marketDescr2,
+    marketDescr3,
+    marketDescr4,
+    city,
+    postCode,
+    street,
+    dealerCode,
+    orderReportMailAddress,
+    dealerCodeDiva,
+    email,
+    marketDescr5,
+    marketDescr6,
+    marketDescr7,
+    marketDescr8,
+    marketDescr9,
+    marketDescr10,
+    printName1,
+    printName2,
+    account1,
+    bankCode1,
+    bankName1,
+    iban1,
+    bic1,
+    account2,
+    bankCode2,
+    bankName2,
+    iban2,
+    bic2,
+    account3,
+    bankCode3,
+    bankName3,
+    iban3,
+    bic3,
+    financeBusinessNo,
+    financePassword,
+    lockDiva,
+    regCourt,
+    tradeRegNo,
+    execMan,
+    useTradeTempl,
+    tradeInfoTemplFile,
+    rptTxt,
+    rptTxtCenter,
+    mailTxt,
+    defaultVehicleType,
+    defaultMake,
+    lockAmsBmw,
+    lockAmsMini,
+    lockAmsBmwi,
+    Standort
+// FROM [lib://BMW VDB:DataFiles/$(v_start_datei)_01_Ext_01_SA_AuSubDep.qvd]
+// (qvd);
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuSubDep.qvd]
+(qvd);
+
+
+/*
+------------------------------------------------------------SpProSubDep------------------------------------------------------------
+*/
+SpProSubDep:
+LOAD
+    proId,
+//     proId & '_' & Standort as %proId_standort,
+%proId_standort,
+    subDepId,
+    classid,
+    creationDate,
+    customer,
+//     temp,
+//     mailing,
+    salesRegionId,
+    employeeId,
+//     employeeId as %Verkäufer,
+%Verkäufer,
+    employee1stId,
+//     origin,
+    proType,
+//     carPark,
+//     criteria,
+//     criteria2,
+//     remark,
+//     marketAct1,
+//     marketAct2,
+//     marketAct3,
+//     marketAct4,
+//     createdBy,
+//     createdOn,
+//     modifiedBy,
+//     modifiedOn,
+//     addressClass,
+//     addrClModOn,
+//     addrClModBy,
+//     marketAct5,
+//     marketAct6,
+//     marketAct7,
+//     marketAct8,
+//     marketAct9,
+//     marketAct10,
+//     divaExport,
+    text(custType) as %Kundengruppe,
+    Standort,
+    text(addressClass) as %addressClass
+//     IF(customer = 0, 'I',
+// 	IF(customer = 1, 'K',
+//     	IF(customer = 2, 'T',
+//         	IF(customer = 3, 'W',
+//             	IF(customer = 4, 'A',
+//                 	IF(customer = 5, 'P',
+//                     	IF(customer = 6, 'S'))))))) AS %Kundengruppe
+//                         text(%Kundengruppe) as %Kundengruppe
+// FROM [lib://BMW VDB:DataFiles/$(v_start_datei)_01_Ext_01_SA_SpProSubDep.qvd]
+// (qvd);
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_SpProSubDep.qvd]
+(qvd);
+
+
+
+/*
+------------------------------------------------------------AuEmployee------------------------------------------------------------
+*/
+AuEmployee:
+LOAD
+    employeeId,
+//     employeeId as %Verkäufer,
+%Verkäufer,
+    classid,
+    subDepId,
+//     subDepId & '_' & Standort as %subDepId_Standort,
+    %subDepId_Standort,
+    name1,
+    firstName,
+    salesman,
+    phoneNo,
+    faxNo,
+    profession,
+    languageCode,
+    teamId,
+    title,
+    externId,
+    externId2,
+    externPw,
+    groupId1,
+    groupId2,
+    groupId3,
+    groupId4,
+    groupId5,
+    "password",
+    createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn,
+    signGroup,
+    defActCount,
+    countActPerDay,
+    email,
+    inactive,
+    groupId6,
+    pastContacts,
+    assistant,
+    emplGrpIdForAss,
+    spassNo,
+    activateDivaExport,
+    groupId7,
+    groupId8,
+    mailAccName,
+    mailAccPassword,
+    managePrivacy,
+    manageConRecOrd,
+    enableBMWi,
+    browser,
+    passwordExpirationDate,
+    Standort
+// FROM [lib://BMW VDB:DataFiles/$(v_start_datei)_01_Ext_01_SA_AuEmployee.qvd]
+// (qvd);
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEmployee.qvd]
+(qvd);
+
+
+/*
+------------------------------------------------------------Kundenart/Gruppe/...------------------------------------------------------------
+*/
+// Kundengruppe:
+// 	Load * inline [
+//     	%Kundengruppe, Bezeichnung
+//         A, Adresse
+//         W, Werkstattkunde
+//         T, Teilekunde
+//         K, Kunde
+//         P, Potential
+//         I, Interessent
+//     ];
+    /*
+    
+Kundenart:
+Load * inline [
+    	%Kundenart, Bezeichnung
+        1, gewerblich selbständig
+        2, gewerbliche Organisation
+        3, Großkunde
+        4, Privatkunde
+    ];
+    
+    */
+    
+// Kundenart:
+// Load * inline [
+//     	%Kundenart, Bezeichnung
+//         1, Privatkunde
+//         2, gewerblich selbständig
+//         3, gewerbliche Organisation
+//         4, Großkunde
+//     ];
+    
+    
+    
+    
+Kundenart:    
+LOAD
+    enumId as %Kundenart,
+    description as Bezeichnung
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd]
+(qvd) where enumTypeId = 'prTy';
+
+
+Kundengruppe:    
+// LOAD
+//     text(enumId) as %Kundengruppe,
+//     description as Bezeichnung
+// FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd]
+// (qvd) where enumTypeId = 'clgr';
+LOAD
+    text(enumStaticId) as %Kundengruppe,
+    description as Bezeichnung
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnumStatic.qvd]
+(qvd) where enumTypeId = 'cuty';
+
+
+
+
+
+
+Hobby:    
+LOAD
+    enumId as %hobby,
+    description as Bezeichnung
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd]
+(qvd) where enumTypeId = 'hoby';
+
+
+Branche:    
+LOAD
+    enumId as %branchId,
+    description as Bezeichnung
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd]
+(qvd) where enumTypeId = 'bran';
+
+Firmenart:    
+LOAD
+    enumId as %cyType,
+    description as Bezeichnung
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd]
+(qvd) where enumTypeId = 'cytp';
+
+Geschäftsbereich:    
+LOAD
+    enumId as %cyType2,
+    description as Bezeichnung
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd]
+(qvd) where enumTypeId = 'ctp2';
+
+
+Adressklasse:
+LOAD
+    text(enumStaticId) as %addressClass,
+    description as Bezeichnung
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnumStatic.qvd]
+(qvd) where enumTypeId = 'acls';
+
+
+    
+/*
+------------------------------------------------------------Kunden Mehrfach------------------------------------------------------------
+*/
+Unqualify *;
+
+NoConcatenate
+SpPro_temp:
+Load
+	%proId_standort,
+     %proAddressId_standort,
+     SpPro.proId,
+     SpPro.firstName,
+     SpPro.name1,
+     SpPro.name2,
+     SpPro.Standort,
+     SpPro.blockCode
+Resident SpPro where SpPro.blockCode = 0;     
+
+left join(SpPro_temp)
+Load distinct 
+	%proAddressId_standort,
+    %streetId
+resident Kundenadressdaten;
+
+
+left join(SpPro_temp)
+Load distinct
+	%streetId,
+    %cityId,
+    Kundenadressdaten.Streetname,
+    Kundenadressdaten.Street_postCode
+resident Kundenadressdaten;
+
+NoConcatenate
+SpPro_temp_B:
+Load distinct 
+	%proId_standort,
+     %proAddressId_standort,
+	SpPro.firstName,
+    SpPro.name1,
+    SpPro.name2,
+   	SpPro.Standort,
+    SpPro.proId,
+    Kundenadressdaten.Streetname,
+    Kundenadressdaten.Street_postCode,
+    SpPro.blockCode,
+    lower(SpPro.firstName) & lower(SpPro.name1) & lower(SpPro.name2) & '_' & lower(SpPro.Standort) & '_' & lower(Kundenadressdaten.Streetname) & '_'& lower(Kundenadressdaten.Street_postCode) as Key_Kunde_mehrfach
+resident SpPro_temp;
+
+
+
+Left Join (SpPro_temp_B)
+Load distinct 
+
+	Key_Kunde_mehrfach,
+    if(count(SpPro.proId) > 1,1 ,0) as Flag_Kunde_Mehrfach
+    
+resident SpPro_temp_B group by Key_Kunde_mehrfach;
+
+
+
+left Join(SpPro)
+Load
+	%proId_standort,
+     %proAddressId_standort,
+	SpPro.firstName,
+    SpPro.name1,
+    SpPro.name2,
+   	SpPro.Standort,
+    SpPro.proId,
+    SpPro.blockCode,
+    Key_Kunde_mehrfach as SpPro.Key_Kunde_mehrfach,
+    Flag_Kunde_Mehrfach as SpPro.Flag_Kunde_Mehrfach
+resident SpPro_temp_B;
+
+
+drop tables SpPro_temp, SpPro_temp_B;
+
+
+drop field %proAddressId_standort from SpPro;
+
+Qualify*;
+Unqualify '%*';
+
+
+
+/*
+------------------------------------------------------------Fehler SA------------------------------------------------------------
+*/
+Unqualify*;
+
+Fehler_SA:
+Load distinct 
+	%proId_standort,
+    
+     'E-Mail' as Fehler_SA.Fehler
+    
+resident SpPro where SpPro.Flag_EMail_gesamt_vollständig = 0;
+
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Telefon' as Fehler_SA.Fehler
+    
+resident SpPro where SpPro.Flag_Phone_gesamt_vollständig = 0;
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Anschrift' as Fehler_SA.Fehler
+    
+resident SpPro where SpPro.Flag_Adresse_vollständig = 0;
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Name' as Fehler_SA.Fehler
+    
+resident SpPro where (SpPro.Name_vollständig = 0);
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Kundenart' as Fehler_SA.Fehler
+    
+resident SpPro where isNull(%Kundenart );
+
+
+
+
+
+// Unqualify*; 
+NoConcatenate    
+Gruppe_temp:
+Load distinct 
+	%proId_standort
+resident SpPro;
+
+Left join (Gruppe_temp)
+Load distinct 
+    %proId_standort,
+    '1' as Flag_Gruppe
+Resident SpProSubDep where isNull(SpProSubDep.customer);
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    'Kundengruppe' as Fehler_SA.Fehler
+resident Gruppe_temp where Flag_Gruppe = 1;
+
+drop table Gruppe_temp;
+
+// Qualify *;
+// Unqualify '%*';
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Branche' as Fehler_SA.Fehler
+    
+resident SpPro where (%Kundenart = 2 or %Kundenart = 3 or %Kundenart= 4) and (isNull(SpPro.branchId ) or SpPro.branchId = 'NIL') and (isNull(SpPro.branchId2 ) or SpPro.branchId2 = 'NIL');
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Firmenart' as Fehler_SA.Fehler
+    
+resident SpPro where (%Kundenart = 2 or %Kundenart = 3 or %Kundenart= 4) and (isNull(SpPro.cyType ) or SpPro.cyType = 'NIL');
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Geschäftsbereich' as Fehler_SA.Fehler
+    
+resident SpPro where (%Kundenart = 2 or %Kundenart = 3 or %Kundenart= 4) and (isNull(SpPro.cyType2 ) or SpPro.cyType2 = 'NIL');
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Geburtstag' as Fehler_SA.Fehler
+    
+resident SpPro where %Kundenart = 1  and (IsNull(SpPro.birthDay) or len(SpPro.birthDay) < 3 or (num(SpPro.birthDay) > num(addyears(date(today()), -15))));
+
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Familienstand' as Fehler_SA.Fehler
+    
+resident SpPro where %Kundenart = 1 and (isNull(SpPro.familySit) or SpPro.familySit = 'NIL');
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Hobby' as Fehler_SA.Fehler
+    
+resident SpPro where %Kundenart = 1 and (isNull(SpPro.hobby) or SpPro.hobby = 'NIL') and (isNull(SpPro.hobby2) or SpPro.hobby2 = 'NIL') and (isNull(SpPro.hobby3) or SpPro.hobby3 = 'NIL') and (isNull(SpPro.hobby4) or SpPro.hobby4 = 'NIL');
+
+ 
+// Unqualify*; 
+NoConcatenate    
+WMZ_temp:
+Load distinct 
+	%proId_standort
+resident SpPro;
+
+Left join (WMZ_temp)
+Load distinct 
+    %proId_standort,
+    '1' as Flag_WMZ
+Resident SpCurProCar where SpCurProCar.Flag_wmz_vorhanden = 1;
+
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    'WMZ' as Fehler_SA.Fehler
+resident WMZ_temp where IsNull(Flag_WMZ);
+
+drop table WMZ_temp;
+
+// Qualify *;
+// Unqualify '%*';
+    
+    
+// Unqualify*; 
+NoConcatenate    
+DSE_temp:
+Load distinct 
+	%proId_standort
+resident SpPro;
+
+Left join (DSE_temp)
+Load distinct 
+    %proId_standort,
+    '1' as Flag_DSE_EMail
+Resident SpProDataPrivacy where SpProDataPrivacy.subDep_ContactByEMail = 1;
+
+Left join (DSE_temp)
+Load distinct 
+    %proId_standort,
+    '1' as Flag_DSE_Post
+Resident SpProDataPrivacy where SpProDataPrivacy.subDep_ContactByMail = 1;
+
+Left join (DSE_temp)
+Load distinct 
+    %proId_standort,
+    '1' as Flag_DSE_Tel
+Resident SpProDataPrivacy where SpProDataPrivacy.subDep_ContactBySMSPhone = 1;
+
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    'DSE E-Mail' as Fehler_SA.Fehler
+resident DSE_temp where IsNull(Flag_DSE_EMail);
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    'DSE Post' as Fehler_SA.Fehler
+resident DSE_temp where IsNull(Flag_DSE_Post);
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    'DSE Telefon' as Fehler_SA.Fehler
+resident DSE_temp where IsNull(Flag_DSE_Tel);
+
+// Qualify *;
+// Unqualify '%*';
+
+drop table DSE_temp;
+    
+    
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    
+    'Mehrfachanlage' as Fehler_SA.Fehler
+    
+resident SpPro where SpPro.Flag_Kunde_Mehrfach = 1;
+    
+    
+    
+    Qualify *;
+Unqualify '%*';
+    
+    
+    
+   
+/*
+------------------------------------------------------------Verkäufer------------------------------------------------------------
+*/
+Verkäufer:
+LOAD
+    Mandant,
+    Standort,
+    VK,
+    text(VK) as %Verkäufer,
+    Verkaufssparte1,
+    Verkaufssparte2,
+    Funktion,
+    Titel_gesamt,
+    Name,
+    Kürzel,
+    Kontaktsoll,
+    Soll_Neuanlage,
+    Email_Quote,
+    "VK seit",
+    "VK bis"
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_Verkäufer_Meta.xlsx]
+(ooxml, embedded labels, table is Sheet1);
+
+/*
+------------------------------------------------------------Kal------------------------------------------------------------
+*/
+Unqualify *;
+
+//*************** Kalender ***************
+LET v_Starttag =  left(num(date(YearStart(AddYears(Today(), -5)))), 5);
+//LET v_Endetag = left(num(date('09.11.2021')), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_Endetag = left(num(date(today())), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_AnzTage = $(v_Endetag) - $(v_Starttag);
+
+Let v_Heute= num(today());
+
+KalenderTMP:
+LOAD
+	$(v_Starttag) + RowNo() - 1 as %DatumNum
+AUTOGENERATE($(v_AnzTage));
+
+
+// GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE 
+
+
+Kalender_SA_temp:
+LOAD
+	*,
+	'KW ' & week(%DatumNum) & '/' & weekyear(%DatumNum) as EindeutigeWoche,
+	weekyear(%DatumNum) * 100 +  week(%DatumNum)		as EindeutigeWocheNum,
+	Jahr & '-' & Monat									as EindeutigerMonat,
+	Jahr * 100 + Monat									as EindeutigerMonatNum,
+// 	Jahr & '-' & Quartal								as EindeutigesQuartal,
+	
+	%DatumNum - $(v_Heute)											as TageVonHeute,
+	(weekstart(%DatumNum) - weekstart($(v_Heute))) / 7				as WochenVonHeute,
+	(Jahr - year($(v_Heute))) * 12 + (Monat - month($(v_Heute))) 	as MonateVonHeute,
+	Jahr - year($(v_Heute))											as JahreVonHeute,
+	
+	KWJahr - weekyear($(v_Heute))									as KWJahreVonHeute,
+	-networkdays(%DatumNum, $(v_Heute))	+ 1				as ArbeitstageVonHeute,
+	
+	InYearToDate(%DatumNum, $(v_Heute), 0) * -1			as Flag_YTDAktuellesJahr,
+	InYearToDate(%DatumNum, $(v_Heute), -1) * -1		as Flag_YTDVorigesJahr,
+	
+	1													as Anz_Tage
+	;
+LOAD
+	%DatumNum,
+    %DatumNum												as %DatumNum_SA,
+	date(%DatumNum)										as Datum,
+	weekday(%DatumNum) & ' ' & date(%DatumNum, 'DD.MM.')as WochentagDatum,
+	weekday(%DatumNum)									as Wochentag,
+	month(%DatumNum)									as Monat,
+// 	applymap('Map_Quartale', month(%DatumNum), '---') 	as Quartal,
+	year(%DatumNum)										as Jahr,
+	week(%DatumNum)										as Woche,
+	weekyear(%DatumNum)									as KWJahr
+RESIDENT KalenderTMP; 
+
+drop Field [%DatumNum] from Kalender_SA_temp;
+
+drop table KalenderTMP;
+
+Qualify*;
+Unqualify '%*';
+
+NoConcatenate
+Kalender_SA:
+Load
+	*
+Resident Kalender_SA_temp;
+
+drop table Kalender_SA_temp;
+
+
+
+ 
+
+
+
+
+
