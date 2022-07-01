@@ -1123,6 +1123,16 @@ LOAD
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_AuEnum.qvd]
 (qvd) where enumTypeId = 'prTy';
 
+Unqualify *;
+Concatenate(Kundenart)
+Load * inline [
+	%Kundenart, Kundenart.Bezeichnung
+    42, Kontakt
+];
+
+Qualify*;
+Unqualify '%*';
+
 
 Kundengruppe:    
 // LOAD
