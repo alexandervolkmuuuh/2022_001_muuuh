@@ -505,7 +505,7 @@ LOAD
     
     isDeleted,
     lastConDate,
-    proType,
+    if(isNull(cuId) and text(proType)='1', 42, proType) as proType,
     mailing,
     manAddrImpOn,
     autAddrImpOn,
