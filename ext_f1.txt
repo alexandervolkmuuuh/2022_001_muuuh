@@ -66,7 +66,7 @@ LOAD
     "Kunde gesperrt Auft." as Blocked,
     "Select-Stufe-Langbez",
     "Ansp. Autofon" as "Mobile Phone No_"
-FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KUN.CSV]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KUNDE.csv]
 (txt, codepage is 28591, embedded labels, delimiter is ';', no eof);
 Store * from Customer into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_Customer.qvd] (qvd);
 
@@ -101,7 +101,7 @@ LOAD
 //     "E-Mail als Rechn. 8",
 //     "E-Mail als Rechn. 9",
 //     "E-Mail als Rechn. 10"
-FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_MAIL.CSV]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_MAIL.csv]
 (txt, codepage is 28591, embedded labels, delimiter is ';', no eof);
 
 
@@ -118,7 +118,7 @@ LOAD
     "Kundenart-Kontrolle",
     "Kundenart-Kurzbez.",
     "Kundenart-Langbez."
-FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KA.CSV]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KUNDENART.csv]
 (txt, codepage is 28591, embedded labels, delimiter is ';', msq);
 
 Store * from META_Kundenart into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_META_Kundenart.qvd] (qvd);
@@ -167,7 +167,7 @@ LOAD
     "Hersteller Incar",
     "Hersteller Bildung",
     Hst.Quellsystem
-FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_DS.CSV]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_DATENSCHUTZ.csv]
 //(txt, utf8, embedded labels, delimiter is ';', no eof);
 (txt, codepage is 28591, embedded labels, delimiter is ';', no eof);
 
@@ -185,7 +185,7 @@ LOAD
     "Kundentyp-Kontrolle",
     "Kundentyp-Kurzbez.",
     "Kundentyp-Langbez." as     "Customer Type"
-FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KT.CSV]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_KUNDENTYP.csv]
 (txt, codepage is 28591, embedded labels, delimiter is ';', msq);
 
 Store * from META_Kundentyp into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_META_Kundentyp.qvd] (qvd);
@@ -203,7 +203,7 @@ LOAD
     Straße,
     PLZ,
     Ort
-FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_FIL.CSV]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_initial)_HUB_FILIALE.csv]
 (txt, codepage is 28591, embedded labels, delimiter is ';', msq);
 
 Store * from META_Filiale into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_04_F1_META_Filiale.qvd] (qvd);
