@@ -1127,7 +1127,7 @@ Unqualify *;
 Concatenate(Kundenart)
 Load * inline [
 	%Kundenart, Kundenart.Bezeichnung
-    42, Kontakt
+    42, gewerblicher Kontakt
 ];
 
 Qualify*;
