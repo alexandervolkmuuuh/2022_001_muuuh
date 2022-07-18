@@ -1599,9 +1599,69 @@ Resident Kalender_SA_temp;
 drop table Kalender_SA_temp;
 
 
-
+/*
+-------------------------------------------- Store QVD --------------------------------------------
+*/
  
+Store * from Branche into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Branche.qvd] (qvd);
+drop table Branche;
 
+Store * from Firmenart into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Firmenart.qvd] (qvd);
+drop table Firmenart;
+
+Store * from Kundenart into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Kundenart.qvd] (qvd);
+drop table Kundenart;
+
+Store * from Kalender_SA into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Kalender_SA.qvd] (qvd);
+drop table Kalender_SA;
+
+Store * from SpPro into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpPro.qvd] (qvd);
+drop table SpPro;
+
+Store * from Hobby into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Hobby.qvd] (qvd);
+drop table Hobby;
+
+Store * from Fehler_SA into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Fehler_SA.qvd] (qvd);
+drop table Fehler_SA;
+
+Store * from Geschäftsbereich into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Geschäftsbereich.qvd] (qvd);
+drop table Geschäftsbereich;
+
+Store * from Adressklasse into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Adressklasse.qvd] (qvd);
+drop table Adressklasse;
+
+Store * from SpProSubDep into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpProSubDep.qvd] (qvd);
+drop table SpProSubDep;
+
+Store * from Kundengruppe into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Kundengruppe.qvd] (qvd);
+drop table Kundengruppe;
+
+Store * from Kundenadressdatenflags into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Kundenadressdatenflags.qvd] (qvd);
+drop table Kundenadressdatenflags;
+
+Store * from SpCurProCar into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpCurProCar.qvd] (qvd);
+drop table SpCurProCar;
+
+Store * from SpProDataPrivacy into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpProDataPrivacy.qvd] (qvd);
+drop table SpProDataPrivacy;
+
+Store * from Mail_Fehler_SA into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Mail_Fehler_SA.qvd] (qvd);
+drop table Mail_Fehler_SA;
+
+Store * from Telefon_Fehler_SA into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Telefon_Fehler_SA.qvd] (qvd);
+drop table Telefon_Fehler_SA;
+
+Store * from Kundenadressdaten into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Kundenadressdaten.qvd] (qvd);
+drop table Kundenadressdaten;
+
+Store * from Verkäufer into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Verkäufer.qvd] (qvd);
+drop table Verkäufer;
+
+Store * from AuEmployee into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_AuEmployee.qvd] (qvd);
+drop table AuEmployee;
+
+Store * from AuSubDep into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_AuSubDep.qvd] (qvd);
+drop table AuSubDep;
 
 
 
