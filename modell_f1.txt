@@ -302,3 +302,32 @@ Resident Kalender_NAV_temp;
 drop table Kalender_NAV_temp;
 
 
+/*
+------------------------------- Store QVD -----------------------------------------
+*/
+Store * from Telefon_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Telefon_Fehler.qvd] (qvd);
+drop table Telefon_Fehler;
+
+Store * from Fehler_F1 into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Fehler_F1.qvd] (qvd);
+drop table Fehler_F1;
+
+Store * from Mail_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Mail_Fehler.qvd] (qvd);
+drop table Mail_Fehler;
+
+Store * from Standorte into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Standorte.qvd] (qvd);
+drop table Standorte;
+
+Store * from Data_Protection into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Data_Protection.qvd] (qvd);
+drop table Data_Protection;
+
+Store * from Customer into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Customer.qvd] (qvd);
+drop table Customer;
+
+Store * from Kundenart_F1 into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Kundenart_F1.qvd] (qvd);
+drop table Kundenart_F1;
+
+Store * from Kundentyp into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Kundentyp.qvd] (qvd);
+drop table Kundentyp;
+
+Store * from Kalender_NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Kalender_NAV.qvd] (qvd);
+drop table Kalender_NAV;
