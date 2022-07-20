@@ -425,7 +425,8 @@ LOAD
     Werbungssperrcode,
     If(Werbungssperrcode = 0, 0, 1) as Flag_Werbung_Blocked,
     Blocked,
-    "DS Einwilligung"
+    "DS Einwilligung",
+    "Angelegt von"
     //DS_erfasst
     
     
