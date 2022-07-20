@@ -385,6 +385,83 @@ Load
     
     
 drop table Mail_Fehler_tmp;
+
+
+/*
+------------------------------------------------------------Kundenadressdaten------------------------------------------------------------
+*/
+Kundenadressdaten:
+LOAD
+    %streetId,
+    proAddressId,
+        %proAddressId_standort,
+    classid,
+    %proId_standort,
+    streetNumber,
+    streetNumber2,
+    phoneNo,
+    faxNo,
+    poBox,
+    poBoxPostCode,
+    poBoxCityId,
+    addressType,
+    blockCode,
+    Standort,
+    %cityId,
+    streetId,
+    Street_classid,
+    Streetname,
+    Street_postCode,
+    streetNumberFrom,
+    streetNumberTo,
+    City_classid,
+    Cityname,
+    City_postCode,
+    countryId,
+    
+    divaDblChk,
+        createdBy,
+    createdOn,
+    modifiedBy,
+    modifiedOn
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdaten.qvd]
+(qvd);
+
+Kundenadressdatenflags:
+LOAD
+    %proId_standort,
+    Flag_Street_empty,
+    Flag_Street_valid,
+    Flag_Street_länge,
+    Flag_PostCode_empty,
+    Flag_PostCode_Länge,
+    Flag_PostCode_valideZahlen,
+    Flag_City_empty,
+    City_Länge,
+    Flag_City_valid,
+    Flag_PhoneNo_empty,
+    Flag_PhoneNo_valid,
+    Flag_PhoneNo_Länge,
+    Flag_PhoneNo_MaximalEinPlus,
+    Flag_PhoneNo_valideZahlen,
+    Flag_streetNumber_empty,
+    Flag_streetNumber_nur_Zahlen,
+    Flag_streetNumber_valid,
+    Flag_poBoxPostCode_empty,
+    Flag_faxNo_empty,
+    Flag_faxNo_valid,
+    Flag_faxNo_Länge,
+    Flag_faxNo_MaximalEinPlus,
+    Flag_faxNo_valideZahlen,
+    if(Flag_PhoneNo_empty = 0 and 
+    	Flag_PhoneNo_valid = 1 and 
+   		Flag_PhoneNo_Länge = 1 and 
+        Flag_PhoneNo_valideZahlen = 1 and 
+        Flag_PhoneNo_MaximalEinPlus = 1, 1, 0) 
+   as Flag_phoneNo_vollständig
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdatenflags.qvd]
+(qvd);
+
 /*
 ------------------------------------------------------------Fehler Telefon SA------------------------------------------------------------
 */
@@ -421,6 +498,15 @@ Load
         SpPro.Flag_profPhoneNo_Länge as Flag_PhoneNo_Länge,
         SpPro.Flag_profPhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
 resident SpPro;
+
+ Concatenate(Telefon_Fehler_tmp)
+Load
+        %proId_standort,
+        Kundenadressdatenflags.Flag_PhoneNo_empty as Flag_PhoneNo_empty ,
+       Kundenadressdatenflags.Flag_PhoneNo_valid as Flag_PhoneNo_valid ,
+         Kundenadressdatenflags.Flag_PhoneNo_Länge as Flag_PhoneNo_Länge,
+       Kundenadressdatenflags.Flag_PhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident Kundenadressdatenflags;
  
  
  Qualify *;
@@ -442,70 +528,6 @@ resident SpPro;
     
     
 drop table Telefon_Fehler_tmp;
-
-
-/*
-------------------------------------------------------------Kundenadressdaten------------------------------------------------------------
-*/
-Kundenadressdaten:
-LOAD
-    %streetId,
-    proAddressId,
-        %proAddressId_standort,
-    classid,
-    %proId_standort,
-    streetNumber,
-    streetNumber2,
-    phoneNo,
-    faxNo,
-    poBox,
-    poBoxPostCode,
-    poBoxCityId,
-    addressType,
-    blockCode,
-    Standort,
-    %cityId,
-    streetId,
-    Street_classid,
-    Streetname,
-    Street_postCode,
-    streetNumberFrom,
-    streetNumberTo,
-    City_classid,
-    Cityname,
-    City_postCode,
-    countryId
-FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdaten.qvd]
-(qvd);
-
-Kundenadressdatenflags:
-LOAD
-    %proId_standort,
-    Flag_Street_empty,
-    Flag_Street_valid,
-    Flag_Street_länge,
-    Flag_PostCode_empty,
-    Flag_PostCode_Länge,
-    Flag_PostCode_valideZahlen,
-    Flag_City_empty,
-    City_Länge,
-    Flag_City_valid,
-    Flag_PhoneNo_empty,
-    Flag_PhoneNo_valid,
-    Flag_PhoneNo_Länge,
-    Flag_PhoneNo_MaximalEinPlus,
-    Flag_PhoneNo_valideZahlen,
-    Flag_streetNumber_empty,
-    Flag_streetNumber_nur_Zahlen,
-    Flag_streetNumber_valid,
-    Flag_poBoxPostCode_empty,
-    Flag_faxNo_empty,
-    Flag_faxNo_valid,
-    Flag_faxNo_Länge,
-    Flag_faxNo_MaximalEinPlus,
-    Flag_faxNo_valideZahlen
-FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdatenflags.qvd]
-(qvd);
 
 /*
 ------------------------------------------------------------Adresse Flags------------------------------------------------------------
