@@ -537,7 +537,32 @@ Resident Kalender_CARE_temp;
 drop table Kalender_CARE_temp;
 
 
+/*
+---------------------------------------- Store QVD ----------------------------------------------------
+*/
 
+Store * from Kalender_CARE into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Kalender_CARE.qvd] (qvd);
+// drop table Kalender_CARE;
 
+Store * from Fehler_Care into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Fehler_Care.qvd] (qvd);
+// drop table Fehler_Care;
+
+Store * from Standorte into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Standorte.qvd] (qvd);
+// drop table Standorte;
+
+Store * from Customer into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Customer.qvd] (qvd);
+// drop table Customer;
+
+Store * from Kundengruppe_Care into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Kundengruppe_Care.qvd] (qvd);
+// drop table Kundengruppe_Care;
+
+Store * from Kunden_Datenschutz into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Kunden_Datenschutz.qvd] (qvd);
+// drop table Kunden_Datenschutz;
+
+Store * from Mail_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_.qvd] (qvd);
+// drop table Mail_Fehler;
+
+Store * from Telefon_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Telefon_Fehler.qvd] (qvd);
+// drop table Telefon_Fehler;
 
 
