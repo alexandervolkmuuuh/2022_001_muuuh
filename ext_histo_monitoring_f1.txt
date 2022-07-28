@@ -39,7 +39,7 @@ Load Distinct
     if(Customer.Flag_HomePhone_vollständig = 1 or Customer.Flag_MobilePhone_vollständig = 1 or Customer.Flag_Phone_vollständig =1, 1,0) as Telefon,
     if(Customer.Flag_Adresse_vollständig = 1 , 1,0) as Post
     
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_F1_Customer.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Customer.qvd]
 (qvd);
 
 Left Join(F1_temp)
@@ -58,7 +58,7 @@ load distinct
     if(num(date#([Data_Protection.Datum Erkl.Händler], 'YYYYMMDD')) > 1, 1, 0) as DSE_date_
     
     
-    FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_F1_Data_Protection.qvd]
+    FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Data_Protection.qvd]
 (qvd);
 
 NoConcatenate
@@ -116,12 +116,12 @@ LOAD distinct
     %Standorte,
     
     '$(v_today)' as %Datum    
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_F1_Customer.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Customer.qvd]
 (qvd);
 
 
 
-Store * from F1_Standort into [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Histo_F1_Standort_$(v_today).qvd] (qvd);
+Store * from F1_Standort into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_F1_Standort_$(v_today).qvd] (qvd);
 
 drop table F1_Standort;
 
