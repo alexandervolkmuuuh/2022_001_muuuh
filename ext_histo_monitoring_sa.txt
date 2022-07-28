@@ -38,7 +38,7 @@ Load distinct
     if(SpPro.Flag_profPhoneNo_vollständig = 1 or SpPro.Flag_profMobPhoneNo_vollständig=1 or SpPro.Flag_mobPhoneNo_vollständig = 1, 1,0) as Telefon,
     if(SpPro.Flag_Adresse_vollständig = 1 , 1,0) as Post
     
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_SA_SpPro.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpPro.qvd]
 (qvd);
 
 Left Join(SA_temp)
@@ -53,7 +53,7 @@ load distinct
     if(num(date#(SpProDataPrivacy.subDep_DateOfDecl, 'YYYYMMDD')) > 1, 1, 0) as DSE_date,
     if(num(date#(SpProDataPrivacy.expirationDate, 'YYYYMMDD')) <= num(today()), 1, 0)  as DSE_abgelaufen
 
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_SA_SpProDataPrivacy.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpProDataPrivacy.qvd]
 (qvd);
 
 
@@ -74,7 +74,7 @@ Resident SA_temp;
 
 drop table SA_temp;
 
-Store * from SA into [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Histo_SA_Kunde_$(v_today).qvd] 
+Store * from SA into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_SA_Kunde_$(v_today).qvd] 
 (qvd);
 
 drop table SA;
@@ -91,7 +91,7 @@ LOAD distinct
     %Verkäufer,
     '$(v_today)' as %Datum
 
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_SA_SpProSubDep.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpProSubDep.qvd]
 (qvd);
 
 left join(SA_Emp)
@@ -103,7 +103,7 @@ LOAD
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Verkäufer.qvd]
 (qvd);
 
-Store * from SA_Emp into [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Histo_SA_Emp_$(v_today).qvd] 
+Store * from SA_Emp into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_SA_Emp_$(v_today).qvd] 
 (qvd);
 
 drop table SA_Emp;
