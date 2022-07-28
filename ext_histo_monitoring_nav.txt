@@ -38,7 +38,7 @@ Load Distinct
     if(Customer.Flag_HomePhone_vollständig = 1 or Customer.Flag_MobilePhone_vollständig = 1 or Customer.Flag_Phone_vollständig =1 or Customer.Flag_HomeMobilePhone_vollständig = 1, 1,0) as Telefon,
     if(Customer.Flag_Adresse_vollständig = 1 , 1,0) as Post
     
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Nav_Customer.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Nav_Customer.qvd]
 (qvd);
 
 Left Join(NAV_temp)
@@ -61,7 +61,7 @@ load distinct
     
 
 
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Nav_Data_Protection.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Nav_Data_Protection.qvd]
 (qvd);
 
 
@@ -102,7 +102,7 @@ Resident NAV_temp_temp;
 
 drop table NAV_temp, NAV_temp_temp;
 
-Store * from NAV into [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Histo_Nav_Kunde_$(v_today).qvd] (qvd);
+Store * from NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_Nav_Kunde_$(v_today).qvd] (qvd);
 
 drop table NAV;
 
@@ -126,12 +126,12 @@ LOAD distinct
     	%Standort,
     
     	'$(v_today)' as %Datum    
-FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Nav_Customer.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Nav_Customer.qvd]
 (qvd);
 
 
 
-Store * from NAV_Standort into [lib://$(vConnectionName):DataFiles/$(v_start_datei)_03_Histo_Nav_Standort_$(v_today).qvd] (qvd);
+Store * from NAV_Standort into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_Nav_Standort_$(v_today).qvd] (qvd);
 
 drop table NAV_Standort;
 
