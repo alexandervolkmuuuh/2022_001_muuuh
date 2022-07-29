@@ -1,0 +1,167 @@
+/*
+----------------------------------------------------Main----------------------------------------------------
+*/
+
+SET ThousandSep='.';
+SET DecimalSep=',';
+SET MoneyThousandSep='.';
+SET MoneyDecimalSep=',';
+SET MoneyFormat='#.##0,00 €;-#.##0,00 €';
+SET TimeFormat='hh:mm:ss';
+SET DateFormat='DD.MM.YYYY';
+SET TimestampFormat='DD.MM.YYYY hh:mm:ss[.fff]';
+SET FirstWeekDay=0;
+SET BrokenWeeks=0;
+SET ReferenceDay=4;
+SET FirstMonthOfYear=1;
+SET CollationLocale='de-DE';
+SET CreateSearchIndexOnReload=1;
+SET MonthNames='Jan.;Feb.;März;Apr.;Mai;Juni;Juli;Aug.;Sep.;Okt.;Nov.;Dez.';
+SET LongMonthNames='Januar;Februar;März;April;Mai;Juni;Juli;August;September;Oktober;November;Dezember';
+SET DayNames='Mo.;Di.;Mi.;Do.;Fr.;Sa.;So.';
+SET LongDayNames='Montag;Dienstag;Mittwoch;Donnerstag;Freitag;Samstag;Sonntag';
+SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
+
+/*
+----------------------------------------------------Load----------------------------------------------------
+*/
+
+Data:
+LOAD
+    %Kunden_Nr_Firma,
+    Anlage,
+    EMail,
+    Telefon,
+    Post,
+    DSE,
+    DSE_EMail,
+    DSE_Telefon,
+    DSE_Post,
+    DSE_date,
+    Erreichbar,
+    Vollständig_Erreichbar,
+    Erreichbar_DSE,
+    Vollständig_Erreichbar_DSE,
+    %Datum
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_CARE_Kunde_*.qvd]
+(qvd);
+
+
+
+if not isNull(FileTime('lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_CARE_Kunde.qvd')) then
+
+	
+
+	NoConcatenate
+	Data_neu:
+	LOAD
+    	%Kunden_Nr_Firma,
+    	Anlage,
+    	EMail,
+    	Telefon,
+    	Post,
+    	DSE,
+    	DSE_EMail,
+    	DSE_Telefon,
+    	DSE_Post,
+    	DSE_date,
+    	Erreichbar,
+    	Vollständig_Erreichbar,
+    	Erreichbar_DSE,
+    	Vollständig_Erreichbar_DSE,
+    	%Datum,
+    	Gelöscht,
+        Flag_neu
+
+	FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_CARE_Kunde.qvd]
+	(qvd);
+    
+    
+
+else
+
+	NoConcatenate
+	Data_neu:
+	Load * Inline [
+		%Kunden_Nr_Firma,Anlage,   EMail,    Telefon,    Post,    DSE,    DSE_EMail,    DSE_Telefon,    DSE_Post,    DSE_date,     Erreichbar,    Vollständig_Erreichbar,    Erreichbar_DSE,  Vollständig_Erreichbar_DSE,    %Datum,     Gelöscht, Flag_neu
+
+	];
+
+
+
+end if
+
+
+
+/*
+----------------------------------------------------Gelöschte Kunden/Neukunden----------------------------------------------------
+*/
+
+//Die Daten werden aus den files gezogen und sortiert, damit ein Abgleich möglich ist
+Date:
+Load Distinct
+	%Datum
+resident Data order By %Datum asc;
+
+
+let neu =  peek('%Datum', -1, 'Date');
+let alt =  peek('%Datum', -2, 'Date');
+
+// let neu='44725';
+// let alt='44724';
+
+//Für Vergleich werden die Daten mit altem Datum gezogen
+Data_temp:
+Load 
+	%Kunden_Nr_Firma
+Resident Data where %Datum = '$(alt)';
+
+//Für Vergleich werden die Daten mit neuem Datum gezogen und geflaggt
+left join (Data_temp)
+	
+load 
+	%Kunden_Nr_Firma,
+        '1' as flag
+Resident Data where %Datum = '$(neu)';
+
+//Aktuelle Kunden in F1 (tagesaktuell mit Datenziehung morgens)
+Neu:
+NoConcatenate
+Load
+	*,
+ 	if(num(Anlage) < '$(neu)' and num(Anlage) >= '$(alt)', 1,0) as Flag_neu  //Momentan werden die Daten morgens eingespielt, deswegen muss Anlage < als neu sein UND Anlage >= alt sein
+Resident Data where %Datum = '$(neu)';	
+
+
+
+
+concatenate(Neu)
+Load
+	%Kunden_Nr_Firma,
+ 	'$(neu)' as %Datum,  
+    '1' as Gelöscht
+resident Data_temp where isNull(flag);
+
+
+
+Concatenate(Data_neu)
+Load
+	*
+Resident Neu;
+
+
+
+
+drop table Data;
+drop table Neu;
+drop table Data_temp;
+drop table Date;
+
+/*
+----------------------------------------------------Store----------------------------------------------------
+*/
+
+//Die neuen Daten, werden in die entsprechende Datei geschrieben und gespeichert
+
+Store * from Data_neu into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Histo_CARE_Kunde.qvd] (qvd);
