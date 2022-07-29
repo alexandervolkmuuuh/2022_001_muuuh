@@ -97,8 +97,8 @@ FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpProSubDep.qvd]
 left join(SA_Emp)
 Standorte:
 LOAD
-    text(VK) as %Verkäufer,
-    Standort
+    text(Verkäufer.VK) as %Verkäufer,
+    Verkäufer.Standort as Standort
     
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Verkäufer.qvd]
 (qvd);
