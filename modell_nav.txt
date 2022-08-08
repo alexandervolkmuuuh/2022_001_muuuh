@@ -1,0 +1,467 @@
+/*
+---------------------------------------------------Customer--------------------------------------------------------
+*/
+
+Customer:
+LOAD
+    *,
+    %DatumNum as %DatumNum_NAV,
+    "Customer Type" as %Kundenart_NAV,
+    "Main Address" as %Kundengruppe_NAV
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_03_Nav_Customer.qvd]
+(qvd);
+
+drop fields [%DatumNum], %kunde_tkp_Standort from Customer;
+
+
+/*
+------------------------------------------------- Mail_Fehler -------------------------------------------------------
+*/
+
+
+Unqualify *;
+
+NoConcatenate
+Mail_Fehler_tmp:
+Load
+	%Kundennummer_Standort,
+    "Customer.E-Mail" as "E-Mail",
+    Customer.Flag_EMail_empty as Flag_EMail_empty,
+    Customer.Flag_EMail_Länge as Flag_EMail_Länge ,
+   Customer.Flag_EMail_@_valid  as Flag_EMail_@_valid,
+   Customer.Flag_EMail_valid  as Flag_EMail_valid ,
+    Customer.Flag_EMail_Lokalteil_valid as Flag_EMail_Lokalteil_valid ,
+    Customer.Flag_EMail_Domainteil_valid as Flag_EMail_Domainteil_valid 
+ resident Customer;
+ 
+ 
+Concatenate(Mail_Fehler_tmp)
+Load
+	%Kundennummer_Standort,
+    "Customer.Home E-Mail" as "E-Mail",
+    Customer.Flag_HomeEMail_empty as Flag_EMail_empty,
+    Customer.Flag_HomeEMail_Länge as Flag_EMail_Länge ,
+   Customer.Flag_HomeEMail_@_valid  as Flag_EMail_@_valid,
+   Customer.Flag_HomeEMail_valid  as Flag_EMail_valid ,
+    Customer.Flag_HomeEMail_Lokalteil_valid as Flag_EMail_Lokalteil_valid ,
+    Customer.Flag_HomeEMail_Domainteil_valid as Flag_EMail_Domainteil_valid 
+ resident Customer;  
+ 
+ Qualify *;
+ Unqualify '%*';
+ 
+ 
+ NoConcatenate
+ Mail_Fehler:
+ Load Distinct
+ 	*,
+    if(
+        Flag_EMail_empty = 0 and
+		Flag_EMail_Länge = 1 and
+		Flag_EMail_@_valid = 1 and
+		Flag_EMail_valid = 1 and
+		Flag_EMail_Lokalteil_valid = 1 and
+		Flag_EMail_Domainteil_valid = 1 
+     ,1,0) as Flag_Email_vollständig
+ Resident Mail_Fehler_tmp;
+    
+    
+    
+drop table Mail_Fehler_tmp;
+
+
+/*
+---------------------------------------------------Telefon_Fehler---------------------------------------------------
+*/
+
+Unqualify *;
+
+NoConcatenate
+Telefon_Fehler_tmp:
+Load
+	%Kundennummer_Standort,
+    "Customer.Phone No_" as "Phone No_",
+    Customer.Flag_PhoneNo_empty as Flag_PhoneNo_empty ,
+    Customer.Flag_PhoneNo_valid as Flag_PhoneNo_valid ,
+    Customer.Flag_PhoneNo_Länge as Flag_PhoneNo_Länge,
+    Customer.Flag_PhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+ resident Customer;
+ 
+ 
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %Kundennummer_Standort,
+        "Customer.Home Phone No_" as "Phone No_",
+        Customer.Flag_HomePhoneNo_empty as Flag_PhoneNo_empty ,
+        Customer.Flag_HomePhoneNo_valid as Flag_PhoneNo_valid ,
+        Customer.Flag_HomePhoneNo_Länge as Flag_PhoneNo_Länge,
+        Customer.Flag_HomePhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident Customer;
+
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %Kundennummer_Standort,
+        "Customer.Mobile Phone No_" as "Phone No_",
+        Customer.Flag_MobilePhoneNo_empty as Flag_PhoneNo_empty ,
+        Customer.Flag_MobilePhoneNo_valid as Flag_PhoneNo_valid ,
+        Customer.Flag_MobilePhoneNo_Länge as Flag_PhoneNo_Länge,
+        Customer.Flag_MobilePhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident Customer;
+
+Concatenate(Telefon_Fehler_tmp)
+Load
+        %Kundennummer_Standort,
+        "Customer.Home Mobile Phone No_" as "Phone No_",
+        Customer.Flag_HomeMobilePhoneNo_empty as Flag_PhoneNo_empty ,
+        Customer.Flag_HomeMobilePhoneNo_valid as Flag_PhoneNo_valid ,
+        Customer.Flag_HomeMobilePhoneNo_Länge as Flag_PhoneNo_Länge,
+        Customer.Flag_HomeMobilePhoneNo_MaximalEinPlus as Flag_PhoneNo_MaximalEinPlus 
+resident Customer;
+ 
+ 
+ Qualify *;
+ Unqualify '%*';
+ 
+ 
+ NoConcatenate
+ Telefon_Fehler:
+ Load Distinct
+ 	*,
+   if(
+        Flag_PhoneNo_empty = 0 and
+        Flag_PhoneNo_valid = 1 and
+        Flag_PhoneNo_Länge = 1 and
+        Flag_PhoneNo_MaximalEinPlus = 1 
+	,1,0) as Flag_Phone_vollständig
+ Resident Telefon_Fehler_tmp;
+    
+    
+    
+drop table Telefon_Fehler_tmp;
+
+
+/*
+--------------------------------------------------Data_Protection----------------------------------------
+*/
+Data_Protection:
+LOAD
+   %kunde_sa_standort,
+//     '_' & Standort as %Kundennummer_Standort,
+    "Block Advertising",
+    "Block SA",
+    "Block Aftersales",
+    "Block customer contact program",
+    "Data Privacy Protection Policy",
+    "Contact written Dealership",
+    "Contact phone Dealership",
+    "Contact Email Dealership",
+    "Policy Date Dealership",
+    "Entry Date Dealership",
+    "Block Data Protection Dealer",
+    "Contact written BMW",
+    "Contact phone BMW",
+    "Contact Email BMW",
+    "Policy Date BMW",
+    "Entry Date BMW",
+    "Block Data Protection BMW",
+    Cancellation,
+    Remarks,
+    "Transfer to BMW",
+    "Dealer Source System",
+    "DPP for Company from",
+    OldBlock,
+    "Block for RSP",
+    "BMW Source Loc Registration",
+    "Dealer Source Loc Registration",
+    "Consent Data Processing",
+    "In Car Dealership",
+    "Building Profiles Dealership",
+    "In Car BMW",
+    "Building Profiles BMW",
+    "BMW Source System",
+    GDPR2,
+    Status,
+    OldDateDealer,
+    OldDateBMW,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_03_Nav_Data_Protection.qvd]
+(qvd);
+
+
+
+/*
+-------------------------------------------------------Kundenart/Gruppe-----------------------------------------------
+*/
+Kundenart_NAV:
+Load * inline [
+    	%Kundenart_NAV, Bezeichnung
+        0, Mann
+        1, Frau
+        2, Firma
+        3, Gewerblich selbständig
+    ];
+    
+    
+Kundengruppe_NAV:
+Load * inline [
+    	%Kundengruppe_NAV, Bezeichnung
+        0, Privat
+        1, Gewerbe
+    ];
+    
+
+/*
+-----------------------------------------------------Fehler_NAV------------------------------------------------
+*/
+Unqualify*;
+
+Fehler_NAV:
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'E-Mail' as Fehler_NAV.Fehler
+    
+resident Customer where Customer.Flag_Email_vollständig = 0 and Customer.Flag_HomeEmail_vollständig = 0;
+
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Telefon' as Fehler_NAV.Fehler
+    
+resident Customer where [Customer.Flag_HomeMobilePhone_vollständig] = 0 and [Customer.Flag_HomePhone_vollständig] = 0 and [Customer.Flag_MobilePhone_vollständig] = 0 and [Customer.Flag_Phone_vollständig] =0;
+
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Anschrift' as Fehler_NAV.Fehler
+    
+resident Customer where [Customer.Flag_Adresse_vollständig] = 0;
+
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Kundenart' as Fehler_NAV.Fehler
+    
+resident Customer where isNull(%Kundenart_NAV);
+
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Kundengruppe' as Fehler_NAV.Fehler
+    
+resident Customer where isNull(%Kundengruppe_NAV);
+
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Name' as Fehler_NAV.Fehler
+    
+resident Customer where [Customer.Flag_Name_empty] = 1 or [Customer.Flag_Name_valid] = 0;
+
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    
+    'Mehrfachanlage' as Fehler_NAV.Fehler
+    
+resident Customer where Customer.Flag_Kunde_Mehrfach = 1;
+
+
+//DSE Fehler
+
+NoConcatenate    
+DSE_temp:
+Load distinct 
+		%Kundennummer_Standort,
+        %kunde_sa_standort
+resident Customer;
+
+Left join (DSE_temp)
+Load distinct 
+  	 %kunde_sa_standort,
+    '1' as Flag_DSE_EMail
+Resident Data_Protection where [Data_Protection.Contact Email Dealership] = 1;
+
+Left join (DSE_temp)
+Load distinct 
+   %kunde_sa_standort,
+    '1' as Flag_DSE_Post
+Resident Data_Protection where [Data_Protection.Contact written Dealership] = 1;
+
+Left join (DSE_temp)
+Load distinct 
+    %kunde_sa_standort,
+    '1' as Flag_DSE_Tel
+Resident Data_Protection where [Data_Protection.Contact phone Dealership] = 1;
+
+NoConcatenate
+Temp_b:
+Load Distinct
+	[%Kundennummer_Standort],
+    max(num(Flag_DSE_Tel)) as Flag_DSE_Tel,
+    max(num(Flag_DSE_EMail)) as Flag_DSE_EMail,
+    max(num(Flag_DSE_Post)) as Flag_DSE_Post
+    resident DSE_temp group by [%Kundennummer_Standort];
+
+drop table DSE_temp;
+
+Concatenate(Fehler_NAV)
+Load distinct 
+		%Kundennummer_Standort,
+    'DSE E-Mail' as Fehler_NAV.Fehler
+resident Temp_b where IsNull(Flag_DSE_EMail);
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	[%Kundennummer_Standort],
+    'DSE Post' as Fehler_NAV.Fehler
+resident Temp_b where IsNull(Flag_DSE_Post);
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	[%Kundennummer_Standort],
+    'DSE Telefon' as Fehler_NAV.Fehler
+resident Temp_b where IsNull(Flag_DSE_Tel);
+
+// Qualify *;
+// Unqualify '%*';
+
+drop table Temp_b;
+
+
+   Qualify *;
+Unqualify '%*';
+
+
+/*
+--------------------------------------------Standorte--------------------------------------
+*/
+Standorte:
+LOAD
+    Nummer,
+    Nummer as %Standort,
+    Name
+from [lib://$(v_bereich):DataFiles/$(v_start_datei)_Standorte.xlsx]
+(ooxml, embedded labels, table is Tabelle1);
+
+
+
+
+/*
+-------------------------------------------------------------Kal-----------------------------------------------------
+*/
+Unqualify *;
+
+//*************** Kalender ***************
+LET v_Starttag =  left(num(date(YearStart(AddYears(Today(), -5)))), 5);
+//LET v_Endetag = left(num(date('09.11.2021')), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_Endetag = left(num(date(today())), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_AnzTage = $(v_Endetag) - $(v_Starttag);
+
+Let v_Heute= num(date('09.11.2021'));//num(today());
+
+KalenderTMP:
+LOAD
+	$(v_Starttag) + RowNo() - 1 as %DatumNum
+AUTOGENERATE($(v_AnzTage));
+
+
+// GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE 
+
+
+Kalender_NAV_temp:
+LOAD
+	*,
+	'KW ' & week(%DatumNum) & '/' & weekyear(%DatumNum) as EindeutigeWoche,
+	weekyear(%DatumNum) * 100 +  week(%DatumNum)		as EindeutigeWocheNum,
+	Jahr & '-' & Monat									as EindeutigerMonat,
+	Jahr * 100 + Monat									as EindeutigerMonatNum,
+// 	Jahr & '-' & Quartal								as EindeutigesQuartal,
+	
+	%DatumNum - $(v_Heute)											as TageVonHeute,
+	(weekstart(%DatumNum) - weekstart($(v_Heute))) / 7				as WochenVonHeute,
+	(Jahr - year($(v_Heute))) * 12 + (Monat - month($(v_Heute))) 	as MonateVonHeute,
+	Jahr - year($(v_Heute))											as JahreVonHeute,
+	
+	KWJahr - weekyear($(v_Heute))									as KWJahreVonHeute,
+	-networkdays(%DatumNum, $(v_Heute))	+ 1				as ArbeitstageVonHeute,
+	
+	InYearToDate(%DatumNum, $(v_Heute), 0) * -1			as Flag_YTDAktuellesJahr,
+	InYearToDate(%DatumNum, $(v_Heute), -1) * -1		as Flag_YTDVorigesJahr,
+	
+	1													as Anz_Tage
+	;
+LOAD
+	%DatumNum,
+    %DatumNum												as %DatumNum_NAV,
+	date(%DatumNum)										as Datum,
+	weekday(%DatumNum) & ' ' & date(%DatumNum, 'DD.MM.')as WochentagDatum,
+	weekday(%DatumNum)									as Wochentag,
+	month(%DatumNum)									as Monat,
+// 	applymap('Map_Quartale', month(%DatumNum), '---') 	as Quartal,
+	year(%DatumNum)										as Jahr,
+	week(%DatumNum)										as Woche,
+	weekyear(%DatumNum)									as KWJahr
+RESIDENT KalenderTMP; 
+
+drop Field [%DatumNum] from Kalender_NAV_temp;
+
+ drop table KalenderTMP;
+ 
+ Qualify*;
+Unqualify '%*';
+
+
+ NoConcatenate
+Kalender_NAV:
+Load
+	*
+Resident Kalender_NAV_temp;
+
+drop table Kalender_NAV_temp;
+
+
+
+
+/*
+-------------------------------------------------------Store-----------------------------------------------------
+*/
+
+Store * from Customer into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Customer.qvd] (qvd);
+//drop table Customer;
+
+Store * from Mail_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Mail_Fehler.qvd] (qvd);
+//drop table Mail_Fehler;
+
+Store * from Telefon_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Telefon_Fehler.qvd] (qvd);
+//drop table Telefon_Fehler;
+
+Store * from Data_Protection into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Data_Protection.qvd] (qvd);
+//drop table Data_Protection;
+
+Store * from Kundenart_NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Kundenart_NAV.qvd] (qvd);
+//drop table Kundenart_NAV;
+
+Store * from Kundengruppe_NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Kundengruppe_NAV.qvd] (qvd);
+//drop table Kundengruppe_NAV;
+
+Store * from Fehler_NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Fehler_NAV.qvd] (qvd);
+//drop table Fehler_NAV;
+
+Store * from Standorte into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Standorte.qvd] (qvd);
+//drop table Standorte;
+
+Store * from Kalender_NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Kalender_NAV.qvd] (qvd);
+//drop table Kalender_NAV;
