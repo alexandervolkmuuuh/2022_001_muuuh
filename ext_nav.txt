@@ -2,9 +2,7 @@ Tabellen:
 	Load * inline [
     	tabelle, store_name
         Customer, Customer
-        Employee, Employee
         Data Protection, Data_Protection
-        Location, Location
 ];
 
 for t=0 to NoOfRows('Tabellen')-1
