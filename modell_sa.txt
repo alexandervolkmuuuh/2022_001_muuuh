@@ -532,13 +532,13 @@ drop table Telefon_Fehler_tmp;
 /*
 ------------------------------------------------------------Adresse Flags------------------------------------------------------------
 */
+
 Unqualify *;
 
 NoConcatenate
 SpPro_temp:
 Load
-	%proId_standort,
-//      %proAddressId_standort,
+    %proId_standort,
      SpPro.Flag_Email_vollständig,
      SpPro.Flag_profEMail_vollständig,
      SpPro.Flag_profPhoneNo_vollständig ,
@@ -548,7 +548,7 @@ Resident SpPro;
 
 left join(SpPro_temp)
 Load distinct 
-	[%proId_standort],
+    [%proId_standort],
     Kundenadressdatenflags.Flag_streetNumber_empty as Flag_streetNumber_empty ,
     Kundenadressdatenflags.Flag_streetNumber_nur_Zahlen as Flag_streetNumber_nur_Zahlen,
     Kundenadressdatenflags.Flag_streetNumber_valid as Flag_streetNumber_valid,
@@ -560,74 +560,100 @@ Load distinct
     Kundenadressdatenflags.Flag_PostCode_valideZahlen as Flag_PostCode_valideZahlen,
     Kundenadressdatenflags.Flag_City_empty as Flag_City_empty,
     Kundenadressdatenflags.City_Länge as City_Länge,
-    Kundenadressdatenflags.Flag_City_valid as Flag_City_valid
+    Kundenadressdatenflags.Flag_City_valid as Flag_City_valid,
+    Kundenadressdatenflags.Flag_PhoneNo_empty,
+    Kundenadressdatenflags.Flag_PhoneNo_valid,
+    Kundenadressdatenflags.Flag_PhoneNo_Länge,
+    Kundenadressdatenflags.Flag_PhoneNo_MaximalEinPlus,
+    Kundenadressdatenflags.Flag_phoneNo_vollständig
+
+
 resident Kundenadressdatenflags;
 
 
 left join (SpPro)
 Load
-	%proId_standort,
-//      %proAddressId_standort,
+    %proId_standort,
+
       if(
-    Flag_streetNumber_empty = '0' and 
-    Flag_streetNumber_nur_Zahlen = '1' and 
-    Flag_streetNumber_valid = '1' and 
-    
-    Flag_Street_empty  = '0' and 
-    Flag_Street_valid  = '1' and 
-    Flag_Street_länge  = '1' and 
-    
-    Flag_PostCode_empty  = '0' and 
-    Flag_PostCode_Länge  = '1' and 
-    Flag_PostCode_valideZahlen  = '1' and 
-    
-    Flag_City_empty   = '0' and 
-    City_Länge   = '1' and 
-    Flag_City_valid   = '1' 
-    
-    ,1, 0) as SpPro.Flag_Adresse_vollständig, 
-    
-    
-       if(	
-        Flag_streetNumber_empty = '0' and 
-        Flag_streetNumber_nur_Zahlen = '1' and 
-        Flag_streetNumber_valid = '1' and
+                Flag_streetNumber_empty = '0' and 
+                Flag_streetNumber_nur_Zahlen = '1' and 
+                Flag_streetNumber_valid = '1' and 
 
-        Flag_Street_empty  = '0' and 
-        Flag_Street_valid  = '1' and 
-        Flag_Street_länge  = '1' and 
+                Flag_Street_empty  = '0' and 
+                Flag_Street_valid  = '1' and 
+                Flag_Street_länge  = '1' and 
 
-        Flag_PostCode_empty  = '0' and 
-        Flag_PostCode_Länge  = '1' and 
-        Flag_PostCode_valideZahlen  = '1' and 
+                Flag_PostCode_empty  = '0' and 
+                Flag_PostCode_Länge  = '1' and 
+                Flag_PostCode_valideZahlen  = '1' and 
 
-        Flag_City_empty   = '0' and 
-        City_Länge   = '1' and 
-        Flag_City_valid   = '1' and 
+                Flag_City_empty   = '0' and 
+                City_Länge   = '1' and 
+                Flag_City_valid   = '1' 
 
-        (
-        SpPro.Flag_Email_vollständig = 1
-        or
-        SpPro.Flag_profEMail_vollständig = 1
-		)
+                ,1, 0)
+    as SpPro.Flag_Adresse_vollständig, 
 
-        and
-        (
-        SpPro.Flag_profPhoneNo_vollständig = 1
-        or
-       SpPro.Flag_mobPhoneNo_vollständig= 1
-        or
-        SpPro.Flag_profMobPhoneNo_vollständig= 1
-        )
-    , 1,0) as SpPro.Flag_Kontakt_vollständig
-     
 
+       if(    
+                  Flag_streetNumber_empty = '0' and 
+                  Flag_streetNumber_nur_Zahlen = '1' and 
+                  Flag_streetNumber_valid = '1' and
+
+                  Flag_Street_empty  = '0' and 
+                  Flag_Street_valid  = '1' and 
+                  Flag_Street_länge  = '1' and 
+
+                  Flag_PostCode_empty  = '0' and 
+                  Flag_PostCode_Länge  = '1' and 
+                  Flag_PostCode_valideZahlen  = '1' and 
+
+                  Flag_City_empty   = '0' and 
+                  City_Länge   = '1' and 
+                  Flag_City_valid   = '1' and 
+
+                  (
+                  SpPro.Flag_Email_vollständig = 1
+                  or
+                  SpPro.Flag_profEMail_vollständig = 1
+                  )
+
+                  and
+                  (
+                  SpPro.Flag_profPhoneNo_vollständig = 1
+                  or
+                 SpPro.Flag_mobPhoneNo_vollständig= 1
+                  or
+                  SpPro.Flag_profMobPhoneNo_vollständig= 1
+                  or 
+                 [Kundenadressdatenflags.Flag_phoneNo_vollständig] = 1 )
+              , 1,0) 
+ as SpPro.Flag_Kontakt_vollständig,
+
+ if                (
+                  SpPro.Flag_profPhoneNo_vollständig = 1
+                  or
+                 SpPro.Flag_mobPhoneNo_vollständig= 1
+                  or
+                  SpPro.Flag_profMobPhoneNo_vollständig= 1
+                  or 
+                 Kundenadressdatenflags.Flag_phoneNo_vollständig = 1 
+              , 1,0)
+
+as SpPro.Flag_Phone_gesamt_vollständig
 resident SpPro_temp;
 
 drop table SpPro_temp;
 
 Qualify*;
 Unqualify '%*';
+
+
+
+
+
+
 /*
 ------------------------------------------------------------SpProDataPrivacy------------------------------------------------------------
 */
