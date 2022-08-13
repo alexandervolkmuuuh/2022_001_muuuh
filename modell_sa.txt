@@ -1332,159 +1332,57 @@ Unqualify*;
 Fehler_SA:
 Load distinct 
 	%proId_standort,
-    
-     'E-Mail' as Fehler_SA.Fehler
-    
-resident SpPro where SpPro.Flag_EMail_gesamt_vollständig = 0;
-
-
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Telefon' as Fehler_SA.Fehler
-    
-resident SpPro where SpPro.Flag_Phone_gesamt_vollständig = 0;
+     'E-Mail falsch' as Fehler_SA.Problem,
+     1 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+resident SpPro where (SpPro.Flag_Email_vollständig = 0 and SpPro.Flag_EMail_empty=0) or (SpPro.Flag_profEMail_vollständig = 0 and SpPro.Flag_profEMail_empty=0);
 
 
 Concatenate(Fehler_SA)
 Load distinct 
 	%proId_standort,
-    
-    'Anschrift' as Fehler_SA.Fehler
-    
+    'Telefon falsch' as Fehler_SA.Problem,
+     1 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+resident SpPro where (SpPro.Flag_profPhoneNo_vollständig = 0 and SpPro.Flag_profPhoneNo_empty=0) or (SpPro.Flag_mobPhoneNo_vollständig = 0 and SpPro.Flag_mobPhoneNo_empty = 0) or (SpPro.Flag_profMobPhoneNo_vollständig = 0 and SpPro.Flag_profMobPhoneNo_empty=0);
+
+
+Concatenate(Fehler_SA)
+Load distinct 
+	%proId_standort,
+    'Adresse falsch' as Fehler_SA.Problem,
+     1 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
 resident SpPro where SpPro.Flag_Adresse_vollständig = 0;
 
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Name' as Fehler_SA.Fehler
-    
-resident SpPro where (SpPro.Name_vollständig = 0);
-
 
 Concatenate(Fehler_SA)
 Load distinct 
 	%proId_standort,
-    
-    'Kundenart' as Fehler_SA.Fehler
-    
-resident SpPro where isNull(%Kundenart );
+    'Keine Kontaktdaten' as Fehler_SA.Problem,
+     1 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+resident SpPro where 
+SpPro.Flag_EMail_empty = 1 and 
+SpPro.Flag_profEMail_empty = 1 and 
+SpPro.Flag_profPhoneNo_empty=1 and 
+SpPro.Flag_mobPhoneNo_empty=1 and 
+SpPro.Flag_profMobPhoneNo_empty=1 and 
+(
+Flag_streetNumber_empty = 1 or 
+Flag_Street_empty = 1 or
+Flag_PostCode_empty = 1 or
+Flag_City_empty = 1
+)
+;
 
 
 
 
 
-// Unqualify*; 
-NoConcatenate    
-Gruppe_temp:
-Load distinct 
-	%proId_standort
-resident SpPro;
-
-Left join (Gruppe_temp)
-Load distinct 
-    %proId_standort,
-    '1' as Flag_Gruppe
-Resident SpProSubDep where isNull(SpProSubDep.customer);
-
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    'Kundengruppe' as Fehler_SA.Fehler
-resident Gruppe_temp where Flag_Gruppe = 1;
-
-drop table Gruppe_temp;
-
-// Qualify *;
-// Unqualify '%*';
-
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Branche' as Fehler_SA.Fehler
-    
-resident SpPro where (%Kundenart = 2 or %Kundenart = 3 or %Kundenart= 4) and (isNull(SpPro.branchId ) or SpPro.branchId = 'NIL') and (isNull(SpPro.branchId2 ) or SpPro.branchId2 = 'NIL');
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Firmenart' as Fehler_SA.Fehler
-    
-resident SpPro where (%Kundenart = 2 or %Kundenart = 3 or %Kundenart= 4) and (isNull(SpPro.cyType ) or SpPro.cyType = 'NIL');
-
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Geschäftsbereich' as Fehler_SA.Fehler
-    
-resident SpPro where (%Kundenart = 2 or %Kundenart = 3 or %Kundenart= 4) and (isNull(SpPro.cyType2 ) or SpPro.cyType2 = 'NIL');
-
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Geburtstag' as Fehler_SA.Fehler
-    
-resident SpPro where %Kundenart = 1  and (IsNull(SpPro.birthDay) or len(SpPro.birthDay) < 3 or (num(SpPro.birthDay) > num(addyears(date(today()), -15))));
 
 
 
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Familienstand' as Fehler_SA.Fehler
-    
-resident SpPro where %Kundenart = 1 and (isNull(SpPro.familySit) or SpPro.familySit = 'NIL');
-
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    
-    'Hobby' as Fehler_SA.Fehler
-    
-resident SpPro where %Kundenart = 1 and (isNull(SpPro.hobby) or SpPro.hobby = 'NIL') and (isNull(SpPro.hobby2) or SpPro.hobby2 = 'NIL') and (isNull(SpPro.hobby3) or SpPro.hobby3 = 'NIL') and (isNull(SpPro.hobby4) or SpPro.hobby4 = 'NIL');
-
- 
-// Unqualify*; 
-NoConcatenate    
-WMZ_temp:
-Load distinct 
-	%proId_standort
-resident SpPro;
-
-Left join (WMZ_temp)
-Load distinct 
-    %proId_standort,
-    '1' as Flag_WMZ
-Resident SpCurProCar where SpCurProCar.Flag_wmz_vorhanden = 1;
-
-
-
-Concatenate(Fehler_SA)
-Load distinct 
-	%proId_standort,
-    'WMZ' as Fehler_SA.Fehler
-resident WMZ_temp where IsNull(Flag_WMZ);
-
-drop table WMZ_temp;
-
-// Qualify *;
-// Unqualify '%*';
-    
-    
-// Unqualify*; 
 NoConcatenate    
 DSE_temp:
 Load distinct 
@@ -1511,41 +1409,81 @@ Resident SpProDataPrivacy where SpProDataPrivacy.subDep_ContactBySMSPhone = 1;
 
 
 
+Left join (DSE_temp)
+Load distinct 
+	%proId_standort,
+     '1' as Flag_Email_falsch
+resident SpPro where SpPro.Flag_Email_vollständig = 0 and SpPro.Flag_profEMail_vollständig = 0;
+
+Left join (DSE_temp)
+Load distinct 
+	%proId_standort,
+    '1' as Flag_Phone_falsch
+resident SpPro where SpPro.Flag_profPhoneNo_vollständig = 0 and SpPro.Flag_mobPhoneNo_vollständig = 0 and SpPro.Flag_profMobPhoneNo_vollständig = 0;
+
+Left join (DSE_temp)
+Load distinct 
+	%proId_standort,
+    '1' as Flag_Adresse_falsch
+    
+resident SpPro where SpPro.Flag_Adresse_vollständig = 0;
+
+
+//DSE ohne befüllung Kanal
 Concatenate(Fehler_SA)
 Load distinct 
 	%proId_standort,
-    'DSE E-Mail' as Fehler_SA.Fehler
-resident DSE_temp where IsNull(Flag_DSE_EMail);
+    'DSE E-Mail mit Fehler' as Fehler_SA.Problem,
+     2 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+resident DSE_temp where Flag_DSE_EMail = '1' and Flag_Email_falsch = '1';
 
 Concatenate(Fehler_SA)
 Load distinct 
 	%proId_standort,
-    'DSE Post' as Fehler_SA.Fehler
-resident DSE_temp where IsNull(Flag_DSE_Post);
+    'DSE Post mit Fehler' as Fehler_SA.Problem,
+     2 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+resident DSE_temp where Flag_DSE_Post = '1' and Flag_Adresse_falsch = '1';
 
 Concatenate(Fehler_SA)
 Load distinct 
 	%proId_standort,
-    'DSE Telefon' as Fehler_SA.Fehler
-resident DSE_temp where IsNull(Flag_DSE_Tel);
+    'DSE Telefon mit Fehler' as Fehler_SA.Problem,
+     2 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+resident DSE_temp where Flag_DSE_Tel = '1' and Flag_Phone_falsch = '1';
 
 // Qualify *;
 // Unqualify '%*';
 
 drop table DSE_temp;
-    
-    
+
+NoConcatenate    
+DSE_temp_vorlage:
+Load distinct 
+	%proId_standort
+resident SpPro;
+
+Left join (DSE_temp_vorlage)
+Load distinct 
+    %proId_standort,
+    '1' as Flag_vorlage_dse
+Resident SpProDataPrivacy where not isNUll(SpProDataPrivacy.subDep_DateOfDecl);
+
+
 Concatenate(Fehler_SA)
 Load distinct 
 	%proId_standort,
+    'Keine DSE' as Fehler_SA.Problem,
+     2 as Fehler_SA.Stufe,
+     'Unvollst.' as Fehler_SA.Art
+resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
+
+drop table DSE_temp_vorlage;
     
-    'Mehrfachanlage' as Fehler_SA.Fehler
     
-resident SpPro where SpPro.Flag_Kunde_Mehrfach = 1;
-    
-    
-    
-    Qualify *;
+Qualify *;
 Unqualify '%*';
     
     
