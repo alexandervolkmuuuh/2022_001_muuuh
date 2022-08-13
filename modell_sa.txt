@@ -641,7 +641,11 @@ Load
                  Kundenadressdatenflags.Flag_phoneNo_vollständig = 1 
               , 1,0)
 
-as SpPro.Flag_Phone_gesamt_vollständig
+as SpPro.Flag_Phone_gesamt_vollständig,
+Flag_streetNumber_empty,
+Flag_Street_empty,
+Flag_PostCode_empty,
+Flag_City_empty
 resident SpPro_temp;
 
 drop table SpPro_temp;
