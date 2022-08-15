@@ -1327,6 +1327,59 @@ Qualify*;
 Unqualify '%*';
 
 
+/*
+-----------------------------------------------------------------Vollständigkeit_DSE----------------------------------------------
+*/
+
+Unqualify*;
+
+Vollständigkeit_DSE_temp:
+Load distinct 
+	%proId_standort,
+    
+     'Kontakt vollständig' as Ausprägung_Vollständigkeit
+    
+resident SpPro where SpPro.Flag_Kontakt_vollständig = 1;
+
+
+
+Concatenate(Vollständigkeit_DSE_temp)
+Load distinct 
+	%proId_standort,
+    
+   'Postalisch erreichbar' as Ausprägung_Vollständigkeit
+    
+resident SpPro where SpPro.Flag_Adresse_vollständig = 1;
+
+
+Concatenate(Vollständigkeit_DSE_temp)
+Load distinct 
+	%proId_standort,
+    
+    'Email erreichbar' as Ausprägung_Vollständigkeit
+    
+resident SpPro where SpPro.Flag_EMail_gesamt_vollständig = 1;
+
+Concatenate(Vollständigkeit_DSE_temp)
+Load distinct 
+	%proId_standort,
+    
+    'Telefon erreichbar' as Ausprägung_Vollständigkeit
+    
+resident SpPro where (SpPro.Flag_Phone_gesamt_vollständig = 1);
+
+Qualify *;
+Unqualify '%*'; 
+
+NoConcatenate
+Vollständigkeit_DSE:
+Load
+	*
+Resident Vollständigkeit_DSE_temp;
+
+drop table Vollständigkeit_DSE_temp;
+
+
 
 /*
 ------------------------------------------------------------Fehler SA------------------------------------------------------------
