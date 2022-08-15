@@ -1706,6 +1706,9 @@ Store * from AuEmployee into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_S
 Store * from AuSubDep into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_AuSubDep.qvd] (qvd);
 //drop table AuSubDep;
 
+Store * from Vollständigkeit_DSE into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Vollständigkeit_DSE.qvd] (qvd);
+//drop table Vollständigkeit_DSE;
+
 
 
 
