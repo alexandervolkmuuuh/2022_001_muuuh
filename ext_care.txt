@@ -309,7 +309,7 @@ LOAD
 //     BUDCDZ,
     BUTCSV AS Kontakt_Incar_intern,
     BUTDSV AS Kontakt_Incar_extern,
-    BUDDDZ Datum_Letzt_Incar_intern,
+    BUDDDZ AS Datum_Letzt_Incar_intern,
 //     BUTESV,
 //     BUTESV,
     BUDEDZ,
