@@ -3,6 +3,7 @@ Tabellen:
     	tabelle, store_name
         Customer, Customer
         Data Protection, Data_Protection
+	AddressHistory, AddressHistory
 ];
 
 for t=0 to NoOfRows('Tabellen')-1
