@@ -356,8 +356,14 @@ LOAD
 from [lib://$(v_bereich):DataFiles/$(v_start_datei)_Standorte.xlsx]
 (ooxml, embedded labels, table is Tabelle1);
 
-
-
+/*
+-------------------------------------------------------------AddressHistory-----------------------------------------------------
+*/
+AddressHistory:
+Load
+    *
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_03_Nav_AddressHistory.qvd]
+(qvd);
 
 /*
 -------------------------------------------------------------Kal-----------------------------------------------------
@@ -465,3 +471,6 @@ Store * from Standorte into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NA
 
 Store * from Kalender_NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Kalender_NAV.qvd] (qvd);
 //drop table Kalender_NAV;
+
+Store * from AddressHistory into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Nav_AddressHistory.qvd] (qvd);
+//drop table AddressHistoy;
