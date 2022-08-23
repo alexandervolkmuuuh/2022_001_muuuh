@@ -613,4 +613,104 @@ drop Table Customer_tmp;
 
 drop table Customer;
 
+/*
+---------------------------------------------------------------------Address History------------------------------------------------------------------
+*/
 
+Address_temp:
+LOAD
+    "Address No_" &'_'& Standort as %kunde_sa_standort,
+    "Address No_",
+    "Date of Update",
+    "Time of Update",
+    "User ID",
+    Company,
+    Standort,    
+    Name,
+    "Name 2",
+    "Last Name",
+    "First Name",
+    "Search Description",
+    Address,
+    "Address 2",
+    County,
+    "Post Code",
+    City,
+    "Country Code",
+    "Language Code",
+    "Currency Code",
+    "Territory Code",
+    "Phone No_",
+    "Home Phone No_",
+    "Home Mobile Phone No_",
+    "Mobile Phone No_",
+    "Fax No_",
+    "Private Fax No_",
+    "E-Mail",
+    "Home Page",
+    "VAT Registration No_",
+    "Title Code",
+    "Social Security No_",
+    "Job Title",
+    "Date of Birth",
+    "Customer Type",
+    Initials,
+    "Bank Account No_",
+    "Bank Branch No_",
+    "P_O_ Box",
+    "Address Salutation Code",
+    "Letter Salutation Code",
+    VIP,
+    "Data Privacy",
+    Profession,
+    "Marital Status",
+    "No_ of Children",
+    "Annual Mileage",
+    "No_ of Vehicles",
+    "No_ of Employees",
+    "Annual Turnover",
+    "Bulk Customer No_",
+    "Address Source",
+    "Euro from",
+    "Agent Code",
+    "Statistical Region",
+    "Mail Stop",
+    "Customer Contact Program",
+    "Private E-Mail",
+    "Private Home Page",
+    Contact,
+    "Transit No_",
+    "Diskette Clearing",
+    "SWIFT-BIC",
+    "Task Code",
+    "Position Code",
+    "Application Method",
+    "Our Account No_",
+    Priority,
+    "Place of Birth",
+    "Integration of Address No_",
+    "Type",
+    Street,
+    "House No_",
+    "DMS Test Address"
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_03_NAV_AddressHistory.qvd]
+(qvd);
+
+
+
+AddressHistory:
+Load
+    %kunde_sa_standort ,
+    FirstSortedValue(distinct "User ID","Date of Update") as First_UserID,
+    FirstSortedValue(distinct "User ID",-"Date of Update") as Last_UserID,
+    FirstSortedValue(distinct "Date of Update","Date of Update") as First_Date,
+    FirstSortedValue(distinct "Date of Update",-"Date of Update") as Last_Date
+   
+resident Address_temp group by %kunde_sa_standort;
+
+
+
+STORE AddressHistory into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_03_Nav_AddressHistory.qvd]
+(qvd);
+drop table Address_temp;
+drop table AddressHistory;
