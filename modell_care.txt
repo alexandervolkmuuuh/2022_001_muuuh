@@ -308,6 +308,62 @@ LOAD
 FROM [lib://$(vConnectionName):DataFiles/$(v_start_datei)_01_Ext_04_CARE_Kundengruppe.qvd]
 (qvd);
 
+/*
+--------------------------------------------------Vollständigkeit DSE----------------------------------------------
+*/
+
+Unqualify *;
+
+Vollständigkeit_DSE_temp:
+Load distinct 
+	%Kundennummer_Standort,
+    
+     'Kontakt vollständig' as Ausprägung_Vollständigkeit
+    
+resident Customer where Customer.Flag_Kontakt_vollständig = 1;
+
+
+
+Concatenate(Vollständigkeit_DSE_temp)
+Load distinct 
+	%Kundennummer_Standort,
+    
+   'Postalisch erreichbar' as Ausprägung_Vollständigkeit
+    
+resident Customer where Customer.Flag_Adresse_vollständig = 1;
+
+
+Concatenate(Vollständigkeit_DSE_temp)
+Load distinct 
+	%Kundennummer_Standort,
+    
+    'Email erreichbar' as Ausprägung_Vollständigkeit
+    
+resident Customer where [Customer.Flag_Email_vollständig] = 1 ;
+
+Concatenate(Vollständigkeit_DSE_temp)
+Load distinct 
+	%Kundennummer_Standort,
+    
+    'Telefon erreichbar' as Ausprägung_Vollständigkeit
+    
+resident Customer where (Customer.Flag_Phone_vollständig = 1) or Customer.Flag_HomePhone_vollständig = 1 or Customer.Flag_MobilePhone_vollständig = 1  ;
+
+
+ 
+ Qualify*;
+Unqualify '%*';
+
+
+NoConcatenate
+Vollständigkeit_DSE:
+Load
+*
+resident Vollständigkeit_DSE_temp;
+
+drop table Vollständigkeit_DSE_temp;
+
+
 
 /*
 ----------------------------------------------------Fehler Care----------------------------------------------------
@@ -592,4 +648,6 @@ Store * from Mail_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_
 Store * from Telefon_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Telefon_Fehler.qvd] (qvd);
 // drop table Telefon_Fehler;
 
+Store * from Vollständigkeit_DSE into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Vollständigkeit_DSE.qvd] (qvd);
+// drop table Vollständigkeit_DSE;
 
