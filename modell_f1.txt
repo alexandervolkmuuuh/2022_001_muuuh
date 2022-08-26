@@ -425,4 +425,4 @@ Store * from Kalender_NAV into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03
 //drop table Kalender_NAV;
 
 Store * from Vollständigkeit_DSE into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_F1_Vollständigkeit_DSE.qvd] (qvd);
-// drop table Vollständigkeit_DSE;
+drop table Vollständigkeit_DSE;
