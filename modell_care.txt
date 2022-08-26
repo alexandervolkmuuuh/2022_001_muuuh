@@ -649,5 +649,5 @@ Store * from Telefon_Fehler into [lib://$(v_bereich):DataFiles/$(v_start_datei)_
 // drop table Telefon_Fehler;
 
 Store * from Vollständigkeit_DSE into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Vollständigkeit_DSE.qvd] (qvd);
-// drop table Vollständigkeit_DSE;
+drop table Vollständigkeit_DSE;
 
