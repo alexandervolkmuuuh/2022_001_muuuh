@@ -59,8 +59,22 @@ LOAD
     if(IsNull(Address) or len(Address) = 0,1,0) as Flag_Address_empty,
     
     //Addresse muss mindestens zwei Buchstaben enthalten
-    if(len(KeepChar(lower(Address), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Address) and len(Address) > 0, 1,0) as Flag_Address_valid,
-
+    if([Country Code] = 'D',
+    	if(not isNull(Address) and len(Address) > 0,
+                if(lower(left(Address, 1)) >= 'a' and lower(left(Address, 1)) <= 'z' and 
+                    len(PurgeChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) = 0 and
+                    len(KeepChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 4, 
+                1, 0),
+            0) ,
+                
+            if(not isNull(Address) and len(Address) > 0,
+                if( len(PurgeChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) = 0 and
+                	len(KeepChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 4, 
+                1, 0), 
+           	0)
+        ) as Flag_Address_valid,
+        
+        
 	//Enthält einer der letzten beiden Teile der Adresse eine Zahl? (Nur für deutsche Adressen geeignet)
 	if(
         len(KeepChar(Lower(SubField(Address, ' ',-1)), '0123456789')) > 0 and not IsNull(SubField(Address, ' ',-1)) and len(SubField(Address, ' ',-1)) > 0 or
@@ -75,8 +89,12 @@ LOAD
     
     //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
    	if(len(City)> 2 and not IsNull(City) and len(City) > 0,1,0) as City_Länge,
-    if(len(KeepChar(lower(City), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(City) and len(City) > 0, 1,0) as Flag_City_valid,
- 
+    
+    if([Country Code] = 'D',
+    	if(len(KeepChar(lower(City), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(City) and len(City) > 0, 1,0),
+
+		if(len(KeepChar(lower(City), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(City) and len(City) > 0, 1,0)
+     )as Flag_City_valid,
     Contact,
     
     if(IsNull(Contact) or len(Contact) = 0,1,0) as Flag_Contact_empty,
@@ -194,11 +212,26 @@ LOAD
     
     if(IsNull("Post Code") or len("Post Code") = 0,1,0) as Flag_PostCode_empty,
     
-    //Muss min. 3 und max. 7 Zahlen enthalten
-    if(len(KeepChar("Post Code", '0123456789')) > 2 and len(KeepChar("Post Code", '0123456789')) < 8 and not IsNull("Post Code") and len("Post Code") > 0, 1, 0) as Flag_PostCode_Länge,
-    //Darf nicht nur aus Nullen bestehen
-    if(len(PurgeChar("Post Code", '0')) = 0 and len(KeepChar("Post Code", '0')) > 0 or IsNull("Post Code") or len("Post Code") = 0, 0,1) as Flag_PostCode_valideZahlen,
+//     //Muss min. 3 und max. 7 Zahlen enthalten
+//     if(len(KeepChar("Post Code", '0123456789')) > 2 and len(KeepChar("Post Code", '0123456789')) < 8 and not IsNull("Post Code") and len("Post Code") > 0, 1, 0) as Flag_PostCode_Länge,
+//     //Darf nicht nur aus Nullen bestehen
+//     if(len(PurgeChar("Post Code", '0')) = 0 and len(KeepChar("Post Code", '0')) > 0 or IsNull("Post Code") or len("Post Code") = 0, 0,1) as Flag_PostCode_valideZahlen,
     
+    
+    if([Country Code] = 'D',
+         	if(len(KeepChar("Post Code", '0123456789')) = 5 and not IsNull("Post Code") and len("Post Code") > 0, 1, 0),
+            
+            if(len(KeepChar(lower("Post Code"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) >= 3 and len(KeepChar(lower("Post Code"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) <= 10 and not IsNull("Post Code") and len("Post Code") > 0, 1, 0)
+      	)as Flag_PostCode_Länge,
+         
+        
+		//Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+       	if([Country Code] = 'D',
+            if(len(PurgeChar("Post Code", '0')) = 0 or len(PurgeChar("Post Code", '0123456789')) > 0 or IsNull("Post Code") or len("Post Code") = 0, 0,1),
+
+            if(len(PurgeChar("Post Code", '0')) = 0 or len(PurgeChar(lower("Post Code"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) > 0 or IsNull("Post Code") or len("Post Code") = 0, 0,1)
+       	)as Flag_PostCode_valideZahlen,
+	
     //County,
     "E-Mail",
     
