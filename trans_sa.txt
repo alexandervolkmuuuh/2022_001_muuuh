@@ -249,28 +249,121 @@ Load
 	   %proId_standort,
        [%proAddressId_standort],
        %streetId,
-//     Streetname,
-          if(IsNull(Streetname) or len(Streetname) = 0,1,0) as Flag_Street_empty,
-
-          //Darf nur Buchstaben und bestimmte Sonderzeichen enthalten
-          if(len(PurgeChar(lower(Streetname), 'abcdefghijklmnopqrstuvwxyzüäöß.,()-/"`´ ')) = 0 and not IsNull(Streetname) and len(Streetname) > 0, 1,0) as Flag_Street_valid,
-          if(len(KeepChar(lower(Streetname), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Streetname) and len(Streetname) > 0, 1,0) as Flag_Street_länge,
+       
+       //     Streetname,
+     	if(countryId = 'DE',
+       		if(IsNull(Streetname) or len(Streetname) = 0,1,0),
+            
+            if(IsNull(Streetname) or len(Streetname) = 0,1,0)
+       	)as Flag_Street_empty,
+        
+        
+        
+        if(countryId = 'DE',
+            if(not isNull(Streetname) and len(Streetname) > 0,
+                if(lower(left(Streetname, 1)) >= 'a' and lower(left(Streetname, 1)) <= 'z' and 
+                    len(PurgeChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                    len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 4, 
+                1, 0),
+            0) ,
+                
+            if(not isNull(Streetname) and len(Streetname) > 0,
+                if( len(PurgeChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                	len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´` ' & chr(39))) >= 4, 
+                1, 0), 
+           	0)
+        ) as Flag_Street_valid,
+        
+        
+        if(countryId = 'DE',    
+        	if(len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 4 and not IsNull(Streetname) and len(Streetname) > 0, 1,0), 
+            
+            if(len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 4 and not IsNull(Streetname) and len(Streetname) > 0, 1,0) 
+        )as Flag_Street_länge,
+        
+        
+   
+   
    
 //     Street_postCode,
-          if(IsNull("Street_postCode") or len("Street_postCode") = 0,1,0) as Flag_PostCode_empty,
+		if(countryId = 'DE',
+        	if(IsNull("Street_postCode") or len("Street_postCode") = 0,1,0),
+            
+            if(IsNull("Street_postCode") or len("Street_postCode") = 0,1,0)
+       	)as Flag_PostCode_empty,
 
           //Muss min. 3 und max. 7 Zahlen enthalten
-          if(len(KeepChar("Street_postCode", '0123456789')) > 2 and len(KeepChar("Street_postCode", '0123456789')) < 8 and not IsNull("Street_postCode") and len("Street_postCode") > 0, 1, 0) as Flag_PostCode_Länge,
-          //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
-          if(len(PurgeChar("Street_postCode", '0')) = 0 and len(KeepChar("Street_postCode", '0')) > 0 or len(PurgeChar("Street_postCode", '0123456789')) > 0 or IsNull("Street_postCode") or len("Street_postCode") = 0, 0,1) as Flag_PostCode_valideZahlen,
+          
+      	if(countryId = 'DE',
+         	if(len(KeepChar("Street_postCode", '0123456789')) = 5 and not IsNull("Street_postCode") and len("Street_postCode") > 0, 1, 0),
+            
+            if(len(KeepChar(lower("Street_postCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) >= 3 and len(KeepChar(lower("Street_postCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) <= 10 and not IsNull("Street_postCode") and len("Street_postCode") > 0, 1, 0)
+      	)as Flag_PostCode_Länge,
+         
+        
+		//Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+       	if(countryId = 'DE',
+            if(len(PurgeChar("Street_postCode", '0')) = 0 or len(PurgeChar("Street_postCode", '0123456789')) > 0 or IsNull("Street_postCode") or len("Street_postCode") = 0, 0,1),
+
+            if(len(PurgeChar("Street_postCode", '0')) = 0 or len(PurgeChar(lower("Street_postCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) > 0 or IsNull("Street_postCode") or len("Street_postCode") = 0, 0,1)
+       	)as Flag_PostCode_valideZahlen,
+        
+        
 
         
 //     Cityname,
-          if(IsNull(Cityname) or len(Cityname) = 0,1,0) as Flag_City_empty,
+		if(countryId = 'DE',
+        	if(IsNull(Cityname) or len(Cityname) = 0,1,0),
+            
+            if(IsNull(Cityname) or len(Cityname) = 0,1,0)
+        )as Flag_City_empty,
+        
 
           //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
-          if(len(Cityname)> 2 and not IsNull(Cityname) and len(Cityname) > 0,1,0) as City_Länge,
-          if(len(KeepChar(lower(Cityname), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0) as Flag_City_valid,
+        if(countryId = 'DE',
+        	if(len(Cityname)> 2 and not IsNull(Cityname),1,0),
+          
+          	if(len(Cityname)> 2 and not IsNull(Cityname),1,0)
+        )as City_Länge,
+          
+          
+        if(countryId = 'DE',
+        	if(len(KeepChar(lower(Cityname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0),
+            
+            if(len(KeepChar(lower(Cityname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0)
+        )as Flag_City_valid,
+          
+          
+          
+          
+//    streetNumber,
+		if(countryId = 'DE',
+        	if(IsNull(streetNumber) or len(streetNumber) = 0,1,0),
+            
+            if(IsNull(streetNumber) or len(streetNumber) = 0,1,0)
+        )as Flag_streetNumber_empty,
+        
+		
+          //Address No_ darf nur Zahlen enthalten
+       	if(countryId = 'DE',
+        	if(len(PurgeChar(lower(streetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0),
+            
+            if(len(PurgeChar(lower(streetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0)
+        )as Flag_streetNumber_nur_Zahlen,
+          
+          
+          
+          
+        if(countryId = 'DE',
+        	if(len(PurgeChar(lower(streetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0),
+            
+            if(len(PurgeChar(lower(streetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0)
+        )as Flag_streetNumber_valid,
+          
+          
+          
+        
+          
  
 //     City_postCode,
 //           if(IsNull("City_postCode") or len("City_postCode") = 0,1,0) as Flag_PostCode_empty,
@@ -292,13 +385,6 @@ Load
           //Darf nicht nur aus Nullen bestehen
           if(len(PurgeChar(phoneNo, '0')) = 0 and len(KeepChar(phoneNo, '0')) > 0 or IsNull(phoneNo) or len(phoneNo) = 0, 0,1) as Flag_PhoneNo_valideZahlen,
    
-//    streetNumber,
-          if(IsNull(streetNumber) or len(streetNumber) = 0,1,0) as Flag_streetNumber_empty,
-
-          //Address No_ darf nur Zahlen enthalten
-          if(len(PurgeChar(lower(streetNumber), '0123456789 ')) = 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0) as Flag_streetNumber_nur_Zahlen,
-          //Address No_ Zahl zwischen 0 und 999.999
-          if(streetNumber < 1000000 and streetNumber >= 0 and not IsNull(streetNumber) and len(streetNumber) > 0, 1,0) as Flag_streetNumber_valid,
    
 //    poBoxPostCode,
     
@@ -316,7 +402,7 @@ Load
           //Darf nicht nur aus Nullen bestehen
           if(len(PurgeChar(faxNo, '0')) = 0 and len(KeepChar(faxNo, '0')) > 0 or IsNull(faxNo) or len(faxNo) = 0, 0,1) as Flag_faxNo_valideZahlen
 
-Resident Kundenadressdaten where countryId = 'DE';
+Resident Kundenadressdaten;
 
 Store * from Kundenadressdaten into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_01_SA_Kundenadressdaten.qvd];
 Drop table Kundenadressdaten;
