@@ -38,7 +38,7 @@ Load Distinct
     if(Customer.Flag_HomePhone_vollständig = 1 or Customer.Flag_MobilePhone_vollständig = 1 or Customer.Flag_Phone_vollständig =1 or Customer.Flag_HomeMobilePhone_vollständig = 1, 1,0) as Telefon,
     if(Customer.Flag_Adresse_vollständig = 1 , 1,0) as Post
     
-FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Nav_Customer.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Customer.qvd]
 (qvd);
 
 Left Join(NAV_temp)
@@ -61,7 +61,7 @@ load distinct
     
 
 
-FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Nav_Data_Protection.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Data_Protection.qvd]
 (qvd);
 
 
@@ -126,7 +126,7 @@ LOAD distinct
     	%Standort,
     
     	'$(v_today)' as %Datum    
-FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Nav_Customer.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Customer.qvd]
 (qvd);
 
 
