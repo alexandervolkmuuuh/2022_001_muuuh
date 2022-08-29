@@ -115,8 +115,8 @@ drop table Care;
 Care_Standort:
 
 LOAD distinct
-	No_ &'_'& Firma as %Kunden_Nr_Firma,
-    Filiale as %Standort,
+	%Kunden_Nr_Firma,
+    %Standort,
     
     '$(v_today)' as %Datum    
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_Care_Customer.qvd]
