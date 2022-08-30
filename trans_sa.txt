@@ -263,22 +263,22 @@ Load
             if(not isNull(Streetname) and len(Streetname) > 0,
                 if(lower(left(Streetname, 1)) >= 'a' and lower(left(Streetname, 1)) <= 'z' and 
                     len(PurgeChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
-                    len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 4, 
+                    len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3, 
                 1, 0),
             0) ,
                 
             if(not isNull(Streetname) and len(Streetname) > 0,
                 if( len(PurgeChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
-                	len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´` ' & chr(39))) >= 4, 
+                	len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´` ' & chr(39))) >= 3, 
                 1, 0), 
            	0)
         ) as Flag_Street_valid,
         
         
         if(countryId = 'DE',    
-        	if(len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 4 and not IsNull(Streetname) and len(Streetname) > 0, 1,0), 
+        	if(len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(Streetname) and len(Streetname) > 0, 1,0), 
             
-            if(len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 4 and not IsNull(Streetname) and len(Streetname) > 0, 1,0) 
+            if(len(KeepChar(lower(Streetname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(Streetname) and len(Streetname) > 0, 1,0) 
         )as Flag_Street_länge,
         
         
@@ -328,9 +328,9 @@ Load
           
           
         if(countryId = 'DE',
-        	if(len(KeepChar(lower(Cityname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0),
+        	if(len(KeepChar(lower(Cityname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0),
             
-            if(len(KeepChar(lower(Cityname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0)
+            if(len(KeepChar(lower(Cityname), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(Cityname) and len(Cityname) > 0, 1,0)
         )as Flag_City_valid,
           
           
