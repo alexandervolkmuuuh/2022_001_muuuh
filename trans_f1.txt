@@ -75,11 +75,11 @@ LOAD
         ) as Flag_Address_valid,
         
         
-	//Enthält einer der letzten beiden Teile der Adresse eine Zahl? (Nur für deutsche Adressen geeignet)
-	if(
-        len(KeepChar(Lower(SubField(Address, ' ',-1)), '0123456789')) > 0 and not IsNull(SubField(Address, ' ',-1)) and len(SubField(Address, ' ',-1)) > 0 or
-        len(KeepChar(Lower(SubField(Address, ' ',-2)), '0123456789')) > 0 and not IsNull(SubField(Address, ' ',-1)) and len(SubField(Address, ' ',-1)) > 0, 
-     1,0) as Flag_Address_Zahl_enthalten,
+	//Enthält einer der letzten vier Zeichen der Adresse eine Zahl
+	if([Country Code] = 'D',
+          if(len(KeepChar(right(Address, 4), '0123456789')) > 0 and not IsNull(Address) > 0,1,0),
+          if(len(KeepChar(Address, '0123456789')) > 0 and not IsNull(Address) > 0,1,0)
+    )as Flag_Address_Zahl_enthalten,
 
 
     //"Address 2",
