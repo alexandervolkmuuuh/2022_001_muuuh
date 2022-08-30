@@ -63,13 +63,13 @@ LOAD
     	if(not isNull(Address) and len(Address) > 0,
                 if(lower(left(Address, 1)) >= 'a' and lower(left(Address, 1)) <= 'z' and 
                     len(PurgeChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) = 0 and
-                    len(KeepChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 4, 
+                    len(KeepChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 3, 
                 1, 0),
             0) ,
                 
             if(not isNull(Address) and len(Address) > 0,
                 if( len(PurgeChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) = 0 and
-                	len(KeepChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 4, 
+                	len(KeepChar(lower(Address), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 3, 
                 1, 0), 
            	0)
         ) as Flag_Address_valid,
@@ -91,9 +91,9 @@ LOAD
    	if(len(City)> 2 and not IsNull(City) and len(City) > 0,1,0) as City_Länge,
     
     if([Country Code] = 'D',
-    	if(len(KeepChar(lower(City), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(City) and len(City) > 0, 1,0),
+    	if(len(KeepChar(lower(City), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(City) and len(City) > 0, 1,0),
 
-		if(len(KeepChar(lower(City), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) > 2 and not IsNull(City) and len(City) > 0, 1,0)
+		if(len(KeepChar(lower(City), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(City) and len(City) > 0, 1,0)
      )as Flag_City_valid,
     Contact,
     
