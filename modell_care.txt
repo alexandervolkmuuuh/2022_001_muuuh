@@ -619,6 +619,15 @@ Resident Kalender_CARE_temp;
 
 drop table Kalender_CARE_temp;
 
+/*
+-------------------------------------- Datenscutz Nummer an Customer Joinen--------------------------
+*/
+
+ Left Join (Customer)
+ Load 
+ %Kunden_Nr_Firma,
+Kunden_Datenschutz.Kunden_Nr
+ Resident Kunden_Datenschutz;
 
 /*
 ---------------------------------------- Store QVD ----------------------------------------------------
