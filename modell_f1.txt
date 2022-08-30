@@ -393,6 +393,15 @@ Resident Kalender_NAV_temp;
 
 drop table Kalender_NAV_temp;
 
+/*
+-----------------------------Data Protection an Customer Joinen---------------------------
+*/
+Left Join (Customer)
+ Load 
+ [%Kundennummer],
+Data_Protection.No_
+ Resident Data_Protection;
+ 
 
 /*
 ------------------------------- Store QVD -----------------------------------------
