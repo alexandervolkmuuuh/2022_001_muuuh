@@ -216,87 +216,84 @@ Load * inline [
 */
 Unqualify*;
 
+Unqualify*;
+
 Fehler_NAV:
 Load distinct 
 	%Kundennummer_Standort,
     
-     'E-Mail' as Fehler_NAV.Fehler
+     'E-Mail falsch' as Fehler_NAV.Fehler,
+     1 as Fehler_NAV.Stufe,
+     'Fehler' as Fehler_NAV.Art
     
-resident Customer where Customer.Flag_Email_vollständig = 0 and Customer.Flag_HomeEmail_vollständig = 0;
+resident Customer where (Customer.Flag_Email_vollständig = 0  and  Customer.Flag_EMail_empty = 0) or  (Customer.Flag_HomeEmail_vollständig = 0 and Customer.Flag_HomeEMail_empty =0);
 
 
 Concatenate(Fehler_NAV)
 Load distinct 
 	%Kundennummer_Standort,
     
-     'Telefon' as Fehler_NAV.Fehler
+     'Telefon falsch' as Fehler_NAV.Fehler,
+     1 as Fehler_NAV.Stufe,
+     'Fehler' as Fehler_NAV.Art
     
-resident Customer where [Customer.Flag_HomeMobilePhone_vollständig] = 0 and [Customer.Flag_HomePhone_vollständig] = 0 and [Customer.Flag_MobilePhone_vollständig] = 0 and [Customer.Flag_Phone_vollständig] =0;
+resident Customer where ([Customer.Flag_HomeMobilePhone_vollständig] = 0 and Customer.Flag_HomeMobilePhoneNo_empty  = 0) or  
+([Customer.Flag_HomePhone_vollständig] = 0 and Customer.Flag_HomePhoneNo_empty  = 0) or  
+([Customer.Flag_MobilePhone_vollständig] = 0 and Customer.Flag_MobilePhoneNo_empty  = 0) or 
+([Customer.Flag_Phone_vollständig] =0 and Customer.Flag_PhoneNo_empty = 0);
 
 
 Concatenate(Fehler_NAV)
 Load distinct 
 	%Kundennummer_Standort,
     
-     'Anschrift' as Fehler_NAV.Fehler
+     'Adresse falsch' as Fehler_NAV.Fehler,
+     1 as Fehler_NAV.Stufe,
+     'Fehler' as Fehler_NAV.Art
     
 resident Customer where [Customer.Flag_Adresse_vollständig] = 0;
 
-
 Concatenate(Fehler_NAV)
 Load distinct 
 	%Kundennummer_Standort,
-    
-     'Kundenart' as Fehler_NAV.Fehler
-    
-resident Customer where isNull(%Kundenart_NAV);
+    'Keine Kontaktdaten' as Fehler_NAV.Fehler,
+     1 as Fehler_NAV.Stufe,
+     'Fehler' as Fehler_NAV.Art
+resident Customer where 
+
+Customer.Flag_EMail_empty = 1 and
+Customer.Flag_HomeEMail_empty= 1 and
+Customer.Flag_HomeMobilePhoneNo_empty= 1 and
+Customer.Flag_HomePhoneNo_empty= 1 and
+Customer.Flag_MobilePhoneNo_empty= 1 and
+Customer.Flag_PhoneNo_empty= 1 and
+
+(
+Customer.Flag_HouseNo_empty = 1 or 
+Customer.Flag_Street_empty = 1 or
+Customer.Flag_PostCode_empty  = 1 or
+Customer.Flag_City_empty  = 1
+)
+;
 
 
-Concatenate(Fehler_NAV)
-Load distinct 
-	%Kundennummer_Standort,
-    
-     'Kundengruppe' as Fehler_NAV.Fehler
-    
-resident Customer where isNull(%Kundengruppe_NAV);
-
-
-Concatenate(Fehler_NAV)
-Load distinct 
-	%Kundennummer_Standort,
-    
-     'Name' as Fehler_NAV.Fehler
-    
-resident Customer where [Customer.Flag_Name_empty] = 1 or [Customer.Flag_Name_valid] = 0;
-
-
-Concatenate(Fehler_NAV)
-Load distinct 
-	%Kundennummer_Standort,
-    
-    'Mehrfachanlage' as Fehler_NAV.Fehler
-    
-resident Customer where Customer.Flag_Kunde_Mehrfach = 1;
-
-
-//DSE Fehler
 
 NoConcatenate    
 DSE_temp:
 Load distinct 
-		%Kundennummer_Standort,
-        %kunde_sa_standort
+	%Kundennummer_Standort,
+    %kunde_sa_standort
 resident Customer;
 
 Left join (DSE_temp)
 Load distinct 
-  	 %kunde_sa_standort,
+    %kunde_sa_standort,
     '1' as Flag_DSE_EMail
 Resident Data_Protection where [Data_Protection.Contact Email Dealership] = 1;
 
 Left join (DSE_temp)
 Load distinct 
-   %kunde_sa_standort,
+    %kunde_sa_standort,
     '1' as Flag_DSE_Post
 Resident Data_Protection where [Data_Protection.Contact written Dealership] = 1;
 
@@ -306,39 +303,79 @@ Load distinct
     '1' as Flag_DSE_Tel
 Resident Data_Protection where [Data_Protection.Contact phone Dealership] = 1;
 
-NoConcatenate
-Temp_b:
-Load Distinct
-	[%Kundennummer_Standort],
-    max(num(Flag_DSE_Tel)) as Flag_DSE_Tel,
-    max(num(Flag_DSE_EMail)) as Flag_DSE_EMail,
-    max(num(Flag_DSE_Post)) as Flag_DSE_Post
-    resident DSE_temp group by [%Kundennummer_Standort];
+
+Left join (DSE_temp)
+Load distinct 
+	%Kundennummer_Standort,
+     '1' as Flag_Email_falsch
+resident Customer where Customer.Flag_Email_vollständig = 0  and  Customer.Flag_HomeEmail_vollständig = 0;
+
+Left join (DSE_temp)
+Load distinct 
+	%Kundennummer_Standort,
+    '1' as Flag_Phone_falsch
+resident Customer where [Customer.Flag_HomeMobilePhone_vollständig] = 0 and [Customer.Flag_HomePhone_vollständig] = 0 and  [Customer.Flag_MobilePhone_vollständig] = 0 and [Customer.Flag_Phone_vollständig] =0;
+
+Left join (DSE_temp)
+Load distinct 
+	%Kundennummer_Standort,
+    '1' as Flag_Adresse_falsch
+    
+resident Customer where Customer.Flag_Adresse_vollständig = 0;
+
+
+//DSE ohne befüllung Kanal
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    'DSE E-Mail mit Fehler' as Fehler_NAV.Fehler,
+     2 as Fehler_NAV.Stufe,
+     'Fehler' as Fehler_NAV.Art
+resident DSE_temp where Flag_DSE_EMail = '1' and Flag_Email_falsch = '1';
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    'DSE Post mit Fehler' as Fehler_NAV.Fehler,
+     2 as Fehler_NAV.Stufe,
+     'Fehler' as Fehler_NAV.Art
+resident DSE_temp where Flag_DSE_Post = '1' and Flag_Adresse_falsch = '1';
+
+Concatenate(Fehler_NAV)
+Load distinct 
+	%Kundennummer_Standort,
+    'DSE Telefon mit Fehler' as Fehler_NAV.Fehler,
+     2 as Fehler_NAV.Stufe,
+     'Fehler' as Fehler_NAV.Art
+resident DSE_temp where Flag_DSE_Tel = '1' and Flag_Phone_falsch = '1';
 
 drop table DSE_temp;
 
+
+NoConcatenate    
+DSE_temp_vorlage:
+Load distinct 
+	%Kundennummer_Standort,
+    %kunde_sa_standort
+resident Customer;
+
+
+Left join (DSE_temp_vorlage)
+Load distinct 
+    %kunde_sa_standort,
+    '1' as Flag_vorlage_dse
+Resident Data_Protection where date([Data_Protection.Policy Date Dealership]) > date('01.01.1953');
+
+
 Concatenate(Fehler_NAV)
 Load distinct 
-		%Kundennummer_Standort,
-    'DSE E-Mail' as Fehler_NAV.Fehler
-resident Temp_b where IsNull(Flag_DSE_EMail);
+	%Kundennummer_Standort,
+    'Keine DSE' as Fehler_NAV.Fehler,
+     2 as Fehler_NAV.Stufe,
+     'Unvollst.' as Fehler_NAV.Art
+resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
 
-Concatenate(Fehler_NAV)
-Load distinct 
-	[%Kundennummer_Standort],
-    'DSE Post' as Fehler_NAV.Fehler
-resident Temp_b where IsNull(Flag_DSE_Post);
-
-Concatenate(Fehler_NAV)
-Load distinct 
-	[%Kundennummer_Standort],
-    'DSE Telefon' as Fehler_NAV.Fehler
-resident Temp_b where IsNull(Flag_DSE_Tel);
-
-// Qualify *;
-// Unqualify '%*';
-
-drop table Temp_b;
+drop table DSE_temp_vorlage;
 
 
    Qualify *;
