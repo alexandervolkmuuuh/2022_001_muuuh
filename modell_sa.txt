@@ -1538,6 +1538,30 @@ Load distinct
 resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
 
 drop table DSE_temp_vorlage;
+
+
+Concatenate(Fehler_SA)
+Load
+	%proId_standort,
+    'Geburtsdatum' as Fehler_SA.Problem,
+     3 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+     
+Resident SpPro where [%Kundenart]='1' and 
+    	not isNull([SpPro.birthDay_org]) and  
+        len([SpPro.birthDay_org]) > 0 and 
+        num(date(SpPro.birthDay)) > num(addyears(date(today()), -15));
+        
+
+Concatenate(Fehler_SA)
+Load
+	%proId_standort,
+    'Anrede' as Fehler_SA.Problem,
+     3 as Fehler_SA.Stufe,
+     'Fehler' as Fehler_SA.Art
+     
+Resident SpPro where ([%Kundenart]='3' or [%Kundenart]='4') and 
+    	(SpPro.title = 'ANHER' or SpPro.title = 'ANFRA');
     
     
 Qualify *;
