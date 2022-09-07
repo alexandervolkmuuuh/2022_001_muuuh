@@ -1,0 +1,9 @@
+Customer:
+LOAD Distinct
+ Customer.No_,
+    Customer.Name &' '& "Customer.Name 2" as CustomerName,
+    Customer.Address,
+    "Customer.Post Code",
+     Customer.City     
+
+From [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Customer.qvd] (qvd);
