@@ -1,0 +1,32 @@
+Customer_temp:
+Load distinct
+%proId_standort,
+    SpPro.proId,
+    SpPro.firstName &' '& SpPro.name1 &' '& SpPro.name2 as Name
+
+From [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_SpPro.qvd] (qvd);
+
+left join(Customer_temp)
+Adressdaten:
+Load 
+%proId_standort,
+Kundenadressdaten.Streetname as Streetname,
+Kundenadressdaten.streetNumber & ' '& Kundenadressdaten.streetNumber2 as Streetnumber,
+Kundenadressdaten.Street_postCode as Streetpostcode,
+[Kundenadressdaten.Cityname] as Cityname
+
+from [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_SA_Kundenadressdaten.qvd] (qvd);
+
+Customer:
+Load 
+	SpPro.proId,
+    Name,
+    Streetname,
+    Streetnumber,
+    Streetpostcode,
+    Cityname
+    
+resident Customer_temp;   
+drop table Customer_temp;
+    
+STORE * from Customer INTO [lib://DataHub-Sharepoint/Downloads/OwnerDataHub/Duplikate/$(v_bereich)_data_duplicates_$(v_start_datei).csv] (txt); 
