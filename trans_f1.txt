@@ -459,7 +459,15 @@ LOAD
     If(Werbungssperrcode = 0, 0, 1) as Flag_Werbung_Blocked,
     Blocked,
     "DS Einwilligung",
-    "Angelegt von"
+    "Angelegt von",
+    "Adr. Anredekz.",
+Adreßanrede,
+Anrede,
+Briefanrede,
+Titelcode,
+"Titel-Langbez.",
+"Firma/Privat Kennz.",
+Adresscode
     //DS_erfasst
     
     
