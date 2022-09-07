@@ -7,3 +7,5 @@ LOAD Distinct
      Customer.City     
 
 From [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_NAV_Customer.qvd] (qvd);
+
+STORE * from Customer INTO [lib://DataHub-Sharepoint/Downloads/OwnerDataHub/Duplikate/$(v_bereich)_data_duplicates_$(v_start_datei).csv] (txt);
