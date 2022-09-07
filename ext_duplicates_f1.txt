@@ -1,0 +1,12 @@
+Customer:
+LOAD
+	No_,
+    Name,
+    Address,
+	"Post Code",
+    City
+
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_04_F1_Customer.qvd]
+(qvd);
+
+STORE * from Customer INTO [lib://DataHub-Sharepoint/Downloads/OwnerDataHub/Duplikate/$(v_bereich)_data_duplicates_$(v_start_datei).csv] (txt);
