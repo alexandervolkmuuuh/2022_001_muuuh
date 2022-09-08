@@ -307,7 +307,7 @@ Resident Data_Protection where not isNUll("Data_Protection.Datum Erkl.Händler")
 Concatenate(Fehler_F1)
 Load distinct 
 	%Kundennummer_Standort,
-    'Keine DSE' as Fehler_F1.Fehler,
+    'Keine DSE vorgelegt' as Fehler_F1.Fehler,
      2 as Fehler_F1.Stufe,
      'Unvollst.' as Fehler_F1.Art
 resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
