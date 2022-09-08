@@ -370,7 +370,7 @@ Resident Data_Protection where date([Data_Protection.Policy Date Dealership]) > 
 Concatenate(Fehler_NAV)
 Load distinct 
 	%Kundennummer_Standort,
-    'Keine DSE' as Fehler_NAV.Fehler,
+    'Keine DSE vorgelegt' as Fehler_NAV.Fehler,
      2 as Fehler_NAV.Stufe,
      'Unvollst.' as Fehler_NAV.Art
 resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
