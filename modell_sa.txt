@@ -1532,7 +1532,7 @@ Resident SpProDataPrivacy where not isNUll(SpProDataPrivacy.subDep_DateOfDecl);
 Concatenate(Fehler_SA)
 Load distinct 
 	%proId_standort,
-    'Keine DSE' as Fehler_SA.Problem,
+    'Keine DSE vorgelegt' as Fehler_SA.Problem,
      2 as Fehler_SA.Stufe,
      'Unvollst.' as Fehler_SA.Art
 resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
