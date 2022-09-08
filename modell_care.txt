@@ -524,7 +524,7 @@ Resident Kunden_Datenschutz where not isNUll("Kunden_Datenschutz.Datum_DS_Erklä
 Concatenate(Fehler_Care)
 Load distinct 
 	%Kunden_Nr_Firma,
-    'Keine DSE' as Fehler_Care.Fehler,
+    'Keine DSE vorgelegt' as Fehler_Care.Fehler,
      2 as Fehler_Care.Stufe,
      'Unvollst.' as Fehler_Care.Art
 resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
