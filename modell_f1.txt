@@ -315,6 +315,16 @@ resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
 drop table DSE_temp_vorlage;
 
 
+Concatenate(Fehler_F1)
+Load distinct 
+	%Kundennummer_Standort,
+    'Anrede' as Fehler_F1.Fehler,
+     3 as Fehler_F1.Stufe,
+     'Fehler' as Fehler_F1.Art
+resident Customer where Customer.Kundenart = 'F' and (Customer.Anrede like 'Frau*' or Customer.Anrede like 'Herr*');
+
+
+
    Qualify *;
 Unqualify '%*';
 
