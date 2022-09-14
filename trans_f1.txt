@@ -246,7 +246,8 @@ LOAD
     //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
     if(len(Left("E-Mail", Index( "E-Mail",'@') -1 )) > 0 and len(Left("E-Mail", Index( "E-Mail",'@') -1 )) < 65 and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_Lokalteil_valid,
 	//Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
-    if(len(Right("E-Mail", Index( "E-Mail",'@') +1 )) > 1 and wildmatch(Right("E-Mail", Index("E-Mail",'@') +1), '*.*') and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_Domainteil_valid,	
+    if(len(Right("E-Mail", Index( "E-Mail",'@') +1 )) > 1 and wildmatch(Right("E-Mail", len("E-Mail")-Index("E-Mail",'@')), '*.*') and not IsNull("E-Mail") and len("E-Mail") > 0, 1,0) as Flag_EMail_Domainteil_valid,	
+   
     
 //     "Home Page",
 //     "Reminder Terms Code",
