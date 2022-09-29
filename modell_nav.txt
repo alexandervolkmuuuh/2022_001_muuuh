@@ -413,7 +413,7 @@ LET v_Starttag =  left(num(date(YearStart(AddYears(Today(), -5)))), 5);
 LET v_Endetag = left(num(date(today())), 5);//left(num(date(YearEnd(today()))), 5);
 LET v_AnzTage = $(v_Endetag) - $(v_Starttag);
 
-Let v_Heute= num(date('09.11.2021'));//num(today());
+Let v_Heute= num(today());
 
 KalenderTMP:
 LOAD
