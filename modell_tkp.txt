@@ -1,0 +1,67 @@
+RentJobSuppData:
+LOAD
+	*
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_RentJobSuppData.qvd]
+(qvd);
+
+Customers:
+LOAD
+    *
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Customers.qvd]
+(qvd);
+
+
+Jobs:
+LOAD
+    *
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Jobs.qvd]
+(qvd);
+
+Operations:
+LOAD
+	*,
+    nKeyOperation &'_'& Standort as %nKeyOperation_Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_Operations.qvd]
+(qvd);
+
+Customers2CarsLink:
+LOAD
+    *
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Customers2CarsLink.qvd]
+(qvd);
+
+Tyres:
+LOAD
+	*,
+    cKeyJob &'_'& Standort as %cKeyJob_Standort,
+    nKeyStock &'_'& Standort as %cnKeyStock_Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_Tyres.qvd]
+(qvd);
+
+TyreStock:
+LOAD
+	*,
+    nKeyStock &'_'& Standort as %cnKeyStock_Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_TyreStock.qvd]
+(qvd);
+
+Store * from RentJobSuppData into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_TKP_RentJobSuppData.qvd] (qvd);
+drop table RentJobSuppData;
+
+Store * from Customers into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_TKP_Customers.qvd] (qvd);
+drop table Customers;
+
+Store * from Jobs into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_TKP_Jobs.qvd] (qvd);
+drop table Jobs;
+
+Store * from Operations into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_TKP_Operations.qvd] (qvd);
+drop table Operations;
+
+Store * from Customers2CarsLink into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_TKP_Customers2CarsLink.qvd] (qvd);
+drop table Customers2CarsLink;
+
+Store * from Tyres into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_TKP_Tyres.qvd] (qvd);
+drop table Tyres;
+
+Store * from TyreStock into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_TKP_TyreStock.qvd] (qvd);
+drop table TyreStock;
