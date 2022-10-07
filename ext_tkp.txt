@@ -1,0 +1,206 @@
+LET vDocName = 		Subfield(DocumentTitle(), '_', 1) 
+					& '_' & Subfield(DocumentTitle(), '_', 2) 
+                	& '_' & Subfield(DocumentTitle(), '_', 3) 
+                	& '_' & Subfield(DocumentTitle(), '_', 4) 
+                	& '_' & Subfield(DocumentTitle(), '_', 5)
+                	& '_' & Subfield(DocumentTitle(), '_', 6) 
+                	&'_';
+LET vDocLimitedName =	Subfield(DocumentTitle(), '_', 1) 
+						& '_' & Subfield(DocumentTitle(), '_', 2) 
+                        & '_' & Subfield(DocumentTitle(), '_', 3) 
+                    	& '_' & Subfield(DocumentTitle(), '_', 4);
+                        
+                        
+Let vConnectionCount = SubstringCount('$(v_bereich)', '_');
+
+
+/*
+*-----------------------------------------------------Load---------------------------------------------------------------
+*/
+
+
+let v_anzahl_mandanten = noofrows('Mandanten');
+let v_anzahl_tabellen = noofrows('Tabellen');
+
+Trace Info:;
+Trace Mandanten: $(v_anzahl_mandanten);
+Trace Tabellen: $(v_anzahl_tabellen);
+
+//Prüfen ob alle Tabellen vorhanden sind
+
+Trace Pfad: lib://$(v_bereich):DataFiles/;
+
+Trace Folgende Tabellen fehlen:;
+
+let v_fehler = False();
+
+for t = 0 to $(v_anzahl_tabellen)-1
+	let v_table = peek('Table_org', t, 'Tabellen');
+    let v_table_store = peek('Table_qlik', t, 'Tabellen');
+    
+	for m = 0 to $(v_anzahl_mandanten)-1
+    	let v_mandant = peek('Kürzel', m, 'Mandanten');
+        let v_mandant_bez = peek('Bezeichnung', m, 'Mandanten');
+        
+        if IsNull(FileTime('lib://$(v_bereich):DataFiles/$(v_datei_name_load)_$(v_mandant)_$(v_table).qvd')) then
+        
+        	Trace $(v_datei_name_load)_$(v_mandant)_$(v_table).qvd;
+            
+            let v_fehler = True();
+        
+        end if
+       
+
+	next
+        
+    
+next
+
+if v_fehler then
+
+	Trace Nicht alle Tabellen gefunden!;
+	exit Script;
+else
+	Trace Keine;
+	Trace Tabellen werden geladen------------------------------------------------;
+end if
+
+//Tabellen laden
+for t = 0 to $(v_anzahl_tabellen)-1
+	let v_table = peek('Table_org', t, 'Tabellen');
+    let v_table_store = peek('Table_qlik', t, 'Tabellen');
+    
+    let v_table_alle_laden = peek('Alle_laden', t, 'Tabellen');
+    
+    Trace Tabelle: $(v_table) --------------------------------------;
+    Trace $(v_bereich):DataFiles/$(v_start_datei)_$(v_table).qvd;
+    
+	for m = 0 to $(v_anzahl_mandanten)-1
+    	let v_mandant = peek('Kürzel', m, 'Mandanten');
+        let v_mandant_bez = peek('Bezeichnung', m, 'Mandanten');
+        
+        Trace Mandant: $(v_mandant_bez);
+        
+        if m = 0 then
+        
+        Table:
+        Load
+        	*,
+        '$(v_mandant_bez)' as Standort
+        from [lib://$(v_bereich):DataFiles/$(v_datei_name_load)_$(v_mandant)_$(v_table).qvd](qvd);
+        
+        else
+        
+        Concatenate(Table)
+        Load
+        	*,
+        '$(v_mandant_bez)' as Standort
+        from [lib://$(v_bereich):DataFiles/$(v_datei_name_load)_$(v_mandant)_$(v_table).qvd](qvd);
+        
+        end if
+        
+        if $(v_table_alle_laden) = 0 then
+        	let m = $(v_anzahl_mandanten);
+        end if
+
+	next
+    
+	Store * from Table into [lib://$(v_bereich):DataFiles/$(v_start_datei)_$(v_table_store).qvd] (qvd);
+    drop Table Table;
+    
+next
+
+
+/*
+*----------------------------------------------------Rename & Store ------------------------------------------------------------
+*/
+
+
+Tabelleneinlesen:
+      LOAD distinct
+          Tabellenname
+      FROM [lib://00_config:DataFiles/Rename_Fields.xlsx]
+	(ooxml, embedded labels, table is [Tabellen])
+      Where Tabelle_einlesen = 1;
+
+//Einlesen der Quelltabelle mit nur relevanten Feldern. Relevant: "Feld_einlesen" = 1
+      Left Join
+	  LOAD 
+      	 Tabellenname, 
+	     Feldname_CARE, 
+	     Feldname_Qlik,  
+	     Feld_Einlesen
+      FROM [lib://00_config:DataFiles/Rename_Fields.xlsx]
+	  (ooxml, embedded labels, table is [TKP])
+      Where Feld_Einlesen = 1;
+      
+      
+      
+      
+      
+      
+Trace 'Tabelle eingelesen';
+//Definiert die Zeilenanzahl in dem Excel-Arbeitsblatt
+      LET v_ZaehlerTabellen = FieldValueCount('Tabellenname');
+
+Trace $(v_ZaehlerTabellen);
+
+  //********************************************************************************
+
+Trace 'Each Folder';
+
+//Schleife wiederholt sich nach der Zeilenanzahl
+          FOR j = 0 to v_ZaehlerTabellen
+                
+                
+                //Führt die Schleife für jede QVD mit Präfix "02_BK_01_Ext" aus 
+          		FOR Each v_file in Filelist ('[Lib://$(v_bereich):DataFiles/$(vDocName)*.qvd')
+
+
+Trace $(v_file);
+//Nimmt den Tabellennamen aus dem QVD-Namen, Bsp.: [lib://BMW VDB:DataFiles/02_BK_01_Ext_04_CARE_Kunde.qvd] = "Kunde"
+                  LET v_filename = IF(SubStringCount('$(v_file)', '_') = 6 + '$(vConnectionCount)',
+                  				   	subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1),
+                                    IF(SubStringCount('$(v_file)', '_') = 7 + '$(vConnectionCount)',
+                                   		subfield(Subfield(SubField('$(v_file)','/', -1),'_',7), '.', 1)& '_' & 
+                                        subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1),  
+                 						IF(SubStringCount('$(v_file)', '_') = 8 + '$(vConnectionCount)',
+                                        	subfield(Subfield(SubField('$(v_file)','/', -1),'_',8), '.', 1)& '_' & 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',7), '.', 1) & '_'& 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1),
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',9), '.', 1)& '_' & 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',8), '.', 1)& '_' & 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',7), '.', 1) & ' _ '& 
+                                            subfield(Subfield(SubField('$(v_file)','/', -1),'_',-1), '.', 1))));
+
+
+Trace $(v_filename);
+					//Wenn der Tabellenname der QVD sich mit dem Tabellennamen aus der Excel deckt, wird der nächste Schleifenteil ausgeführt. Bsp.: "Kunde" = "Kunde"
+                  IF '$(v_filename)' = FieldValue('Tabellenname',j) THEN 
+     				  Trace Tabelle: $(v_filename);
+                      
+                      //Erstellt eine Mappingtabelle, die die entsprechenden Felder umbenennt
+  					  MAP_$(v_filename):
+					  Mapping
+					  LOAD 
+					  		Feldname_CARE, 
+                            //Tabellenpräfix wird entfernt. Bsp.: "Fahrzeug.VIN" => "VIN"
+					    	Subfield(Feldname_Qlik, '.', -1) AS Feldname_Qlik
+				 	  Resident Tabelleneinlesen
+					  Where Feld_Einlesen=1 AND Tabellenname = '$(v_filename)';                    
+					  
+                      //Lädt die intiale QVD erneut
+                      $(v_filename):
+                      LOAD 
+                          *
+                      FROM $(v_file)(qvd);
+                      
+					  //Benennt Felder mit der Mappingtabelle um
+                      RENAME Fields using 'MAP_$(v_filename)';
+                      //STORE '$(v_filename)' into '[Lib://BMW VDB:DataFiles/02_BK_01_Ext_04_CARE_$(v_filename).qvd'](qvd);
+                      STORE '$(v_filename)' into '[Lib://$(v_bereich):DataFiles/$(vDocName)$(v_filename).qvd]'(qvd);
+                      DROP Table '$(v_filename)';		
+                      
+                  end if
+              NEXT v_file;	
+          NEXT j;	
