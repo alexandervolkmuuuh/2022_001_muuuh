@@ -1,0 +1,1387 @@
+/*
+--------------------------------------------------------------------- Tyres --------------------------------------------------
+*/
+
+Tyres:
+LOAD
+    cKeyJob,
+    cKeyJob &'_'& Standort as %cKeyJob_Standort,
+    nItemKey,
+    nKeyStock,
+    nKeyStock &'_'& Standort as %cnKeyStock_Standort,
+    cStockNr,
+    cTyreManufacturer,
+    nRimType,
+    cRimManufacturer,
+    nTyreHeight,
+    nTyreWidth,
+    nTyreSize,
+    cDesignation,
+    cMixedTyres,
+    cDOT,
+    cDOT2,
+    cTyresNr,
+    cSpeedSymbol,
+    dblProfileDepth_FL,
+    dblProfileDepth_FR,
+    cLoadCapacity,
+    cStyling,
+    cTyreManufacturer_B,
+    nRimType_B,
+    cRimManufacturer_B,
+    nTyreHeight_B,
+    nTyreWidth_B,
+    nTyreSize_B,
+    cDesignation_B,
+    cMixedTyres_B,
+    cDOT_B,
+    cDOT2_B,
+    cTyresNr_B,
+    cSpeedSymbol_B,
+    dblProfileDepth_BL,
+    dblProfileDepth_BR,
+    cLoadCapacity_B,
+    cStyling_B,
+    cNote,
+    nCover,
+    cRegisterNr,
+    cExternalKey,
+    cExternalKeyGenerator,
+    nHubCover,
+    nManufacturerSymbol,
+    nWeelBolt,
+    nRunFlat,
+    cTyreAdditionalNote,
+    nIsPrepared,
+    cOriginalOwner,
+    cOriginalCreator,
+    cCheckInNote,
+    cCheckOutNote,
+    lBranchKey,
+    cDeliveryKeyJob,
+    cDeliveryJobSBName,
+    dtDeliveryJobSBStartDateTime,
+    dtRequestedAt,
+    dTyreDeliveryDate,
+    nDeliveryType,
+    nDeliveryStatus,
+    cRequestNote,
+    nPriority,
+    nOwnerCheck,
+    cShipToAddressCode,
+    cUnloadingPoint,
+    cUnloadingPointShelf,
+    cCheckListLink,
+    nItemCondition,
+    nExternalSourceFlag,
+    cExternalSourceServiceID,
+    lComputedBranchKey,
+    dRepairStartDate,
+    dRepairEndDate,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_Tyres.qvd]
+(qvd);
+
+Store Tyres into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Tyres.qvd]
+(qvd);
+
+drop table Tyres;
+
+
+/*
+-------------------------------------------------------- Customers2CarsLink ----------------------------------------------------------------
+*/
+
+Customers2CarsLink:
+LOAD
+    cKeyCustomer,
+    
+    cKeyCustomer &'_'& Standort as %cKeyCustomer_Standort,
+     
+    if(IsNull(cKeyCustomer) or len(cKeyCustomer) = 0,1,0) as Flag_cKeyCustomer_empty,
+    
+    //Genau 10 Ziffern/Buchstaben
+    if(len(KeepChar(lower(cKeyCustomer), '0123456789abcdefghijklmnopqrstuvwxyzüäöß ')) = 10 and not IsNull(cKeyCustomer) and len(cKeyCustomer) > 0, 1,0) as Flag_cKeyCustomer_valid,
+
+    lKeyCar,
+    
+    lKeyCar &'_'& Standort as %lKeyCar_Standort,
+    
+    if(IsNull(lKeyCar) or len(lKeyCar) = 0,1,0) as Flag_lKeyCar_empty,
+
+    if(len(PurgeChar(lKeyCar, '0123456789')) = 0 and not IsNull(cKeyCustomer) and len(cKeyCustomer) > 0, 1,0) as Flag_lKeyCar_nur_Zahlen,
+    
+    cLicenseNr,
+    
+    if(IsNull(cLicenseNr) or len(cLicenseNr) = 0, 1,0) as Flag_cLicenseNr_empty,
+    
+    //Min. einen Buchstaben und min. eine Ziffer
+    if(len(KeepChar(lower(cLicenseNr), 'abcdefghijklmnopqrstuvwxyz')) >= 1 and len(KeepChar(lower(cLicenseNr), '0123456789')) >= 1 and not IsNull(cLicenseNr) and len(cLicenseNr) > 0, 1,0) as Flag_cLicenseNr_valid,
+    
+    cLicenseNrCleaned,
+    
+    if(IsNull(cLicenseNrCleaned) or len(cLicenseNrCleaned) = 0, 1,0) as Flag_cLicenseNrCleaned_empty,
+    
+    //Min. einen Buchstaben und min. eine Ziffer
+    if(len(KeepChar(lower(cLicenseNrCleaned), 'abcdefghijklmnopqrstuvwxyz')) >= 1 and len(KeepChar(lower(cLicenseNrCleaned), '0123456789')) >= 1 and not IsNull(cLicenseNrCleaned) and len(cLicenseNrCleaned) > 0, 1,0) as Flag_cLicenseNrCleaned_valid,
+    
+    //Kaum valide Daten
+    cLicenseCountryCode,
+    
+    cFactoryNr,
+    
+    if(IsNull(cFactoryNr) or len(cFactoryNr) = 0, 1,0) as Flag_cFactoryNr_empty,
+    
+    //Mehr als eine Ziffer
+    if(len(KeepChar(cFactoryNr, '0123456789 ')) > 1 and not IsNull(cFactoryNr) and len(cFactoryNr) > 0, 1,0) as Flag_cFactoryNr_valid,
+    
+    cFactoryNrReverse,
+    cModel,
+    
+    if(IsNull(cModel) or len(cModel) = 0, 1,0) as Flag_cModel_empty,
+    
+    //Darf nicht nur aus Sonderzeichen bestehen
+    if(len(PurgeChar(cModel, '.-?,*0#<>^ ')) = 0 or IsNull(cModel) or len(cModel) = 0, 0,1) as Flag_cModel_valid,
+    
+    lMileage,
+    
+    if(IsNull(lMileage) or len(lMileage) = 0,1,0) as Flag_lMileage_empty,
+    
+    //lMileage nur Zahlen >= 0 
+    if(len(PurgeChar(lower(lMileage), '0123456789 ')) = 0 and not IsNull(lMileage) and len(lMileage) > 0, 1,0) as Flag_lMileage_nurZahlen,
+    if(lMileage >= 0 and not IsNull(lMileage) and len(lMileage) > 0,1,0) as Flag_lMileage_valid,
+    
+    dRegYear,
+    
+    if(IsNull(dRegYear) or len(dRegYear) = 0, 1,0) as Flag_dRegYear_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dRegYear) >= '1900' and not IsNull(dRegYear) and len(dRegYear) > 0, 1,0) as Flag_dRegYear_valid,
+    
+    cFirstName,
+    
+    if(IsNull(cFirstName) or len(cFirstName) = 0, 1,0) as Flag_cFirstName_empty,    
+    
+    //Name muss mehr als einen Buchstaben haben
+    if(len(KeepChar(lower(cFirstName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 1 and not IsNull(cFirstName) and len(cFirstName) > 0, 1,0) as Flag_cFirstName_länge,
+    
+    //Sonderfälle (Name ist 'Fahrzeug'/'XXX') beseitigen
+    if(wildmatch(lower(cFirstName), '*fahrzeug*') or len(PurgeChar(lower(cFirstName), 'x ')) = 0 or IsNull(cFirstName) or len(cFirstName) = 0, 0,1) as Flag_cFirstName_valid,
+    
+    cFirstNameUser,
+    
+    if(IsNull(cFirstNameUser) or len(cFirstNameUser) = 0, 1,0) as Flag_cFirstNameUser_empty,    
+    
+    //Name muss mehr als einen Buchstaben haben
+    if(len(KeepChar(lower(cFirstNameUser), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 1 and not IsNull(cFirstNameUser) and len(cFirstNameUser) > 0, 1,0) as Flag_cFirstNameUser_länge,
+    
+    //Sonderfall (Name ist 'XXX') beseitigen
+    if(len(PurgeChar(lower(cFirstNameUser), 'x ')) = 0 or IsNull(cFirstNameUser) or len(cFirstNameUser) = 0, 0,1) as Flag_cFirstNameUser_valid,
+    
+    cCarType,
+ 
+    if(IsNull(cCarType) or len(cCarType) = 0, 1,0) as Flag_cCarType_empty, 
+    
+    //Muss C D oder R entsprechen
+    if(cCarType = 'C' or cCarType = 'D' or cCarType = 'R' and not IsNull(cCarType) and len(cCarType) > 0, 1,0) as Flag_cCarType_valid,
+    
+    dTUV,
+    
+    if(IsNull(dTUV) or len(dTUV) = 0, 1,0) as Flag_dTUV_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dTUV) > '1900' and not IsNull(dTUV) and len(dTUV) > 0, 1,0) as Flag_dTUV_valid,
+    
+    //Datum der AU
+    dAU,
+    
+    if(IsNull(dAU) or len(dAU) = 0, 1,0) as Flag_dAU_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dAU) > '1900' and not IsNull(dAU) and len(dAU) > 0, 1,0) as Flag_dAU_valid,
+    
+    cPrivatPhone,
+    
+    if(IsNull(cPrivatPhone) or len(cPrivatPhone) = 0,1,0) as Flag_cPrivatPhone_empty,
+    
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(cPrivatPhone), '0123456789-/+() ')) = 0 and not IsNull(cPrivatPhone) and len(cPrivatPhone) > 0, 1,0) as Flag_cPrivatPhone_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(cPrivatPhone, '0123456789')) > 6 and not IsNull(cPrivatPhone) and len(cPrivatPhone) > 0, 1, 0) as Flag_cPrivatPhone_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(cPrivatPhone, '+')) < 2 and not IsNull(cPrivatPhone) and len(cPrivatPhone) > 0, 1, 0) as Flag_cPrivatPhone_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(cPrivatPhone, '0')) = 0 and len(KeepChar(cPrivatPhone, '0')) > 0 or IsNull(cPrivatPhone) or len(cPrivatPhone) = 0, 0,1) as Flag_cPrivatPhone_valideZahlen,
+    
+    cMobilPhone,
+    
+    if(IsNull(cMobilPhone) or len(cMobilPhone) = 0,1,0) as Flag_cMobilPhone_empty,
+    
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(cMobilPhone), '0123456789-/+() ')) = 0 and not IsNull(cMobilPhone) and len(cMobilPhone) > 0, 1,0) as Flag_cMobilPhone_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(cMobilPhone, '0123456789')) > 6 and not IsNull(cMobilPhone) and len(cMobilPhone) > 0, 1, 0) as Flag_cMobilPhone_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(cMobilPhone, '+')) < 2 and not IsNull(cMobilPhone) and len(cMobilPhone) > 0, 1, 0) as Flag_cMobilPhone_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(cMobilPhone, '0')) = 0 and len(KeepChar(cMobilPhone, '0')) > 0 or IsNull(cMobilPhone) or len(cMobilPhone) = 0, 0,1) as Flag_cMobilPhone_valideZahlen,
+    
+    cMotorNr,
+    
+    if(IsNull(cMotorNr) or len(cMotorNr) = 0,1,0) as Flag_cMotorNr_empty,
+    
+    //Darf nicht nur aus Sonderzeichen bestehen
+    if(len(PurgeChar(cMotorNr, '.-?,*0#<>^ ')) = 0 or IsNull(cMotorNr) or len(cMotorNr) = 0, 0,1) as Flag_cMotorNr_valid,
+    
+    
+    dBatteryCheckYear,
+    
+    if(IsNull(dBatteryCheckYear) or len(dBatteryCheckYear) = 0, 1,0) as Flag_dBatteryCheckYear_empty, 
+
+    if(year(dBatteryCheckYear) > '1999' and not IsNull(dBatteryCheckYear) and len(dBatteryCheckYear) > 0, 1,0) as Flag_dBatteryCheckYear_valid,
+    
+    cSalesPersNr,
+    
+    if(IsNull(cSalesPersNr) or len(cSalesPersNr) = 0,1,0) as Flag_cSalesPersNr_empty,
+    
+    //Nur Zahlen
+    if(len(PurgeChar(lower(cSalesPersNr), '0123456789')) = 0 and not IsNull(cSalesPersNr) and len(cSalesPersNr) > 0, 1,0) as Flag_cSalesPersNr_valid,
+    
+    cSalesPersName,
+    
+    if(IsNull(cSalesPersName) or len(cSalesPersName) = 0,1,0) as Flag_cSalesPersName_empty,
+    
+    //Mehr als einen Buchstaben
+    if(len(KeepChar(lower(cSalesPersName), 'abcdefghijklmnopqrstuvwxyzüäöß')) > 1 and not IsNull(cSalesPersName) and len(cSalesPersName) > 0, 1,0) as Flag_cSalesPersName_länge,
+    //Sonderfälle beseitigen
+    if(wildmatch(lower(cSalesPersName), '*nicht*', '*n.n*', '*n.v*', '*ohne*') or IsNull(cSalesPersName) or len(cSalesPersName) = 0,0,1) as Flag_cSalesPersName_valid,
+    
+    cBrandType,
+    
+    if(IsNull(cBrandType) or len(cBrandType) = 0, 1,0) as Flag_cBrandType_empty,
+    
+    //Nur Buchstaben und Bindestrich
+    if(len(PurgeChar(lower(cBrandType), 'abcdefghijklmnopqrstuvwxyzüäöß- ')) = 0 and not IsNull(cBrandType) and len(cBrandType) > 0, 1,0) as Flag_cBrandType_valid,
+    //Mehr als ein Buchstabe
+    if(len(KeepChar(lower(cBrandType), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 1 and not IsNull(cBrandType) and len(cBrandType) > 0, 1,0) as Flag_cBrandType_länge,
+    
+    cModelNr,
+    
+    if(IsNull(cModelNr) or len(cModelNr) = 0, 1,0) as Flag_cModelNr_empty,   
+    
+    //Nicht nur Sonderzeichen
+    if(len(PurgeChar(cModelNr, '.-?,*0#<>^ ')) = 0 or IsNull(cModelNr) or len(cModelNr) = 0, 0,1) as Flag_cModelNr_valid,
+
+    cModelYear,
+    
+    if(IsNull(cModelYear) or len(cModelYear) = 0, 1,0) as Flag_cModelYear_empty,
+    
+    //Min. vier Ziffern
+    if(len(KeepChar(cModelYear, '0123456789')) > 3 and not IsNull(cModelYear) and len(cModelYear) > 0, 1, 0) as Flag_cModelYear_Länge,
+    
+    cFuelType,
+    
+    if(IsNull(cFuelType) or len(cFuelType) = 0, 1,0) as Flag_cFuelType_empty,
+    
+    //Muss einem der bekannten Kraftstoffe entsprechen
+    if(wildmatch(lower(cFuelType), '*benzin*', '*diesel*', '*elektro*', '*gas*', '*hybrid*') and not IsNull(cFuelType) and len(cFuelType) > 0, 1,0) as Flag_cFuelType_valid,
+
+    cColourCode,
+    
+    if(IsNull(cColourCode) or len(cColourCode) = 0,1,0) as Flag_cColourCode_empty,
+    
+    //Nicht nur Sonderzeichen
+    if(len(PurgeChar(cColourCode, '.-?,*#<>^ ')) = 0 or IsNull(cColourCode) or len(cColourCode) = 0, 0,1) as Flag_cColourCode_valid,
+    
+    cFurnishCode,
+    
+    if(IsNull(cFurnishCode) or len(cFurnishCode) = 0,1,0) as Flag_cFurnishCode_empty,
+    
+    //Nicht nur Sonderzeichen
+    if(len(PurgeChar(cFurnishCode, '.-?,*#<>^ ')) = 0 or IsNull(cFurnishCode) or len(cFurnishCode) = 0, 0,1) as Flag_cFurnishCode_valid,
+    
+    cSubType,
+    
+    if(IsNull(cSubType) or len(cSubType) = 0,1,0) as Flag_cSubType_empty,
+    
+    //Nur Buchstaben und Zahlen
+    if(len(PurgeChar(lower(cSubType), 'abcdefghijklmnopqrstuvwxyzüäöß0123456789')) = 0 and not IsNull(cSubType) and len(cSubType) > 0, 1,0) as Flag_cSubType_valid,
+    
+    cPseudoType,
+    
+    if(IsNull(cPseudoType) or len(cPseudoType) = 0,1,0) as Flag_cPseudoType_empty,
+    
+    //Nur Buchstaben und Zahlen
+    if(len(PurgeChar(lower(cPseudoType), 'abcdefghijklmnopqrstuvwxyzüäöß0123456789')) = 0 and not IsNull(cPseudoType) and len(cPseudoType) > 0, 1,0) as Flag_cPseudoType_valid,
+    
+    dLastDateInService,
+    
+    if(IsNull(dLastDateInService) or len(dLastDateInService) = 0, 1,0) as Flag_dLastDateInService_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dLastDateInService) > '1900' and not IsNull(dLastDateInService) and len(dLastDateInService) > 0, 1,0) as Flag_dLastDateInService_valid,
+    
+    dReRegYear,
+    
+    if(IsNull(dReRegYear) or len(dReRegYear) = 0, 1,0) as Flag_dReRegYear_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dReRegYear) >= '1900' and not IsNull(dReRegYear) and len(dReRegYear) > 0, 1,0) as Flag_dReRegYear_valid,
+    
+    if(dReRegYear >= dRegYear and not IsNull(dReRegYear) and len(dReRegYear) > 0  and not IsNull(dRegYear) and len(dRegYear) > 0, 1,0) as Flag_RegYear_logical,
+    
+    //nur 8 valide Werte (Stand: Oktober 2021)
+    dGuarantee,
+    
+    if(IsNull(dGuarantee) or len(dGuarantee) = 0, 1,0) as Flag_dGuarantee_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dGuarantee) > '1900' and not IsNull(dGuarantee) and len(dGuarantee) > 0, 1,0) as Flag_dGuarantee_valid,
+    
+    cGearBoxNumber,
+    
+    if(IsNull(cGearBoxNumber) or len(cGearBoxNumber) = 0, 1,0) as Flag_cGearBoxNumber_empty,
+    
+    //Nur Buchstaben und Zahlen
+    if(len(PurgeChar(lower(cGearBoxNumber), 'abcdefghijklmnopqrstuvwxyzüäöß0123456789')) = 0 and not IsNull(cGearBoxNumber) and len(cGearBoxNumber) > 0, 1,0) as Flag_cGearBoxNumber_valid,
+    
+    cServiceType,
+    
+    if(IsNull(cServiceType) or len(cServiceType) = 0, 1,0) as Flag_cServiceType_empty,
+    
+    dProductionDate,
+    
+    if(IsNull(dProductionDate) or len(dProductionDate) = 0, 1,0) as Flag_dProductionDate_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dProductionDate) > '1900' and not IsNull(dProductionDate) and len(dProductionDate) > 0, 1,0) as Flag_dProductionDate_valid,
+    
+    cOwnSold,
+    
+    //Nur drei valide Datumsfelder (Stand: Oktober 2021)
+    dDeliveryDate,
+    
+    if(IsNull(dDeliveryDate) or len(dDeliveryDate) = 0, 1,0) as Flag_dDeliveryDate_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dDeliveryDate) > '1900' and not IsNull(dDeliveryDate) and len(dDeliveryDate) > 0, 1,0) as Flag_dDeliveryDate_valid,
+    
+    //Nur ein valides Datumsfeld (Stand: Oktober 2021)
+    dNextBreakOil,
+    
+    if(IsNull(dNextBreakOil) or len(dNextBreakOil) = 0, 1,0) as Flag_dNextBreakOil_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dNextBreakOil) > '1900' and not IsNull(dNextBreakOil) and len(dNextBreakOil) > 0, 1,0) as Flag_dNextBreakOil_valid,
+    
+    //Keine validen Datumsfelder (Stand: Oktober 2021)
+    dNextServiceDate,
+    
+    if(IsNull(dNextServiceDate) or len(dNextServiceDate) = 0, 1,0) as Flag_dNextServiceDate_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dNextServiceDate) > '1900' and not IsNull(dNextServiceDate) and len(dNextServiceDate) > 0, 1,0) as Flag_dNextServiceDate_valid,
+    
+    //nur 0 oder 1
+    nNextServiceMileage,
+    
+    if(IsNull(nNextServiceMileage) or len(nNextServiceMileage) = 0, 1,0) as Flag_nNextServiceMileage_empty,
+    
+    //alles auf default (1899)
+    dToothBeltDate,
+    
+    if(IsNull(dToothBeltDate) or len(dToothBeltDate) = 0, 1,0) as Flag_dToothBeltDate_empty,
+    
+    //alles 0
+    nToothBeltMileage,
+    
+    if(IsNull(nToothBeltMileage) or len(nToothBeltMileage) = 0, 1,0) as Flag_nToothBeltMileage_empty,    
+    
+    //Nur acht valide Datumsfelder (Stand: Oktober 2021)    
+    dNextBsuDate,
+    
+    if(IsNull(dNextBsuDate) or len(dNextBsuDate) = 0, 1,0) as Flag_dNextBsuDate_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dNextBsuDate) > '1900' and not IsNull(dNextBsuDate) and len(dNextBsuDate) > 0, 1,0) as Flag_dNextBsuDate_valid,
+    
+    cCarNote,
+    
+    if(IsNull(cCarNote) or len(cCarNote) = 0, 1,0) as Flag_cCarNote_empty,
+    
+    cLastSBDMS,
+    
+    if(IsNull(cLastSBDMS) or len(cLastSBDMS) = 0, 1,0) as Flag_cLastSBDMS_empty,
+    
+    if(len(KeepChar(lower(cLastSBDMS), 'abcdefghijklmnopqrstuvwxyzüäöß')) > 2 and not IsNull(cLastSBDMS) and len(cLastSBDMS) > 0, 1,0) as Flag_cLastSBDMS_valid,    
+    
+    cModellCode,
+    
+    if(IsNull(cModellCode) or len(cModellCode) = 0, 1,0) as Flag_cModellCode_empty,
+    
+    //Darf nicht nur aus Sonderzeichen bestehen
+    if(len(PurgeChar(cModellCode, '.-?,*0#<>^ ')) = 0 or IsNull(cModellCode) or len(cModellCode) = 0, 0,1) as Flag_cModellCode_valid,
+    
+    cFinanceType,
+    
+    if(IsNull(cFinanceType) or len(cFinanceType) = 0, 1,0) as Flag_cFinanceType_empty,
+    
+    dFinanceEnd,
+    
+    if(IsNull(dFinanceEnd) or len(dFinanceEnd) = 0, 1,0) as Flag_dFinanceEnd_empty, 
+    
+    //Default Wert 12/30/1899 herausfiltern
+    if(year(dFinanceEnd) > '1900' and not IsNull(dFinanceEnd) and len(dFinanceEnd) > 0, 1,0) as Flag_dFinanceEnd_valid,
+    
+    nNOGIsNew,
+ 
+ 	if(IsNull(nNOGIsNew) or len(nNOGIsNew) = 0,1,0) as Flag_nNOGIsNew_empty,
+
+	//nur 0 oder 1
+    if(nNOGIsNew = '0' or '1' and not IsNull(nNOGIsNew) and len(nNOGIsNew) > 0, 1,0) as Flag_nNOGIsNew_valid,
+    
+    nNOGIsPassing,
+    
+    if(IsNull(nNOGIsPassing) or len(nNOGIsPassing) = 0,1,0) as Flag_nNOGIsPassing_empty,
+
+	//nur 0 oder 1
+    if(nNOGIsPassing = '0' or '1' and not IsNull(nNOGIsPassing) and len(nNOGIsPassing) > 0, 1,0) as Flag_nNOGIsPassing_valid,
+    
+    nIsTrusted,
+      
+    if(IsNull(nIsTrusted) or len(nIsTrusted) = 0,1,0) as Flag_nIsTrusted_empty,
+
+	//nur 0 oder 1
+    if(nIsTrusted = '0' or '1' and not IsNull(nIsTrusted) and len(nIsTrusted) > 0, 1,0) as Flag_nIsTrusted_valid,
+    
+    lCarTypeKey,
+        
+    if(IsNull(lCarTypeKey) or len(lCarTypeKey) = 0,1,0) as Flag_lCarTypeKey_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(lCarTypeKey), '0123456789 ')) = 0 and not IsNull(lCarTypeKey) and len(lCarTypeKey) > 0, 1,0) as Flag_lCarTypeKey_nurZahlen,
+    
+    lBranchKey,
+        
+    if(IsNull(lBranchKey) or len(lBranchKey) = 0,1,0) as Flag_lBranchKey_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(lBranchKey), '0123456789 ')) = 0 and not IsNull(lBranchKey) and len(lBranchKey) > 0, 1,0) as Flag_lBranchKey_nurZahlen,
+    
+    bNOGCarBinded,
+    
+    if(IsNull(bNOGCarBinded) or len(bNOGCarBinded) = 0,1,0) as Flag_bNOGCarBinded_empty,
+
+	//nur 0 oder 1
+    if(bNOGCarBinded = '0' or '1' and not IsNull(bNOGCarBinded) and len(bNOGCarBinded) > 0, 1,0) as Flag_bNOGCarBinded_valid,
+    
+    Standort,
+    
+    if(IsNull(Standort) or len(Standort) = 0, 1,0) as Flag_Standort_empty
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_Customers2CarsLink.qvd]
+(qvd);
+
+// Store Customers2CarsLink into [lib://$(v_bereich):DataFiles:DataFiles/$(v_start_datei)_02_Trans_02_TKP_Customers2CarsLink.qvd]
+// (qvd);
+
+Store Customers2CarsLink into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Customers2CarsLink.qvd]
+(qvd);
+
+drop table Customers2CarsLink;
+
+
+/*
+-------------------------------------------------------------------Operations-----------------------------------------------------
+*/
+Operations:
+LOAD
+    nKeyOperation,
+    nKeyOperation &'_'& Standort as %nKeyOperation_Standort,
+    lOpTypeGroupKey,
+    cGroup,
+    cOperationName,
+    nWU,
+    nPrintNoteOptions,
+    nProcWUAll,
+    nMaxNrAll,
+    cNote,
+    cExternalTypeKey,
+    nPartsRelevant,
+    nOpTypeFlag,
+    Standort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_Operations.qvd]
+(qvd);
+
+// Store Operations into [lib://$(v_bereich):DataFiles:DataFiles/$(v_start_datei)_02_Trans_02_TKP_Operations.qvd]
+// (qvd);
+
+Store Operations into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Operations.qvd]
+(qvd);
+
+drop table Operations;
+
+/*
+------------------------------------------------------Customers--------------------------------------------------------------
+*/
+Customers:
+LOAD
+    cKeyCustomer,
+    
+    cKeyCustomer &'_'& Standort as %cKeyCustomer_Standort,
+
+    if(IsNull(cKeyCustomer) or len(cKeyCustomer) = 0,1,0) as Flag_cKeyCustomer_empty,
+
+    if(len(KeepChar(lower(cKeyCustomer), '0123456789abcdefghijklmnopqrstuvwxyzüäöß ')) = 10 and not IsNull(cKeyCustomer) and len(cKeyCustomer) > 0, 1,0) as Flag_cKeyCustomer_valid,
+
+    cRegNr,
+    
+    cRegNr &'_'& Standort as %kunde_tkp_Standort,
+
+    if(IsNull(cRegNr) or len(cRegNr) = 0, 1,0) as Flag_cRegNr_empty,
+
+    cSalutationOwner,
+
+    if(IsNull(cSalutationOwner) or len(cSalutationOwner) = 0,1,0) as Flag_cSalutationOwner_empty,
+
+    if(len(PurgeChar(lower(cSalutationOwner), 'abcdefghijklmnopqrstuvwxyzüäöß., '&chr(39)&chr(96)&chr(180))) = 0 and not IsNull(cSalutationOwner) and len(cSalutationOwner) > 0, 1,0) as Flag_cSalutationOwner_valid,
+
+    if(len(KeepChar(lower(cSalutationOwner), 'abcdefghijklmnopqrstuvwxyzüäöß')) > 1 and not IsNull(cSalutationOwner) and len(cSalutationOwner) > 0, 1,0) as Flag_cSalutationOwner_länge,
+
+    cSalutationUser,
+
+    if(IsNull(cSalutationUser) or len(cSalutationUser) = 0,1,0) as Flag_cSalutationUser_empty,
+
+    if(len(PurgeChar(lower(cSalutationUser), 'abcdefghijklmnopqrstuvwxyzüäöß., '&chr(39)&chr(96)&chr(180))) = 0 and not IsNull(cSalutationUser) and len(cSalutationUser) > 0, 1,0) as Flag_cSalutationUser_valid,
+    
+    if(len(KeepChar(lower(cSalutationUser), 'abcdefghijklmnopqrstuvwxyzüäöß')) > 1 and not IsNull(cSalutationUser) and len(cSalutationUser) > 0, 1,0) as Flag_cSalutationUser_länge,
+
+    cName,
+
+    if(IsNull(cName) or len(cName) = 0,1,0) as Flag_cName_empty,
+
+    if(len(KeepChar(lower(cName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(cName) and len(cName) > 0, 1,0) as Flag_cName_länge,
+
+    //Häufig auftretende Sonderfälle beseitigen
+    if(wildmatch(lower(cName), '*nicht*', '*!!*', '*verkauft*', '*V E R K A U F*') or IsNull(cName) or len(cName) = 0, 0,1) as Flag_cName_valid,
+
+    cName2,
+
+    if(IsNull(cName2) or len(cName2) = 0,1,0) as Flag_cName2_empty,
+
+    if(len(KeepChar(lower(cName2), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(cName2) and len(cName2) > 0, 1,0) as Flag_cName2_länge,
+
+    //Häufig auftretende Sonderfälle beseitigen
+    if(wildmatch(lower(cName2), '*nicht*', '*!!*', '*verkauft*', '*V E R K A U F*', '*werden*') or IsNull(cName2) or len(cName2) = 0, 0,1) as Flag_cName2_valid,
+
+    cStreet,
+
+    if(IsNull(cStreet) or len(cStreet) = 0,1,0) as Flag_cStreet_empty,
+
+    if(len(PurgeChar(lower(cStreet), '0123456789abcdefghijklmnopqrstuvwxyzüäöß.,()-/"`´ ')) = 0 and not IsNull(cStreet) and len(cStreet) > 0, 1,0) as Flag_cStreet_valid,
+    if(len(KeepChar(lower(cStreet), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(cStreet) and len(cStreet) > 0, 1,0) as Flag_cStreet_länge,
+
+    cPLZ ,
+
+    if(IsNull(cPLZ) or len(cPLZ) = 0,1,0) as Flag_cPLZ_empty,
+
+    //Muss min. 3 und max. 7 Zahlen enthalten
+    if(len(KeepChar(cPLZ, '0123456789')) > 2 and len(KeepChar(cPLZ, '0123456789')) < 8 and not IsNull(cPLZ) and len(cPLZ) > 0, 1, 0) as Flag_cPLZ_Länge,
+    if(len(PurgeChar(lower(cPLZ), '0123456789 ')) = 0 and not IsNull(cPLZ) and len(cPLZ) > 0, 1,0) as Flag_cPLZ_NurZahlen,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(cPLZ, '0')) = 0 and len(KeepChar(cPLZ, '0')) > 0 or IsNull(cPLZ) or len(cPLZ) = 0, 0,1) as Flag_cPLZ_valideZahlen,
+
+    cCity,
+
+    if(IsNull(cCity) or len(cCity) = 0,1,0) as Flag_cCity_empty,
+
+    //City muss aus min. zwei Buchstaben bestehen
+    //if(len(PurgeChar(lower(cCity), 'abcdefghijklmnopqrstuvwxyzüäöß/-()`´. ')) = 0, 1,0) as Flag_CCITY_valid,
+    if(len(KeepChar(lower(cCity), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(cCity) and len(cCity) > 0, 1,0) as Flag_cCity_Länge,
+
+    cCounty,
+    
+    if(IsNull(cCounty) or len(cCounty) = 0,1,0) as Flag_cCounty_empty,
+    
+    
+    
+    if(IsNull(cCountry) or len(cCountry) = 0,1,0) as Flag_cCountry_empty,
+    
+    cEMail,
+
+    if(IsNull(cEMail) or len(cEMail) = 0,1,0) as Flag_cEMail_empty,
+
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len(cEMail) < 255 and len(cEMail) > 5 and not IsNull(cEMail) and len(cEMail) > 0, 1,0) as Flag_cEMail_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower(cEMail), '@')) = 1 and not IsNull(cEMail) and len(cEMail) > 0, 1,0) as Flag_cEMail_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower(cEMail), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull(cEMail) and len(cEMail) > 0, 1,0) as Flag_cEMail_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left(cEMail, Index(cEMail,'@') -1 )) > 0 and len(Left(cEMail, Index(cEMail,'@') -1 )) < 65 and not IsNull(cEMail) and len(cEMail) > 0, 1,0) as Flag_cEMail_Lokalteil_valid,
+    //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten
+    if(len(Right(cEMail, Index(cEMail,'@') +1 )) > 1 and wildmatch(Right(cEMail, Index(cEMail,'@') +1), '*.*') and not IsNull(cEMail) and len(cEMail) > 0, 1,0) as Flag_cEMail_Domainteil_valid,
+
+    cCreditID ,
+
+    if(IsNull(cCreditID) or len(cCreditID) = 0,1,0) as Flag_cCreditID_empty,
+
+    cTaxNumber ,
+    
+    if(IsNull(cTaxNumber) or len(cTaxNumber) = 0,1,0) as Flag_cTaxNumber_empty,
+    
+    cVATRegistration ,
+    
+    if(IsNull(cVATRegistration) or len(cVATRegistration) = 0,1,0) as Flag_cVATRegistration_empty,
+    
+    cPhone ,
+
+    if(IsNull(cPhone) or len(cPhone) = 0,1,0) as Flag_cPhone_empty,
+
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(cPhone), '0123456789-/+() ')) = 0 and not IsNull(cPhone) and len(cPhone) > 0, 1,0) as Flag_cPhone_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(cPhone, '0123456789')) > 6 and not IsNull(cPhone) and len(cPhone) > 0, 1, 0) as Flag_cPhone_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(cPhone, '+')) < 2 and not IsNull(cPhone) and len(cPhone) > 0, 1, 0) as Flag_cPhone_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(cPhone, '0')) = 0 and len(KeepChar(cPhone, '0')) > 0 or IsNull(cPhone) or len(cPhone) = 0, 0,1) as Flag_cPhone_valideZahlen,
+
+    cNote ,
+    
+    if(IsNull(cNote) or len(cNote) = 0,1,0) as Flag_cNote_empty,
+    
+    nSalutation ,
+
+    if(IsNull(nSalutation) or len(nSalutation) = 0,1,0) as Flag_nSalutation_empty,
+
+    //NSALUTATION darf nur 1,2,3 oder 4 sein
+    if(nSalutation = '1' or '2' or '3' or '4' and not IsNull(nSalutation) and len(nSalutation) > 0, 1,0) as Flag_nSalutation_valid,
+
+    cTitle ,
+
+    if(IsNull(cTitle) or len(cTitle) = 0,1,0) as Flag_cTitle_empty,
+
+    //Darf nur Buchstaben, Bindestrich und Punkt enthalten
+    if(len(PurgeChar(lower(cTitle), 'abcdefghijklmnopqrstuvwxyzüäöß.- ')) = 0 and not IsNull(cTitle) and len(cTitle) > 0, 1,0) as Flag_cTitle_valid,
+    //Länge >= 2
+    if(len(cTitle) >= 2 and not IsNull(cTitle) and len(cTitle) > 0, 1,0) as Flag_cTitle_Länge,
+
+    cCustomerExternalKey ,
+    
+    if(IsNull(cCustomerExternalKey) or len(cCustomerExternalKey) = 0,1,0) as Flag_cCustomerExternalKey_empty,
+    
+    cFaxNr ,
+
+    if(IsNull(cFaxNr) or len(cFaxNr) = 0,1,0) as Flag_cFaxNr_empty,
+
+    //FaxNr darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(cFaxNr), '0123456789-/+() ')) = 0 and not IsNull(cFaxNr) and len(cFaxNr) > 0, 1,0) as Flag_cFaxNr_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(cFaxNr, '0123456789')) > 6 and not IsNull(cFaxNr) and len(cFaxNr) > 0, 1, 0) as Flag_cFaxNr_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(cFaxNr, '+')) < 2 and not IsNull(cFaxNr) and len(cFaxNr) > 0, 1, 0) as Flag_cFaxNr_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(cFaxNr, '0')) = 0 and len(KeepChar(cFaxNr, '0')) > 0 or IsNull(cFaxNr) or len(cFaxNr) = 0, 0,1) as Flag_cFaxNr_valideZahlen,
+
+    cMatchCode ,
+    
+    if(IsNull(cMatchCode) or len(cMatchCode) = 0,1,0) as Flag_cMatchCode_empty,
+    
+    bCustomerVisibleInWelcome ,
+
+    if(IsNull(bCustomerVisibleInWelcome) or len(bCustomerVisibleInWelcome) = 0,1,0) as Flag_bCustomerVisibleInWelcome_empty,
+
+    //darf nur 0 oder 1 sein
+    if(bCustomerVisibleInWelcome = '0' or '1' and not IsNull(bCustomerVisibleInWelcome) and len(bCustomerVisibleInWelcome) > 0, 1,0) as Flag_bCustomerVisibleInWelcome_valid,
+
+    bContacted ,
+
+    if(IsNull(bContacted) or len(bContacted) = 0,1,0) as Flag_bContacted_empty,
+
+    //darf nur 0 oder 1 sein
+    if(bContacted = '0' or '1' and not IsNull(bContacted) and len(bContacted) > 0, 1,0) as Flag_bContacted_valid,
+
+    bDealerLetter ,
+
+    if(IsNull(bDealerLetter) or len(bDealerLetter) = 0,1,0) as Flag_bDealerLetter_empty,
+
+    //darf nur 0 oder 1 sein
+    if(bDealerLetter = '0' or '1' and not IsNull(bDealerLetter) and len(bDealerLetter) > 0, 1,0) as Flag_bDealerLetter_valid,
+
+    bDealerEMail ,
+
+    if(IsNull(bDealerEMail) or len(bDealerEMail) = 0,1,0) as Flag_bDealerEMail_empty,
+
+    //darf nur 0 oder 1 sein
+    if(bDealerEMail = '0' or '1' and not IsNull(bDealerEMail) and len(bDealerEMail) > 0, 1,0) as Flag_bDealerEMail_valid,
+
+    bDealerAgreeWithDP ,
+    if(IsNull(bDealerAgreeWithDP) or len(bDealerAgreeWithDP) = 0,1,0) as Flag_bDealerAgreeWithDP_empty,
+    //darf nur 0 oder 1 sein
+    if(bDealerAgreeWithDP = '0' or '1' and not IsNull(bDealerAgreeWithDP) and len(bDealerAgreeWithDP) > 0, 1,0) as Flag_bDealerAgreeWithDP_valid,
+
+    bDealerPhoneOrMsg ,
+    if(IsNull(bDealerPhoneOrMsg) or len(bDealerPhoneOrMsg) = 0,1,0) as Flag_bDealerPhoneOrMsg_empty,
+    //darf nur 0 oder 1 sein
+    if(bDealerPhoneOrMsg = '0' or '1' and not IsNull(bDealerPhoneOrMsg) and len(bDealerPhoneOrMsg) > 0, 1,0) as Flag_bDealerPhoneOrMsg_valid,
+
+    bDealerBlocked ,
+    if(IsNull(bDealerBlocked) or len(bDealerBlocked) = 0,1,0) as Flag_bDealerBlocked_empty,
+    //darf nur 0 oder 1 sein
+    if(bDealerBlocked = '0' or '1' and not IsNull(bDealerBlocked) and len(bDealerBlocked) > 0, 1,0) as Flag_bDealerBlocked_valid,
+
+    bDealerInCar ,
+    if(IsNull(bDealerInCar) or len(bDealerInCar) = 0,1,0) as Flag_bDealerInCar_empty,
+    //darf nur 0 oder 1 sein
+    if(bDealerInCar = '0' or '1' and not IsNull(bDealerInCar) and len(bDealerInCar) > 0, 1,0) as Flag_bDealerInCar_valid,
+
+    bDealerProfile ,
+    if(IsNull(bDealerProfile) or len(bDealerProfile) = 0,1,0) as Flag_bDealerProfile_empty,
+    //darf nur 0 oder 1 sein
+    if(bDealerProfile = '0' or '1' and not IsNull(bDealerProfile) and len(bDealerProfile) > 0, 1,0) as Flag_bDealerProfile_valid,
+
+    bManufacturerLetter ,
+
+    if(IsNull(bManufacturerLetter) or len(bManufacturerLetter) = 0,1,0) as Flag_bManufacturerLetter_empty,
+
+    //darf nur 0 oder 1 sein
+    if(bManufacturerLetter = '0' or '1' and not IsNull(bManufacturerLetter) and len(bManufacturerLetter) > 0, 1,0) as Flag_bManufacturerLetter_valid,
+
+    bManufacturerEMail ,
+
+    if(IsNull(bManufacturerEMail) or len(bManufacturerEMail) = 0,1,0) as Flag_bManufacturerEMail_empty,
+
+    //darf nur 0 oder 1 sein
+    if(bManufacturerEMail = '0' or '1' and not IsNull(bManufacturerEMail) and len(bManufacturerEMail) > 0, 1,0) as Flag_bManufacturerEMail_valid,
+
+    cDataPrivacyComment ,
+    
+    if(IsNull(cDataPrivacyComment) or len(cDataPrivacyComment) = 0,1,0) as Flag_cDataPrivacyComment_empty,
+    
+    dBirthdate ,
+
+    if(IsNull(dBirthdate) or len(dBirthdate) = 0,1,0) as Flag_dBirthdate_empty,
+
+    if(year(dBirthdate) > '1899' and not IsNull(dBirthdate) and len(dBirthdate) > 0, 1,0) as Flag_dBirthdate_valid,
+
+    if(year(dBirthdate) <= year(today()) and not IsNull(dBirthdate) and len(dBirthdate) > 0, 1,0) as Flag_dBirthdate_valid1,
+
+    cCustomerGroup,
+
+    if(IsNull(cCustomerGroup) or len(cCustomerGroup) = 0,1,0) as Flag_cCustomerGroup_empty,
+
+    cCompany ,
+    
+    if(IsNull(cCompany) or len(cCompany) = 0,1,0) as Flag_cCompany_empty,
+    
+    cBranch ,
+    
+    if(IsNull(cBranch) or len(cBranch) = 0,1,0) as Flag_cBranch_empty,
+    
+    cAdditionalNote ,
+    
+    if(IsNull(cAdditionalNote) or len(cAdditionalNote) = 0,1,0) as Flag_cAdditionalNote_empty,
+    
+    dLastContact ,
+
+    if(IsNull(dLastContact) or len(dLastContact) = 0,1,0) as Flag_dLastContact_empty,
+
+    if(year(dLastContact) > '1899' and not IsNull(dLastContact) and len(dLastContact) > 0, 1,0) as Flag_dLastContact_valid,
+
+    if(year(dLastContact) <= year(today()) and not IsNull(dLastContact) and len(dLastContact) > 0, 1,0) as Flag_dLastContact_valid1,
+
+    cClientActivityType ,
+    
+    if(IsNull(cClientActivityType) or len(cClientActivityType) = 0,1,0) as Flag_cClientActivityType_empty,
+    
+    cCreditLimit ,
+    
+    if(IsNull(cCreditLimit) or len(cCreditLimit) = 0,1,0) as Flag_cCreditLimit_empty,
+    
+    cCharacteristic ,
+    
+    if(IsNull(cCharacteristic) or len(cCharacteristic) = 0,1,0) as Flag_cCharacteristic_empty,
+    
+    cDriver ,
+
+    if(IsNull(cDriver) or len(cDriver) = 0,1,0) as Flag_cDriver_empty,
+
+    if(len(KeepChar(lower(cDriver), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(cDriver) and len(cDriver) > 0, 1,0) as Flag_cDriver_valid,
+
+    dDriverLicenceExpDate ,
+
+    if(IsNull(dDriverLicenceExpDate) or len(dDriverLicenceExpDate) = 0,1,0) as Flag_dDriverLicenceExpDate_empty,
+
+    cOccupationGroup ,
+    
+    if(IsNull(cOccupationGroup) or len(cOccupationGroup) = 0,1,0) as Flag_cOccupationGroup_empty,
+    
+    cPreferContact,
+    
+    if(IsNull(cPreferContact) or len(cPreferContact) = 0,1,0) as Flag_cPreferContact_empty,
+    
+    cAdditionalTelefon ,
+    
+    if(IsNull(cAdditionalTelefon) or len(cAdditionalTelefon) = 0,1,0) as Flag_cAdditionalTelefon_empty,
+    
+    cGlobalID ,
+    
+    if(IsNull(cGlobalID) or len(cGlobalID) = 0,1,0) as Flag_cGlobalID_empty,
+    
+    lBranchKey,
+    
+    if(IsNull(lBranchKey) or len(lBranchKey) = 0,1,0) as Flag_lBranchKey_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(lBranchKey), '0123456789 ')) = 0 and not IsNull(lBranchKey) and len(lBranchKey) > 0, 1,0) as Flag_lBranchKey_nurZahlen,    
+    
+    bNOGUserBinded ,
+    
+    if(IsNull(bNOGUserBinded) or len(bNOGUserBinded) = 0,1,0) as Flag_bNOGUserBinded_empty,
+    
+    // bDealerAgreeWithDP AS BDEALERAGREEWITHDP,
+    dDealerAcceptanceDate ,
+    
+    if(IsNull(dDealerAcceptanceDate) or len(dDealerAcceptanceDate) = 0,1,0) as Flag_dDealerAcceptanceDate_empty,
+    
+    // bDealerPhoneOrMsg AS BDEALERPHONEORMSG,
+    // bDealerBlocked AS BDEALERBLOCKED,
+    // bDealerInCar AS BDEALERINCAR,
+    // bDealerProfile AS BDEALERPROFILE,
+    bManufacturerAgreeWithDP ,
+    
+    if(IsNull(bManufacturerAgreeWithDP) or len(bManufacturerAgreeWithDP) = 0,1,0) as Flag_bManufacturerAgreeWithDP_empty,
+    
+    dManufacturerAcceptanceDate ,
+    
+    if(IsNull(dManufacturerAcceptanceDate) or len(dManufacturerAcceptanceDate) = 0,1,0) as Flag_dManufacturerAcceptanceDate_empty,
+    
+    bManufacturerPhoneOrMsg ,
+    
+    if(IsNull(bManufacturerPhoneOrMsg) or len(bManufacturerPhoneOrMsg) = 0,1,0) as Flag_bManufacturerPhoneOrMsg_empty,
+    
+    bManufacturerBlocked ,
+    
+    if(IsNull(bManufacturerBlocked) or len(bManufacturerBlocked) = 0,1,0) as Flag_bManufacturerBlocked_empty,
+    
+    bManufacturerInCar ,
+    
+    if(IsNull(bManufacturerInCar) or len(bManufacturerInCar) = 0,1,0) as Flag_bManufacturerInCar_empty,
+    
+    bManufacturerProfile ,
+    
+    if(IsNull(bManufacturerProfile) or len(bManufacturerProfile) = 0,1,0) as Flag_bManufacturerProfile_empty,
+    
+    Standort ,    
+    
+    if(IsNull(Standort) or len(Standort) = 0,1,0) as Flag_Standort_empty
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_Customers.qvd]
+(qvd);
+
+// Store Customer into [lib://$(v_bereich):DataFiles:DataFiles/$(v_start_datei)_02_Trans_02_TKP_Customer.qvd]
+// (qvd);
+
+Store Customers into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Customers.qvd]
+(qvd);
+
+
+drop table Customers;
+
+/*
+----------------------------------------------------------------Jobs----------------------------------------------------
+*/
+Jobs:
+LOAD
+    cKeyJob,
+    
+    cKeyJob &'_'& Standort as %cKeyJob_Standort, 
+    
+    if(IsNull(cKeyJob) or len(cKeyJob) = 0,1,0) as Flag_cKeyJob_empty,
+    
+    if(len(KeepChar(lower(cKeyJob), '0123456789abcdefghijklmnopqrstuvwxyzüäöß ')) = 10 and not IsNull(cKeyJob) and len(cKeyJob) > 0, 1,0) as Flag_cKeyJob_valid,
+
+    cGUID,
+
+	if(IsNull(cGUID) or len(cGUID) = 0,1,0) as Flag_cGUID_empty,
+
+    if(len(KeepChar(cGUID, '0123456789')) > 5 and len(KeepChar(cGUID, 'abcdefghijklmnopqrstuvwxyzüäöß ')) < 2 and not IsNull(cGUID) and len(cGUID) > 0, 1,0) as Flag_cGUID_valid,
+
+	cMaintenanceGUID,
+    
+    if(IsNull(cMaintenanceGUID) or len(cMaintenanceGUID) = 0,1,0) as Flag_cMaintenanceGUID_empty,
+
+    if(len(KeepChar(cMaintenanceGUID, '0123456789')) > 5 and len(KeepChar(cMaintenanceGUID, 'abcdefghijklmnopqrstuvwxyzüäöß ')) < 2 and not IsNull(cMaintenanceGUID) and len(cMaintenanceGUID) > 0, 1,0) as Flag_cMaintenanceGUID_valid,
+
+    cJobType,
+    
+    if(IsNull(cJobType) or len(cJobType) = 0,1,0) as Flag_cJobType_empty,
+
+	//Muss einem der zehn Fälle entsprechen
+    if(match(cJobType, 'E','H','I','J','K','Q','R','T','X','Z') and not IsNull(cJobType) and len(cKeyJob) > 0, 1, 0) as Flag_cJobType_valid,
+    
+    nJobSubType,
+    
+    if(IsNull(nJobSubType) or len(nJobSubType) = 0,1,0) as Flag_nJobSubType_empty,
+
+    if(len(PurgeChar(nJobSubType, '0123456789')) = 0 and not IsNull(nJobSubType) and len(nJobSubType) > 0, 1,0) as Flag_nJobSubType_valid,
+    
+    cKeyCustomer,
+    
+    if(IsNull(cKeyCustomer) or len(cKeyCustomer) = 0,1,0) as Flag_cKeyCustomer_empty,
+    
+    if(len(KeepChar(lower(cKeyCustomer), '0123456789abcdefghijklmnopqrstuvwxyzüäöß ')) = 10 and not IsNull(cKeyCustomer) and len(cKeyCustomer) > 0, 1,0) as Flag_cKeyCustomer_valid,
+    
+    lKeyCar,
+    
+    lKeyCar &'_'& Standort as %lKeyCar_Standort,
+    
+    if(IsNull(lKeyCar) or len(lKeyCar) = 0,1,0) as Flag_lKeyCar_empty,
+
+    if(len(PurgeChar(lKeyCar, '0123456789')) = 0 and not IsNull(lKeyCar) and len(lKeyCar) > 0, 1,0) as Flag_lKeyCar_nur_Zahlen,
+
+    nSAKey,
+    
+    if(IsNull(nSAKey) or len(nSAKey) = 0,1,0) as Flag_nSAKey_empty,
+
+    if(len(PurgeChar(nSAKey, '0123456789')) = 0 and not IsNull(nSAKey) and len(nSAKey) > 0, 1,0) as Flag_nSAKey_nur_Zahlen,      
+    
+    cSAName,
+    
+    if(IsNull(cSAName) or len(cSAName) = 0,1,0) as Flag_cSAName_empty,
+
+	//Name muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(cSAName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(cSAName) and len(cSAName) > 0, 1,0) as Flag_cSAName_valid,
+    
+    dtSAAllocationStart,
+    
+    if(IsNull(dtSAAllocationStart) or len(dtSAAllocationStart) = 0,1,0) as Flag_dtSAAllocationStart_empty,
+    
+    if(year(dtSAAllocationStart) > '1998' and not IsNull(dtSAAllocationStart) and len(dtSAAllocationStart) > 0, 1,0) as Flag_dtSAAllocationStart_valid,
+    
+    dtSAAllocationStartLocal,
+     
+    if(IsNull(dtSAAllocationStartLocal) or len(dtSAAllocationStartLocal) = 0,1,0) as Flag_dtSAAllocationStartLocal_empty,
+
+	if(year(dtSAAllocationStartLocal) > '1998' and not IsNull(dtSAAllocationStartLocal) and len(dtSAAllocationStartLocal) > 0, 1,0) as Flag_dtSAAllocationStartLocal_valid,
+
+    nSAAllocationStart,
+    
+    if(IsNull(nSAAllocationStart) or len(nSAAllocationStart) = 0,1,0) as Flag_nSAAllocationStart_empty,
+
+	if(Left(nSAAllocationStart, 4) > '1998' and not IsNull(nSAAllocationStart) and len(nSAAllocationStart) > 0, 1,0) as Flag_nSAAllocationStart_valid,
+    
+    dtSAAllocationStop,
+    
+    if(IsNull(dtSAAllocationStop) or len(dtSAAllocationStop) = 0,1,0) as Flag_dtSAAllocationStop_empty,
+    
+    if(year(dtSAAllocationStop) > '1998' and not IsNull(dtSAAllocationStop) and len(dtSAAllocationStop) > 0, 1,0) as Flag_dtSAAllocationStop_valid,
+    
+    dtSAAllocationStopLocal,
+    
+    if(IsNull(dtSAAllocationStopLocal) or len(dtSAAllocationStopLocal) = 0,1,0) as Flag_dtSAAllocationStopLocal_empty,
+
+	if(year(dtSAAllocationStopLocal) > '1998' and not IsNull(dtSAAllocationStopLocal) and len(dtSAAllocationStopLocal) > 0, 1,0) as Flag_dtSAAllocationStopLocal_valid,
+    
+    dtArrivalTime,
+    
+    if(IsNull(dtArrivalTime) or len(dtArrivalTime) = 0,1,0) as Flag_dtArrivalTime_empty,
+    
+    if(year(dtArrivalTime) > '1998' and not IsNull(dtArrivalTime) and len(dtArrivalTime) > 0, 1,0) as Flag_dtArrivalTime_valid,
+
+    dtArrivalTimeLocal,
+    
+    if(IsNull(dtArrivalTimeLocal) or len(dtArrivalTimeLocal) = 0,1,0) as Flag_dtArrivalTimeLocal_empty,
+    
+    if(year(dtArrivalTimeLocal) > '1998' and not IsNull(dtArrivalTimeLocal) and len(dtArrivalTimeLocal) > 0, 1,0) as Flag_dtArrivalTimeLocal_valid,
+   
+    dRepairStartDate,
+        
+    if(IsNull(dRepairStartDate) or len(dRepairStartDate) = 0,1,0) as Flag_dRepairStartDate_empty,
+    
+    if(year(dRepairStartDate) > '1998' and not IsNull(dRepairStartDate) and len(dRepairStartDate) > 0, 1,0) as Flag_dRepairStartDate_valid,
+
+    dRepairEndDate,
+       
+    if(IsNull(dRepairEndDate) or len(dRepairEndDate) = 0,1,0) as Flag_dRepairEndDate_empty,
+    
+    if(year(dRepairEndDate) > '1998' and not IsNull(dRepairEndDate) and len(dRepairEndDate) > 0, 1,0) as Flag_dRepairEndDate_valid,
+
+    nCompletionDate,
+    
+    if(IsNull(nCompletionDate) or len(nCompletionDate) = 0,1,0) as Flag_nCompletionDate_empty,
+    
+    if(Left(nCompletionDate, 4) > '1998' and not IsNull(nCompletionDate) and len(nCompletionDate) > 0, 1,0) as Flag_nCompletionDate_valid,
+    
+    lMileage2,
+    
+    if(IsNull(lMileage2) or len(lMileage2) = 0,1,0) as Flag_lMileage2_empty,
+    
+    //lMileage2 darf nur Zahlen >= 0 enthalten
+    if(len(PurgeChar(lower(lMileage2), '0123456789 ')) = 0 and not IsNull(lMileage2) and len(lMileage2) > 0, 1,0) as Flag_lMileage2_nurZahlen,
+    if(lMileage2 >= 0 and not IsNull(lMileage2) and len(lMileage2) > 0,1,0) as Flag_lMileage2_valid,
+
+    lKeyRentCar,
+    
+    if(IsNull(lKeyRentCar) or len(lKeyRentCar) = 0,1,0) as Flag_lKeyRentCar_empty,
+
+    lKeyExternalRentCar,
+    
+    if(IsNull(lKeyExternalRentCar) or len(lKeyExternalRentCar) = 0,1,0) as Flag_lKeyExternalRentCar_empty,
+
+    dtRentStartDate,
+    
+    if(IsNull(dtRentStartDate) or len(dtRentStartDate) = 0,1,0) as Flag_dtRentStartDate_empty,
+    
+    if(year(dtRentStartDate) > '1998' and not IsNull(dtRentStartDate) and len(dtRentStartDate) > 0, 1,0) as Flag_dtRentStartDate_valid,
+
+    dtRentStartDateLocal,
+    
+    if(IsNull(dtRentStartDateLocal) or len(dtRentStartDateLocal) = 0,1,0) as Flag_dtRentStartDateLocal_empty,
+    
+    if(year(dtRentStartDateLocal) > '1998' and not IsNull(dtRentStartDateLocal) and len(dtRentStartDateLocal) > 0, 1,0) as Flag_dtRentStartDateLocal_valid,
+
+    dtRentEndDate,
+    
+    if(IsNull(dtRentEndDate) or len(dtRentEndDate) = 0,1,0) as Flag_dtRentEndDate_empty,
+    
+    if(year(dtRentEndDate) > '1998' and not IsNull(dtRentEndDate) and len(dtRentEndDate) > 0, 1,0) as Flag_dtRentEndDate_valid,
+
+    dtRentEndDateLocal,
+    
+    if(IsNull(dtRentEndDateLocal) or len(dtRentEndDateLocal) = 0,1,0) as Flag_dtRentEndDateLocal_empty,
+    
+    if(year(dtRentEndDateLocal) > '1998' and not IsNull(dtRentEndDateLocal) and len(dtRentEndDateLocal) > 0, 1,0) as Flag_dtRentEndDateLocal_valid,
+
+    nWorkShopID,
+        
+    if(IsNull(nWorkShopID) or len(nWorkShopID) = 0,1,0) as Flag_nWorkShopID_empty,
+
+    //nur 0 oder 1
+    if(nWorkShopID = '0' or '1' and not IsNull(nWorkShopID) and len(nWorkShopID) > 0, 1,0) as Flag_nWorkShopID_valid,
+    
+    cFaxNote,
+    
+    if(IsNull(cFaxNote) or len(cFaxNote) = 0,1,0) as Flag_cFaxNote_empty,
+    
+    nNextTimeReminderFlag,
+      
+    if(IsNull(nNextTimeReminderFlag) or len(nNextTimeReminderFlag) = 0,1,0) as Flag_nNextTimeReminderFlag_empty,
+
+    //nur 0 oder 1
+    if(nNextTimeReminderFlag = '0' or '1' and not IsNull(nNextTimeReminderFlag) and len(nNextTimeReminderFlag) > 0, 1,0) as Flag_nNextTimeReminderFlag_valid,
+    
+    dtEstimatedRepairEndDate,
+    
+    if(IsNull(dtEstimatedRepairEndDate) or len(dtEstimatedRepairEndDate) = 0,1,0) as Flag_dtEstimatedRepairEndDate_empty,
+    
+    if(year(dtEstimatedRepairEndDate) > '1998' and not IsNull(dtEstimatedRepairEndDate) and len(dtEstimatedRepairEndDate) > 0, 1,0) as Flag_dtEstimatedRepairEndDate_valid,
+
+    dtEstimatedRepairEndDateLocal,
+    
+    if(IsNull(dtEstimatedRepairEndDateLocal) or len(dtEstimatedRepairEndDateLocal) = 0,1,0) as Flag_dtEstimatedRepairEndDateLocal_empty,
+    
+    if(year(dtEstimatedRepairEndDateLocal) > '1998' and not IsNull(dtEstimatedRepairEndDateLocal) and len(dtEstimatedRepairEndDateLocal) > 0, 1,0) as Flag_dtEstimatedRepairEndDateLocal_valid,
+
+    nEstimatedRepairEndDate,
+    
+    if(IsNull(nEstimatedRepairEndDate) or len(nEstimatedRepairEndDate) = 0,1,0) as Flag_nEstimatedRepairEndDate_empty,
+    
+    if(Left(nEstimatedRepairEndDate, 4) > '1998' and not IsNull(nEstimatedRepairEndDate) and len(nEstimatedRepairEndDate) > 0, 1,0) as Flag_nEstimatedRepairEndDate_valid,
+    
+    dtEstimatedRepairEndDate2,
+    
+    if(IsNull(dtEstimatedRepairEndDate2) or len(dtEstimatedRepairEndDate2) = 0,1,0) as Flag_dtEstimatedRepairEndDate2_empty,
+    
+    if(year(dtEstimatedRepairEndDate2) > '1998' and not IsNull(dtEstimatedRepairEndDate2) and len(dtEstimatedRepairEndDate2) > 0, 1,0) as Flag_dtEstimatedRepairEndDate2_valid,
+
+    dtEstimatedRepairEndDate2Local,
+    
+    if(IsNull(dtEstimatedRepairEndDate2Local) or len(dtEstimatedRepairEndDate2Local) = 0,1,0) as Flag_dtEstimatedRepairEndDate2Local_empty,
+    
+    if(year(dtEstimatedRepairEndDate2Local) > '1998' and not IsNull(dtEstimatedRepairEndDate2Local) and len(dtEstimatedRepairEndDate2Local) > 0, 1,0) as Flag_dtEstimatedRepairEndDate2Local_valid,
+
+    cNextTimeReminderNote,
+    
+    if(IsNull(cNextTimeReminderNote) or len(cNextTimeReminderNote) = 0,1,0) as Flag_cNextTimeReminderNote_empty,
+
+    cAutomaticNote,
+    
+    if(IsNull(cAutomaticNote) or len(cAutomaticNote) = 0,1,0) as Flag_cAutomaticNote_empty,
+
+    cAdditionalNote,
+    
+    if(IsNull(cAdditionalNote) or len(cAdditionalNote) = 0,1,0) as Flag_cAdditionalNote_empty,
+
+    cSalesNote,
+    
+    if(IsNull(cSalesNote) or len(cSalesNote) = 0,1,0) as Flag_cSalesNote_empty,
+
+    cSANote,
+    
+    if(IsNull(cSANote) or len(cSANote) = 0,1,0) as Flag_cSANote_empty,
+
+    cStockNote,
+    
+    if(IsNull(cStockNote) or len(cStockNote) = 0,1,0) as Flag_cStockNote_empty,
+
+    lKeyRentItem,
+    
+    if(IsNull(lKeyRentItem) or len(lKeyRentItem) = 0,1,0) as Flag_lKeyRentItem_empty,
+
+    if(len(PurgeChar(lKeyRentItem, '0123456789')) = 0 and not IsNull(lKeyRentItem) and len(lKeyRentItem) > 0, 1,0) as Flag_lKeyRentItem_nur_Zahlen,
+
+    nDeliverSAKey,
+    
+    if(IsNull(nDeliverSAKey) or len(nDeliverSAKey) = 0,1,0) as Flag_nDeliverSAKey_empty,
+
+    if(len(PurgeChar(nDeliverSAKey, '0123456789')) = 0 and not IsNull(nDeliverSAKey) and len(nDeliverSAKey) > 0, 1,0) as Flag_nDeliverSAKey_nur_Zahlen,
+
+    cDeliverSAName,
+    
+    if(IsNull(cDeliverSAName) or len(cDeliverSAName) = 0,1,0) as Flag_cDeliverSAName_empty,
+    
+    cOrderNumber,
+    
+    if(IsNull(cOrderNumber) or len(cOrderNumber) = 0,1,0) as Flag_cOrderNumber_empty,
+
+    cParkingPlace,
+    
+    if(IsNull(cParkingPlace) or len(cParkingPlace) = 0,1,0) as Flag_cParkingPlace_empty,
+
+    nOrderType,
+    
+    if(IsNull(nOrderType) or len(nOrderType) = 0,1,0) as Flag_nOrderType_empty,
+    
+    if(len(PurgeChar(nOrderType, '0123456789')) = 0 and not IsNull(nOrderType) and len(nOrderType) > 0, 1,0) as Flag_nOrderType_nur_Zahlen,
+     
+    cWorkshopRefNr,
+    
+    if(IsNull(cWorkshopRefNr) or len(cWorkshopRefNr) = 0,1,0) as Flag_cWorkshopRefNr_empty,
+    
+    lRootPackageKey,
+    
+    if(IsNull(lRootPackageKey) or len(lRootPackageKey) = 0,1,0) as Flag_lRootPackageKey_empty,
+    
+    if(len(PurgeChar(lower(lRootPackageKey), '0123456789')) = 0 and not IsNull(lRootPackageKey) and len(lRootPackageKey) > 0, 1,0) as Flag_lRootPackageKey_valid,   
+    
+    //nur 0 oder leer
+    lNextTimePackageKey,
+    
+    if(IsNull(lNextTimePackageKey) or len(lNextTimePackageKey) = 0,1,0) as Flag_lNextTimePackageKey_empty,
+    
+    lBranchKey,
+    
+    if(IsNull(lBranchKey) or len(lBranchKey) = 0,1,0) as Flag_lBranchKey_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(lBranchKey), '0123456789 ')) = 0 and not IsNull(lBranchKey) and len(lBranchKey) > 0, 1,0) as Flag_lBranchKey_nurZahlen,    
+    
+    nRepeatedRepairFlag,
+    
+    if(IsNull(nRepeatedRepairFlag) or len(nRepeatedRepairFlag) = 0,1,0) as Flag_nRepeatedRepairFlag_empty,
+    
+    //nur 0 oder 1
+    if(nRepeatedRepairFlag = '0' or '1' and not IsNull(nRepeatedRepairFlag) and len(nRepeatedRepairFlag) > 0, 1,0) as Flag_nRepeatedRepairFlag_valid,    
+    
+    nDirectAcceptanceFlag,
+    
+    if(IsNull(nDirectAcceptanceFlag) or len(nDirectAcceptanceFlag) = 0,1,0) as Flag_nDirectAcceptanceFlag_empty,
+    
+    //nur 0 oder 1
+    if(nDirectAcceptanceFlag = '0' or '1' and not IsNull(nDirectAcceptanceFlag) and len(nDirectAcceptanceFlag) > 0, 1,0) as Flag_nDirectAcceptanceFlag_valid,    
+    
+    nFastLaneFlag,
+    
+    if(IsNull(nFastLaneFlag) or len(nFastLaneFlag) = 0,1,0) as Flag_nFastLaneFlag_empty,
+    
+    //nur 0 oder 1
+    if(nFastLaneFlag = '0' or '1' and not IsNull(nFastLaneFlag) and len(nFastLaneFlag) > 0, 1,0) as Flag_nFastLaneFlag_valid,    
+    
+    nRentJobStatus,
+    
+    if(IsNull(nRentJobStatus) or len(nRentJobStatus) = 0,1,0) as Flag_nRentJobStatus_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(nRentJobStatus), '0123456789 ')) = 0 and not IsNull(nRentJobStatus) and len(nRentJobStatus) > 0, 1,0) as Flag_nRentJobStatus_nurZahlen,    
+    
+    nJobCreationType,
+    
+    if(IsNull(nJobCreationType) or len(nJobCreationType) = 0,1,0) as Flag_nJobCreationType_empty,
+     
+     //nur Zahlen
+    if(len(PurgeChar(lower(nJobCreationType), '0123456789 ')) = 0 and not IsNull(nJobCreationType) and len(nJobCreationType) > 0, 1,0) as Flag_nJobCreationType_nurZahlen,    
+    
+    dtJobCreationDate,
+    
+    if(IsNull(dtJobCreationDate) or len(dtJobCreationDate) = 0,1,0) as Flag_dtJobCreationDate_empty,
+    
+    if(year(dtJobCreationDate) > '1998' and not IsNull(dtJobCreationDate) and len(dtJobCreationDate) > 0, 1,0) as Flag_dtJobCreationDate_valid,
+
+    dtJobCreationDateLocal,
+    
+    if(IsNull(dtJobCreationDateLocal) or len(dtJobCreationDateLocal) = 0,1,0) as Flag_dtJobCreationDateLocal_empty,
+    
+    if(year(dtJobCreationDateLocal) > '1998' and not IsNull(dtJobCreationDateLocal) and len(dtJobCreationDateLocal) > 0, 1,0) as Flag_dtJobCreationDateLocal_valid,
+
+    dtJobLastModifiedDate,
+    
+    if(IsNull(dtJobLastModifiedDate) or len(dtJobLastModifiedDate) = 0,1,0) as Flag_dtJobLastModifiedDate_empty,
+    
+    if(year(dtJobLastModifiedDate) > '1998' and not IsNull(dtJobLastModifiedDate) and len(dtJobLastModifiedDate) > 0, 1,0) as Flag_dtJobLastModifiedDate_valid,
+
+    dtJobLastModifiedDateLocal,
+    
+    if(IsNull(dtJobLastModifiedDateLocal) or len(dtJobLastModifiedDateLocal) = 0,1,0) as Flag_dtJobLastModifiedDateLocal_empty,
+    
+    if(year(dtJobLastModifiedDateLocal) > '1998' and not IsNull(dtJobLastModifiedDateLocal) and len(dtJobLastModifiedDateLocal) > 0, 1,0) as Flag_dtJobLastModifiedDateLocal_valid,    
+
+    nJobLastModifiedDate,
+    
+    if(IsNull(nJobLastModifiedDate) or len(nJobLastModifiedDate) = 0,1,0) as Flag_nJobLastModifiedDate_empty,
+
+	if(Left(nJobLastModifiedDate, 4) > '1998' and not IsNull(nJobLastModifiedDate) and len(nJobLastModifiedDate) > 0, 1,0) as Flag_nJobLastModifiedDate_valid,
+    
+    cJobCreationLoginID,
+    
+    if(IsNull(cJobCreationLoginID) or len(cJobCreationLoginID) = 0,1,0) as Flag_cJobCreationLoginID_empty,
+    
+    if(len(KeepChar(cJobCreationLoginID, 'abcdefghijklmnopqrstuvwxyzüäöß')) > 1 ,1,0) as Flag_cJobCreationLoginID_valid,
+
+    cJobLastModifiedLoginID,    
+    
+    if(IsNull(cJobLastModifiedLoginID) or len(cJobLastModifiedLoginID) = 0,1,0) as Flag_cJobLastModifiedLoginID_empty,
+    
+    if(len(KeepChar(cJobLastModifiedLoginID, 'abcdefghijklmnopqrstuvwxyzüäöß')) > 1 ,1,0) as Flag_cJobLastModifiedLoginID_valid,
+    
+    if(cJobCreationLoginID = cJobLastModifiedLoginID and not IsNull(cJobCreationLoginID) and len(cJobCreationLoginID) > 0 and not IsNull(cJobLastModifiedLoginID) and len(cJobLastModifiedLoginID) > 0, 1,0) as Flag_cJobLoginIDs_equal,
+
+	//nur 0
+    nFSContractAvailability,
+    
+    //leer
+    cFSContractAvailabilityRefID,
+    cFSContractAvailabilityMsg,
+    //
+    //nur 0
+    nFSOfferAvailability,
+    //leer
+    lPartsAvailabilityStatus,
+    //leer
+    cOrderNote,
+    nWorkCycleLocalFlag,
+        
+    if(IsNull(nWorkCycleLocalFlag) or len(nWorkCycleLocalFlag) = 0,1,0) as Flag_nWorkCycleLocalFlag_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(nWorkCycleLocalFlag), '0123456789 ')) = 0 and not IsNull(nWorkCycleLocalFlag) and len(nWorkCycleLocalFlag) > 0, 1,0) as Flag_nWorkCycleLocalFlag_nurZahlen,
+    
+    //nur 0
+    nWorkCycleRemoteFlag,
+    nDMSUpdateOrderState,
+    
+    if(IsNull(nDMSUpdateOrderState) or len(nDMSUpdateOrderState) = 0,1,0) as Flag_nDMSUpdateOrderState_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(nDMSUpdateOrderState), '0123456789 ')) = 0 and not IsNull(nDMSUpdateOrderState) and len(nDMSUpdateOrderState) > 0, 1,0) as Flag_nDMSUpdateOrderState_nurZahlen,
+    
+    dtDMSOrderTimestamp,
+      
+    if(IsNull(dtDMSOrderTimestamp) or len(dtDMSOrderTimestamp) = 0,1,0) as Flag_dtDMSOrderTimestamp_empty,
+    
+    if(year(dtDMSOrderTimestamp) > '1998' and not IsNull(dtDMSOrderTimestamp) and len(dtDMSOrderTimestamp) > 0, 1,0) as Flag_dtDMSOrderTimestamp_valid,
+
+    cDeliverType,
+    
+    if(IsNull(cDeliverType) or len(cDeliverType) = 0,1,0) as Flag_cDeliverType_empty,
+    
+    nDeliverSubType,
+    
+    if(IsNull(nDeliverSubType) or len(nDeliverSubType) = 0,1,0) as Flag_nDeliverSubType_empty,
+    
+    cContactPhone,
+    
+    if(IsNull(cContactPhone) or len(cContactPhone) = 0,1,0) as Flag_cContactPhone_empty,
+
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(cContactPhone), '0123456789-/+() ')) = 0 and not IsNull(cContactPhone) and len(cContactPhone) > 0, 1,0) as Flag_cContactPhone_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(cContactPhone, '0123456789')) > 6 and not IsNull(cContactPhone) and len(cContactPhone) > 0, 1, 0) as Flag_cContactPhone_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(cContactPhone, '+')) < 2 and not IsNull(cContactPhone) and len(cContactPhone) > 0, 1, 0) as Flag_cContactPhone_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(cContactPhone, '0')) = 0 and len(KeepChar(cContactPhone, '0')) > 0 or IsNull(cContactPhone) or len(cContactPhone) = 0, 0,1) as Flag_cContactPhone_valideZahlen,
+
+    cContactEmail,
+    
+    if(IsNull(cContactEmail) or len(cContactEmail) = 0,1,0) as Flag_cContactEmail_empty,
+
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len(cContactEmail) < 255 and len(cContactEmail) > 5 and not IsNull(cContactEmail) and len(cContactEmail) > 0, 1,0) as Flag_cContactEmail_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower(cContactEmail), '@')) = 1 and not IsNull(cContactEmail) and len(cContactEmail) > 0, 1,0) as Flag_cContactEmail_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower(cContactEmail), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull(cContactEmail) and len(cContactEmail) > 0, 1,0) as Flag_cContactEmail_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left(cContactEmail, Index(cContactEmail,'@') -1 )) > 0 and len(Left(cContactEmail, Index(cContactEmail,'@') -1 )) < 65 and not IsNull(cContactEmail) and len(cContactEmail) > 0, 1,0) as Flag_cContactEmail_Lokalteil_valid,
+    //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten
+    if(len(Right(cContactEmail, Index(cContactEmail,'@') +1 )) > 1 and wildmatch(Right(cContactEmail, Index(cContactEmail,'@') +1), '*.*') and not IsNull(cContactEmail) and len(cContactEmail) > 0, 1,0) as Flag_cContactEmail_Domainteil_valid,
+
+    cServiceCode,
+        
+    if(IsNull(cServiceCode) or len(cServiceCode) = 0,1,0) as Flag_cServiceCode_empty,
+
+    cWorkshopCode,
+    
+	if(IsNull(cWorkshopCode) or len(cWorkshopCode) = 0,1,0) as Flag_cWorkshopCode_empty,
+    
+    cServiceCaseId,
+    
+    if(IsNull(cServiceCaseId) or len(cServiceCaseId) = 0,1,0) as Flag_cServiceCaseId_empty,
+    
+    nTouchedByPad,
+    
+    if(IsNull(nTouchedByPad) or len(nTouchedByPad) = 0,1,0) as Flag_nTouchedByPad_empty,
+    
+    nStatusOfJob,
+    
+    if(IsNull(nStatusOfJob) or len(nStatusOfJob) = 0,1,0) as Flag_nStatusOfJob_empty,
+    
+    //nur Zahlen
+    if(len(PurgeChar(lower(nStatusOfJob), '0123456789 ')) = 0 and not IsNull(nStatusOfJob) and len(nStatusOfJob) > 0, 1,0) as Flag_nStatusOfJob_nurZahlen,
+    
+    bIsDirty,
+    
+    if(IsNull(bIsDirty) or len(bIsDirty) = 0,1,0) as Flag_bIsDirty_empty,
+    
+    //nur 0 oder 1
+    if(bIsDirty = '0' or '1' and not IsNull(bIsDirty) and len(bIsDirty) > 0, 1,0) as Flag_bIsDirty_valid,    
+    
+    //nur 0
+    nPartsRelevant,
+    
+    if(IsNull(nPartsRelevant) or len(nPartsRelevant) = 0,1,0) as Flag_nPartsRelevant_empty,
+
+    dtOperationLastCompletionTime,
+    
+    if(IsNull(dtOperationLastCompletionTime) or len(dtOperationLastCompletionTime) = 0,1,0) as Flag_dtOperationLastCompletionTime_empty,
+
+    if(year(dtOperationLastCompletionTime) > '1998' and not IsNull(dtOperationLastCompletionTime) and len(dtOperationLastCompletionTime) > 0, 1,0) as Flag_dtOperationLastCompletionTime_valid,    	
+
+    Standort,
+    
+    if(IsNull(Standort) or len(Standort) = 0, 1,0) as Flag_Standort_empty
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_02_TKP_Jobs.qvd]
+(qvd);
+
+// Store Jobs into [lib://$(v_bereich):DataFiles:DataFiles/$(v_start_datei)_02_Trans_02_TKP_Jobs.qvd]
+// (qvd);
+
+Store Jobs into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_02_TKP_Jobs.qvd]
+(qvd);
+
+
+
+drop table Jobs;
+
+
+
