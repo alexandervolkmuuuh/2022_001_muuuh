@@ -511,7 +511,7 @@ LOAD
     if(IsNull(LFILD) or len(LFILD) = 0,1,0) as Flag_LFILD_empty,
     
     LFIL
-FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_03_NAV_Customer.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_03_Nav_Customer.qvd]
 (qvd);
 
 
@@ -760,7 +760,7 @@ LOAD
     Street,
     "House No_",
     "DMS Test Address"
-FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_03_NAV_AddressHistory.qvd]
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_03_Nav_AddressHistory.qvd]
 (qvd);
 
 
