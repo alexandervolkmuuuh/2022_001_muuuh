@@ -492,7 +492,8 @@ LOAD
           //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
           if(len(Left(EMail, Index( EMail,'@') -1 )) > 0 and len(Left(EMail, Index( EMail,'@') -1 )) < 65 and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_Lokalteil_valid,
           //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
-          if(len(Right(EMail, Index( EMail,'@') +1 )) > 1 and wildmatch(Right(EMail, Index(EMail,'@') +1), '*.*') and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_Domainteil_valid,
+          //if(len(Right(EMail, Index( EMail,'@') +1 )) > 1 and wildmatch(Right(EMail, Index(EMail,'@') +1), '*.*') and not IsNull(EMail) and len(EMail) > 0, 1,0) as Flag_EMail_Domainteil_valid,
+	  if(len(Right("EMail", Index( "EMail",'@') +1 )) > 1 and wildmatch(Right("EMail", len("EMail")-Index("EMail",'@')), '*.*') and not IsNull("EMail") and len("EMail") > 0, 1,0) as Flag_EMail_Domainteil_valid,
 
     
     profEMail,
@@ -508,7 +509,8 @@ LOAD
           //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
           if(len(Left(profEMail, Index( profEMail,'@') -1 )) > 0 and len(Left(profEMail, Index( profEMail,'@') -1 )) < 65 and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_Lokalteil_valid,
           //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
-          if(len(Right(profEMail, Index( profEMail,'@') +1 )) > 1 and wildmatch(Right(profEMail, Index(profEMail,'@') +1), '*.*') and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_Domainteil_valid,
+          //if(len(Right(profEMail, Index( profEMail,'@') +1 )) > 1 and wildmatch(Right(profEMail, Index(profEMail,'@') +1), '*.*') and not IsNull(profEMail) and len(profEMail) > 0, 1,0) as Flag_profEMail_Domainteil_valid,
+	  if(len(Right("profEMail", Index( "profEMail",'@') +1 )) > 1 and wildmatch(Right("profEMail", len("profEMail")-Index("profEMail",'@')), '*.*') and not IsNull("profEMail") and len("profEMail") > 0, 1,0) as Flag_profEMail_Domainteil_valid,
 
     
     title,
