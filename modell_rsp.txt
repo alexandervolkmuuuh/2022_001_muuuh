@@ -1,0 +1,1138 @@
+---------------------------------------------DataPrivacyInformation-----------------------------------------------
+
+DataPrivacyInformation:
+LOAD
+    privacyConsentDataControllerId,
+    contactId as %contactId,
+    createdDate_u0 as createdDate,
+    consentDate,
+    contactEmail,
+    contactInCar,
+    contactLetter,
+    contactPhoneMessengerService,
+    createCustomerProfiles,
+    dataController,
+    dataControllerLegalEntityPN,
+    dataControllerNSCLegalEntityPartnerNum,
+    dataProcessing,
+    isValid,
+    accountId //as %accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_dataPrivacyInformation.qvd]
+(qvd);
+
+---------------------------------------------LegalEntityInformation-----------------------------------------------
+LegalEntityInformation:
+LOAD
+    personalDmsId,
+    legalEntityPartnerNr,
+    accountId as %accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_legalEntityInformation.qvd]
+(qvd);
+
+-----------------------------------------------------Account------------------------------------------------------
+Accounts:
+LOAD
+    lastSalesActivity,
+    personBirthdate,
+    accountId as %accountId,
+    accountNumber,
+    accountNumberFs,
+    accountNumberWholesaleCar,
+    accountNumberWholesaleMotorcycle,
+    buyReason,
+    keyAccountNumber,
+    accountStatus,
+    salesArea,
+    openOpportunities,
+    civilStatus,
+    contactId_u0, //as %contactId,
+    contactId,
+    contactId as %contactId,
+    accountId &'_'& contactId as Key,
+    customerMainType,
+    customerSubType,
+    customerType,
+    deleteStatus,
+    employment,
+    hobbiesValid,
+    industry,
+    isActive,
+    isPersonAccount,
+    mainAddress,
+    motorcycleLicense,
+    nationality,
+    negativePool,
+    numberOfIndividualsInHousehold,
+    numberOfVehiclesInHousehold,
+    ucid,
+    personLeadSource,
+    personDoNotCall,
+    privacyDealerBlock,
+    privacyWholesaleBlock,
+    dataPrivacyInformation,
+    hobbies,
+    additionalAddress.addressStreet,
+    additionalAddress.addressStreetNumber,
+    additionalAddress.addressStreetType,
+    additionalAddress.addressPostalCode,
+    additionalAddress.addressCity,
+    additionalAddress.addressState,
+    additionalAddress.addressCountry,
+    additionalAddress.addressPostBox,
+    additionalAddress.addressComplement,
+    additionalAddress.addressPostalCode.Flag_empty,
+    additionalAddress.addressPostalCode.Flag_Länge,
+    additionalAddress.addressPostalCode.Flag_valideZahlen,
+    additionalAddress.addressCity.Flag_empty,
+    additionalAddress.addressCity.Länge,
+    additionalAddress.addressCity.Flag_valid,
+    additionalAddress.addressStreet.Flag_empty,
+    additionalAddress.addressStreet.Flag_valid,
+    additionalAddress.addressStreet.Flag_länge,
+    additionalAddress.addressStreetNumber.Flag_empty,
+    additionalAddress.addressStreetNumber.Flag_nur_Zahlen,
+    additionalAddress.addressStreetNumber.Flag_valid,
+    privateAddress.addressStreet,
+    privateAddress.addressStreetNumber,
+    privateAddress.addressStreetType,
+    privateAddress.addressPostalCode,
+    privateAddress.addressCity,
+    privateAddress.addressState,
+    privateAddress.addressCountry,
+    privateAddress.addressPostBox,
+    privateAddress.addressComplement,
+    privateAddress.addressPostalCode.Flag_empty,
+    privateAddress.addressPostalCode.Flag_Länge,
+    privateAddress.addressPostalCode.Flag_valideZahlen,
+    privateAddress.addressCity.Flag_empty,
+    privateAddress.addressCity.Länge,
+    privateAddress.addressCity.Flag_valid,
+    privateAddress.addressStreet.Flag_empty,
+    privateAddress.addressStreet.Flag_valid,
+    privateAddress.addressStreet.Flag_länge,
+    privateAddress.addressStreetNumber.Flag_empty,
+    privateAddress.addressStreetNumber.Flag_nur_Zahlen,
+    privateAddress.addressStreetNumber.Flag_valid,
+    businessAddress.addressStreet,
+    businessAddress.addressStreetNumber,
+    businessAddress.addressStreetType,
+    businessAddress.addressPostalCode,
+    businessAddress.addressCity,
+    businessAddress.addressState,
+    businessAddress.addressCountry,
+    businessAddress.addressPostBox,
+    businessAddress.addressComplement,
+    businessAddress.addressPostalCode.Flag_empty,
+    businessAddress.addressPostalCode.Flag_Länge,
+    businessAddress.addressPostalCode.Flag_valideZahlen,
+    businessAddress.addressCity.Flag_empty,
+    businessAddress.addressCity.Länge,
+    businessAddress.addressCity.Flag_valid,
+    businessAddress.addressStreet.Flag_empty,
+    businessAddress.addressStreet.Flag_valid,
+    businessAddress.addressStreet.Flag_länge,
+    businessAddress.addressStreetNumber.Flag_empty,
+    businessAddress.addressStreetNumber.Flag_nur_Zahlen,
+    businessAddress.addressStreetNumber.Flag_valid,
+    name.salutation,
+    name.title,
+    name.firstName,
+    name.middleName,
+    name.lastName,
+    name.suffix,
+    name.nameInitials,
+    name.fullName,
+    name.name,
+    name.nameAdditional,
+    systemInfo.createdDate,
+    left(num(date(systemInfo.createdDate)), 5) as %DatumNum_RSP,
+    systemInfo.lastModifiedDate,
+    systemInfo.recordTypeName,
+    systemInfo.ownerId,
+    systemInfo.ownerName,
+    connection.phonePrivate,
+    connection.phoneBusiness,
+    connection.mobilePrivate,
+    connection.mobileBusiness,
+    connection.emailPrivate,
+    connection.emailBusiness,
+    connection.language,
+    phonePrivate.Flag_empty,
+    phonePrivate.Flag_valid,
+    phonePrivate.Flag_Länge,
+    phonePrivate.Flag_MaximalEinPlus,
+    phonePrivate.Flag_valideZahlen,
+    phoneBusiness.Flag_empty,
+    phoneBusiness.Flag_valid,
+    phoneBusiness.Flag_Länge,
+    phoneBusiness.Flag_MaximalEinPlus,
+    phoneBusiness.Flag_valideZahlen,
+    mobilePrivate.Flag_empty,
+    mobilePrivate.Flag_valid,
+    mobilePrivate.Flag_Länge,
+    mobilePrivate.Flag_MaximalEinPlus,
+    mobilePrivate.Flag_valideZahlen,
+    mobileBusiness.Flag_empty,
+    mobileBusiness.Flag_valid,
+    mobileBusiness.Flag_Länge,
+    mobileBusiness.Flag_MaximalEinPlus,
+    mobileBusiness.Flag_valideZahlen,
+    emailPrivate.Flag_empty,
+    emailPrivate.Flag_Länge,
+    emailPrivate.Flag_@_valid,
+    emailPrivate.Flag_valid,
+    emailPrivate.Flag_Lokalteil_valid,
+    emailPrivate.Flag_Domainteil_valid,
+    emailBusiness.Flag_empty,
+    emailBusiness.Flag_Länge,
+    emailBusiness.Flag_@_valid,
+    emailBusiness.Flag_valid,
+    emailBusiness.Flag_Lokalteil_valid,
+    emailBusiness.Flag_Domainteil_valid,
+    hobby.Flag_empty,
+    civilStatus.Flag_empty,
+    personBirthdate.Flag_vaild,
+    
+    firstName.Flag_empty,
+    firstName.Flag_valid,
+    middleName.Flag_empty,
+    middleName.Flag_valid,
+    lastName.Flag_empty,
+    lastName.Flag_valid,
+    fullName.Flag_empty,
+    fullName.Flag_valid,
+    name.Flag_empty,
+    name.Flag_valid,
+    
+    
+////CONTACTS
+		
+     //EMAIL   
+	
+     Contacts.emailPrivate.Flag_empty,
+     Contacts.emailPrivate.Flag_Länge,
+     Contacts.emailPrivate.Flag_@_valid,
+     Contacts.emailPrivate.Flag_valid,
+     Contacts.emailPrivate.Flag_Lokalteil_valid,
+     Contacts.emailPrivate.Flag_Domainteil_valid,
+     Contacts.emailBusiness.Flag_empty,
+     Contacts.emailBusiness.Flag_Länge,
+     Contacts.emailBusiness.Flag_@_valid,
+     Contacts.emailBusiness.Flag_valid,
+     Contacts.emailBusiness.Flag_Lokalteil_valid,
+     Contacts.emailBusiness.Flag_Domainteil_valid,
+    
+    
+    //ADDRESS
+    
+    Contacts.addressPostalCode.Flag_empty,
+    Contacts.addressPostalCode.Flag_Länge,
+    Contacts.addressPostalCode.Flag_valideZahlen,
+    
+    Contacts.addressCity.Flag_empty,
+    Contacts.addressCity.Länge,
+    Contacts.addressCity.Flag_valid,
+    
+    Contacts.addressStreet.Flag_empty,
+    Contacts.addressStreet.Flag_valid,
+    //Contacts.addressStreet.Flag_länge,
+    Contacts.addressStreet.Flag_Address_Zahl_enthalten,
+	//Phone
+    
+    Contacts.phonePrivate.Flag_empty,
+    Contacts.phonePrivate.Flag_valid,
+    Contacts.phonePrivate.Flag_Länge,
+    Contacts.phonePrivate.Flag_MaximalEinPlus,
+    Contacts.phonePrivate.Flag_valideZahlen,
+    Contacts.phoneBusiness.Flag_empty,
+    Contacts.phoneBusiness.Flag_valid,
+    Contacts.phoneBusiness.Flag_Länge,
+    Contacts.phoneBusiness.Flag_MaximalEinPlus,
+    Contacts.phoneBusiness.Flag_valideZahlen,
+    Contacts.mobilePrivate.Flag_empty,
+    Contacts.mobilePrivate.Flag_valid,
+    Contacts.mobilePrivate.Flag_Länge,
+    Contacts.mobilePrivate.Flag_MaximalEinPlus,
+    Contacts.mobilePrivate.Flag_valideZahlen,
+    Contacts.mobileBusiness.Flag_empty,
+    Contacts.mobileBusiness.Flag_valid,
+    Contacts.mobileBusiness.Flag_Länge,
+    Contacts.mobileBusiness.Flag_MaximalEinPlus,
+    Contacts.mobileBusiness.Flag_valideZahlen,
+    
+    
+    Contacts.contactNumber,
+    Contacts.birthdate,
+    Contacts.isPersonAccount,
+    Contacts.privacyBlockDealer,
+    Contacts.privacyBlockWholesale,
+    Contacts.addressStreet,
+    Contacts.addressPostalCode,
+    Contacts.addressCity,
+    Contacts.addressState, 
+    Contacts.addressCountry,
+    Contacts.addressPostBox,
+    
+    Contacts.phonePrivate,
+    Contacts.phoneBusiness,
+    Contacts.mobilePrivate,
+    Contacts.mobileBusiness,
+    Contacts.emailPrivate,
+    Contacts.emailBusiness,
+    Contacts.salutation,
+    Contacts.firstName,
+    Contacts.middleName,
+    Contacts.lastName,
+    Contacts.nameInitials,
+    Contacts.name,
+    Contacts.fullName ,
+    
+   
+    Contacts.consentDate,
+    Contacts.contactEmail,
+    Contacts.contactInCar,
+    Contacts.contactLetter,
+    Contacts.contactPhoneMessengerService,
+    
+
+/////
+ 	dataPrivacyInformation.Flag_erklärung_vorgelegt,
+    dataPrivacyInformation.Email,
+    dataPrivacyInformation.Letter,
+    dataPrivacyInformation.PhoneSms,
+    
+    Contacts.dataPrivacyInformation.Flag_erklärung_vorgelegt,
+    
+    
+    
+    if(
+        additionalAddress.addressStreetNumber.Flag_empty = '0' and 
+        additionalAddress.addressStreetNumber.Flag_nur_Zahlen = '1' and 
+        additionalAddress.addressStreetNumber.Flag_valid = '1' and 
+
+        additionalAddress.addressStreet.Flag_empty  = '0' and 
+        additionalAddress.addressStreet.Flag_valid  = '1' and 
+        additionalAddress.addressStreet.Flag_länge  = '1' and 
+
+        additionalAddress.addressPostalCode.Flag_empty  = '0' and 
+        additionalAddress.addressPostalCode.Flag_Länge  = '1' and 
+        additionalAddress.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        additionalAddress.addressCity.Flag_empty   = '0' and 
+        additionalAddress.addressCity.Länge   = '1' and 
+        additionalAddress.addressCity.Flag_valid   = '1' 
+
+    ,1, 0) as additionalAddress.Flag_vollständig,
+    
+    if(
+        privateAddress.addressStreetNumber.Flag_empty = '0' and 
+        privateAddress.addressStreetNumber.Flag_nur_Zahlen = '1' and 
+        privateAddress.addressStreetNumber.Flag_valid = '1' and 
+
+        privateAddress.addressStreet.Flag_empty  = '0' and 
+        privateAddress.addressStreet.Flag_valid  = '1' and 
+        privateAddress.addressStreet.Flag_länge  = '1' and 
+
+        privateAddress.addressPostalCode.Flag_empty  = '0' and 
+        privateAddress.addressPostalCode.Flag_Länge  = '1' and 
+        privateAddress.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        privateAddress.addressCity.Flag_empty   = '0' and 
+        privateAddress.addressCity.Länge   = '1' and 
+        privateAddress.addressCity.Flag_valid   = '1' 
+
+    ,1, 0) as privateAddress.Flag_vollständig,
+    
+    
+    if(
+        businessAddress.addressStreetNumber.Flag_empty = '0' and 
+        businessAddress.addressStreetNumber.Flag_nur_Zahlen = '1' and 
+        businessAddress.addressStreetNumber.Flag_valid = '1' and 
+
+        businessAddress.addressStreet.Flag_empty  = '0' and 
+        businessAddress.addressStreet.Flag_valid  = '1' and 
+        businessAddress.addressStreet.Flag_länge  = '1' and 
+
+        businessAddress.addressPostalCode.Flag_empty  = '0' and 
+        businessAddress.addressPostalCode.Flag_Länge  = '1' and 
+        businessAddress.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        businessAddress.addressCity.Flag_empty   = '0' and 
+        businessAddress.addressCity.Länge   = '1' and 
+        businessAddress.addressCity.Flag_valid   = '1' 
+
+    ,1, 0) as businessAddress.Flag_vollständig,
+    
+    
+    if(
+    
+    	(mainAddress = 'Business Address' and
+    
+    	businessAddress.addressStreetNumber.Flag_empty = '0' and 
+        businessAddress.addressStreetNumber.Flag_nur_Zahlen = '1' and 
+        businessAddress.addressStreetNumber.Flag_valid = '1' and 
+
+        businessAddress.addressStreet.Flag_empty  = '0' and 
+        businessAddress.addressStreet.Flag_valid  = '1' and 
+        businessAddress.addressStreet.Flag_länge  = '1' and 
+
+        businessAddress.addressPostalCode.Flag_empty  = '0' and 
+        businessAddress.addressPostalCode.Flag_Länge  = '1' and 
+        businessAddress.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        businessAddress.addressCity.Flag_empty   = '0' and 
+        businessAddress.addressCity.Länge   = '1' and 
+        businessAddress.addressCity.Flag_valid   = '1')
+        
+        or 
+    
+    	(mainAddress = 'Private Address' and
+    	
+        privateAddress.addressStreetNumber.Flag_empty = '0' and 
+        privateAddress.addressStreetNumber.Flag_nur_Zahlen = '1' and 
+        privateAddress.addressStreetNumber.Flag_valid = '1' and 
+
+        privateAddress.addressStreet.Flag_empty  = '0' and 
+        privateAddress.addressStreet.Flag_valid  = '1' and 
+        privateAddress.addressStreet.Flag_länge  = '1' and 
+
+        privateAddress.addressPostalCode.Flag_empty  = '0' and 
+        privateAddress.addressPostalCode.Flag_Länge  = '1' and 
+        privateAddress.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        privateAddress.addressCity.Flag_empty   = '0' and 
+        privateAddress.addressCity.Länge   = '1' and 
+        privateAddress.addressCity.Flag_valid   = '1')
+    
+    
+    ,1, 0) as mainAddress.Flag_vollständig,
+    
+    
+    
+    if(
+        phonePrivate.Flag_empty = 0 and
+        phonePrivate.Flag_valid = 1 and
+        phonePrivate.Flag_Länge = 1 and
+        phonePrivate.Flag_MaximalEinPlus = 1 
+	,1,0) as phonePrivate.Flag_vollständig,
+    
+    if(
+        phoneBusiness.Flag_empty = 0 and
+        phoneBusiness.Flag_valid = 1 and
+        phoneBusiness.Flag_Länge = 1 and
+        phoneBusiness.Flag_MaximalEinPlus = 1 
+	,1,0) as phoneBusiness.Flag_vollständig,
+    
+    if(
+        mobilePrivate.Flag_empty = 0 and
+        mobilePrivate.Flag_valid = 1 and
+        mobilePrivate.Flag_Länge = 1 and
+        mobilePrivate.Flag_MaximalEinPlus = 1 
+	,1,0) as mobilePrivate.Flag_vollständig,
+    
+    if(
+        mobileBusiness.Flag_empty = 0 and
+        mobileBusiness.Flag_valid = 1 and
+        mobileBusiness.Flag_Länge = 1 and
+        mobileBusiness.Flag_MaximalEinPlus = 1 
+	,1,0) as mobileBusiness.Flag_vollständig,
+    
+    
+    if(
+    
+    	(mainAddress = 'Business Address' and
+    
+    	(phoneBusiness.Flag_empty = 0 and
+        phoneBusiness.Flag_valid = 1 and
+        phoneBusiness.Flag_Länge = 1 and
+        phoneBusiness.Flag_MaximalEinPlus = 1)
+        or
+        (mobileBusiness.Flag_empty = 0 and
+        mobileBusiness.Flag_valid = 1 and
+        mobileBusiness.Flag_Länge = 1 and
+        mobileBusiness.Flag_MaximalEinPlus = 1)
+        )
+        
+        or 
+    
+    	(mainAddress = 'Private Address' and
+        
+        (phonePrivate.Flag_empty = 0 and
+        phonePrivate.Flag_valid = 1 and
+        phonePrivate.Flag_Länge = 1 and
+        phonePrivate.Flag_MaximalEinPlus = 1)
+        or
+        (mobilePrivate.Flag_empty = 0 and
+        mobilePrivate.Flag_valid = 1 and
+        mobilePrivate.Flag_Länge = 1 and
+        mobilePrivate.Flag_MaximalEinPlus = 1 )
+        
+        )
+    
+    
+    ,1, 0) as mainPhone.Flag_vollständig,
+    
+    
+    if(
+        emailPrivate.Flag_empty = 0 and
+		emailPrivate.Flag_Länge = 1 and
+		emailPrivate.Flag_@_valid = 1 and
+		emailPrivate.Flag_valid = 1 and
+		emailPrivate.Flag_Lokalteil_valid = 1 and
+		emailPrivate.Flag_Domainteil_valid = 1 
+     ,1,0) as emailPrivate.Flag_vollständig,
+     
+     
+     if(
+        emailBusiness.Flag_empty = 0 and
+		emailBusiness.Flag_Länge = 1 and
+		emailBusiness.Flag_@_valid = 1 and
+		emailBusiness.Flag_valid = 1 and
+		emailBusiness.Flag_Lokalteil_valid = 1 and
+		emailBusiness.Flag_Domainteil_valid = 1 
+     ,1,0) as emailBusiness.Flag_vollständig,
+     
+     
+     if(
+    
+    	(mainAddress = 'Business Address' and
+    
+    	emailBusiness.Flag_empty = 0 and
+		emailBusiness.Flag_Länge = 1 and
+		emailBusiness.Flag_@_valid = 1 and
+		emailBusiness.Flag_valid = 1 and
+		emailBusiness.Flag_Lokalteil_valid = 1 and
+		emailBusiness.Flag_Domainteil_valid = 1)
+        
+        or 
+    
+    	(mainAddress = 'Private Address' and
+    	
+        emailPrivate.Flag_empty = 0 and
+		emailPrivate.Flag_Länge = 1 and
+		emailPrivate.Flag_@_valid = 1 and
+		emailPrivate.Flag_valid = 1 and
+		emailPrivate.Flag_Lokalteil_valid = 1 and
+		emailPrivate.Flag_Domainteil_valid = 1)
+    
+    
+    ,1, 0) as mainEmail.Flag_vollständig,
+    
+////////////////////////////////////////////////neu    
+
+	if((
+		//Address
+		(
+        (businessAddress.addressStreetNumber.Flag_empty = '0' and 
+        businessAddress.addressStreetNumber.Flag_nur_Zahlen = '1' and 
+        businessAddress.addressStreetNumber.Flag_valid = '1' and 
+
+        businessAddress.addressStreet.Flag_empty  = '0' and 
+        businessAddress.addressStreet.Flag_valid  = '1' and 
+        businessAddress.addressStreet.Flag_länge  = '1' and 
+
+        businessAddress.addressPostalCode.Flag_empty  = '0' and 
+        businessAddress.addressPostalCode.Flag_Länge  = '1' and 
+        businessAddress.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        businessAddress.addressCity.Flag_empty   = '0' and 
+        businessAddress.addressCity.Länge   = '1' and 
+        businessAddress.addressCity.Flag_valid   = '1') 
+
+       or
+        
+        (privateAddress.addressStreetNumber.Flag_empty = '0' and 
+        privateAddress.addressStreetNumber.Flag_nur_Zahlen = '1' and 
+        privateAddress.addressStreetNumber.Flag_valid = '1' and 
+
+        privateAddress.addressStreet.Flag_empty  = '0' and 
+        privateAddress.addressStreet.Flag_valid  = '1' and 
+        privateAddress.addressStreet.Flag_länge  = '1' and 
+
+        privateAddress.addressPostalCode.Flag_empty  = '0' and 
+        privateAddress.addressPostalCode.Flag_Länge  = '1' and 
+        privateAddress.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        privateAddress.addressCity.Flag_empty   = '0' and 
+        privateAddress.addressCity.Länge   = '1' and 
+        privateAddress.addressCity.Flag_valid   = '1' )
+        )
+        
+      and
+      
+      	//Phone
+      	(
+        (
+        (phoneBusiness.Flag_empty = 0 and
+        phoneBusiness.Flag_valid = 1 and
+        phoneBusiness.Flag_Länge = 1 and
+        phoneBusiness.Flag_MaximalEinPlus = 1)
+        
+        or
+        
+        (mobileBusiness.Flag_empty = 0 and
+        mobileBusiness.Flag_valid = 1 and
+        mobileBusiness.Flag_Länge = 1 and
+        mobileBusiness.Flag_MaximalEinPlus = 1)
+        )
+        
+        or 
+    
+    	        
+        (
+        (phonePrivate.Flag_empty = 0 and
+        phonePrivate.Flag_valid = 1 and
+        phonePrivate.Flag_Länge = 1 and
+        phonePrivate.Flag_MaximalEinPlus = 1)
+        or
+        (mobilePrivate.Flag_empty = 0 and
+        mobilePrivate.Flag_valid = 1 and
+        mobilePrivate.Flag_Länge = 1 and
+        mobilePrivate.Flag_MaximalEinPlus = 1 )
+        )
+        )
+    
+      and
+        
+        //Email
+        (
+        (emailBusiness.Flag_empty = 0 and
+		emailBusiness.Flag_Länge = 1 and
+		emailBusiness.Flag_@_valid = 1 and
+		emailBusiness.Flag_valid = 1 and
+		emailBusiness.Flag_Lokalteil_valid = 1 and
+		emailBusiness.Flag_Domainteil_valid = 1)
+        
+        or 
+    
+    	(
+        emailPrivate.Flag_empty = 0 and
+		emailPrivate.Flag_Länge = 1 and
+		emailPrivate.Flag_@_valid = 1 and
+		emailPrivate.Flag_valid = 1 and
+		emailPrivate.Flag_Lokalteil_valid = 1 and
+		emailPrivate.Flag_Domainteil_valid = 1)
+        ))
+        ,1,0) as Flag_Kontakt_vollständig,
+        
+
+
+///////CONTACTS EMAIL
+
+
+	if(
+        Contacts.emailPrivate.Flag_empty = 0 and
+		Contacts.emailPrivate.Flag_Länge = 1 and
+		Contacts.emailPrivate.Flag_@_valid = 1 and
+		Contacts.emailPrivate.Flag_valid = 1 and
+		Contacts.emailPrivate.Flag_Lokalteil_valid = 1 and
+		Contacts.emailPrivate.Flag_Domainteil_valid = 1 
+     ,1,0) as Contacts.emailPrivate.Flag_vollständig,
+     
+     
+     if(
+        Contacts.emailBusiness.Flag_empty = 0 and
+		Contacts.emailBusiness.Flag_Länge = 1 and
+		Contacts.emailBusiness.Flag_@_valid = 1 and
+		Contacts.emailBusiness.Flag_valid = 1 and
+		Contacts.emailBusiness.Flag_Lokalteil_valid = 1 and
+		Contacts.emailBusiness.Flag_Domainteil_valid = 1 
+     ,1,0) as Contacts.emailBusiness.Flag_vollständig,
+     
+     //Address
+     if(   
+        Contacts.addressStreet.Flag_empty  = '0' and 
+        Contacts.addressStreet.Flag_valid  = '1' and 
+        //Contacts.addressStreet.Flag_länge  = '1' and
+        Contacts.addressStreet.Flag_Address_Zahl_enthalten = '1' and
+
+        Contacts.addressPostalCode.Flag_empty  = '0' and 
+        Contacts.addressPostalCode.Flag_Länge  = '1' and 
+        Contacts.addressPostalCode.Flag_valideZahlen  = '1' and 
+
+        Contacts.addressCity.Flag_empty   = '0' and 
+        Contacts.addressCity.Länge   = '1' and 
+        Contacts.addressCity.Flag_valid   = '1' 
+
+    ,1, 0) as Contacts.address.Flag_vollständig,
+    
+    
+    //Phone
+    if(
+        Contacts.phonePrivate.Flag_empty = 0 and
+        Contacts.phonePrivate.Flag_valid = 1 and
+        Contacts.phonePrivate.Flag_Länge = 1 and
+        Contacts.phonePrivate.Flag_MaximalEinPlus = 1 
+	,1,0) as Contacts.phonePrivate.Flag_vollständig,
+    
+    if(
+        Contacts.phoneBusiness.Flag_empty = 0 and
+        Contacts.phoneBusiness.Flag_valid = 1 and
+        Contacts.phoneBusiness.Flag_Länge = 1 and
+        Contacts.phoneBusiness.Flag_MaximalEinPlus = 1 
+	,1,0) as Contacts.phoneBusiness.Flag_vollständig,
+    
+    if(
+        Contacts.mobilePrivate.Flag_empty = 0 and
+        Contacts.mobilePrivate.Flag_valid = 1 and
+        Contacts.mobilePrivate.Flag_Länge = 1 and
+        Contacts.mobilePrivate.Flag_MaximalEinPlus = 1 
+	,1,0) as Contacts.mobilePrivate.Flag_vollständig,
+    
+    if(
+        Contacts.mobileBusiness.Flag_empty = 0 and
+        Contacts.mobileBusiness.Flag_valid = 1 and
+        Contacts.mobileBusiness.Flag_Länge = 1 and
+        Contacts.mobileBusiness.Flag_MaximalEinPlus = 1 
+	,1,0) as Contacts.mobileBusiness.Flag_vollständig
+        
+    
+ from [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_06_RSP_Accounts.qvd] (qvd);
+
+---------------------------------------------Fehler RSP-----------------------------------------------
+
+
+Unqualify*;
+
+Fehler_RSP:
+Load distinct 
+	%accountId,
+    'Account' as Quelle,
+    'E-Mail falsch' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+    
+resident Accounts where 
+(Accounts.emailPrivate.Flag_vollständig = 0 and Accounts.emailPrivate.Flag_empty = 0) or
+(Accounts.emailBusiness.Flag_vollständig = 0 and Accounts.emailBusiness.Flag_empty = 0);
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Contact' as Quelle,
+    'E-Mail falsch' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+    
+resident Accounts where 
+//Zeile 37 weg
+// (not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization') 
+ (Accounts.Contacts.emailPrivate.Flag_vollständig = 0 and Accounts.Contacts.emailPrivate.Flag_empty = 0) or
+(Accounts.Contacts.emailBusiness.Flag_vollständig = 0 and Accounts.Contacts.emailBusiness.Flag_empty = 0);
+///Neu
+// or 
+// (not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization') 
+// and (Accounts.Contacts.emailPrivate.Flag_vollständig = 0 and Accounts.Contacts.emailPrivate.Flag_empty = 0) or
+// (Accounts.Contacts.emailBusiness.Flag_vollständig = 0 and Accounts.Contacts.emailBusiness.Flag_empty = 0));
+
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Account' as Quelle,
+     'Telefon falsch' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+    
+resident Accounts where 
+([Accounts.phonePrivate.Flag_vollständig] = 0 and Accounts.phonePrivate.Flag_empty = 0) or 
+([Accounts.phoneBusiness.Flag_vollständig] = 0 and Accounts.phoneBusiness.Flag_empty = 0) or 
+([Accounts.mobilePrivate.Flag_vollständig] = 0 and Accounts.mobilePrivate.Flag_empty = 0) or 
+([Accounts.mobileBusiness.Flag_vollständig] =0 and Accounts.mobileBusiness.Flag_empty = 0);
+
+//Trennung beachten von Quelle
+//(not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization') 
+//and (
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Contact' as Quelle,
+     'Telefon falsch' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+    
+resident Accounts where 
+([Accounts.Contacts.phonePrivate.Flag_vollständig] = 0 and Accounts.Contacts.phonePrivate.Flag_empty = 0) or 
+([Accounts.Contacts.phoneBusiness.Flag_vollständig] = 0 and Accounts.Contacts.phoneBusiness.Flag_empty = 0) or 
+(Accounts.Contacts.mobilePrivate.Flag_vollständig = 0 and Accounts.Contacts.mobilePrivate.Flag_empty = 0) or 
+(Accounts.Contacts.mobileBusiness.Flag_vollständig =0 and Accounts.Contacts.mobileBusiness.Flag_empty = 0);
+
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Account' as Quelle,
+     'Adresse falsch' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+    
+resident Accounts where 
+([Accounts.privateAddress.Flag_vollständig] = 0 and (Accounts.privateAddress.addressStreetNumber.Flag_empty = 0 or Accounts.privateAddress.addressStreet.Flag_empty = 0 or Accounts.privateAddress.addressPostalCode.Flag_empty=0 or Accounts.privateAddress.addressCity.Flag_empty=0)) or
+([Accounts.businessAddress.Flag_vollständig] = 0 and (Accounts.businessAddress.addressStreetNumber.Flag_empty = 0 or Accounts.businessAddress.addressStreet.Flag_empty = 0 or Accounts.businessAddress.addressPostalCode.Flag_empty=0 or Accounts.businessAddress.addressCity.Flag_empty=0));
+//or 
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Contact' as Quelle,
+     'Adresse falsch' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+    
+resident Accounts where 
+//(not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization') 
+(Accounts.Contacts.address.Flag_vollständig = 0 and ( Accounts.Contacts.addressStreet.Flag_empty = 0 or Accounts.Contacts.addressPostalCode.Flag_empty=0 or Accounts.Contacts.addressCity.Flag_empty=0));
+
+
+
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Account' as Quelle,
+    'Keine Kontaktdaten' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+resident Accounts where 
+Accounts.emailPrivate.Flag_empty = 1 and
+Accounts.emailBusiness.Flag_empty = 1 and
+Accounts.phonePrivate.Flag_empty = 1 and
+Accounts.phoneBusiness.Flag_empty = 1 and
+Accounts.mobilePrivate.Flag_empty = 1 and
+Accounts.mobileBusiness.Flag_empty = 1 and
+(
+Accounts.privateAddress.addressStreetNumber.Flag_empty = 1 or 
+Accounts.privateAddress.addressStreet.Flag_empty = 1 or 
+Accounts.privateAddress.addressPostalCode.Flag_empty=1 or 
+Accounts.privateAddress.addressCity.Flag_empty=1
+) and 
+(
+Accounts.businessAddress.addressStreetNumber.Flag_empty = 1 or 
+Accounts.businessAddress.addressStreet.Flag_empty = 1 or 
+Accounts.businessAddress.addressPostalCode.Flag_empty=1 or 
+Accounts.businessAddress.addressCity.Flag_empty=1
+);
+
+
+//or 
+//(not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization')
+//and
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Contact' as Quelle,
+    'Keine Kontaktdaten' as Fehler_RSP.Fehler,
+     1 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+resident Accounts where 
+(Accounts.Contacts.emailPrivate.Flag_empty = 1 and
+Accounts.Contacts.emailBusiness.Flag_empty = 1 and
+Accounts.Contacts.phonePrivate.Flag_empty = 1 and
+Accounts.Contacts.phoneBusiness.Flag_empty = 1 and
+Accounts.Contacts.mobilePrivate.Flag_empty = 1 and
+Accounts.Contacts.mobileBusiness.Flag_empty = 1) 
+and
+(
+Accounts.Contacts.addressStreet.Flag_empty = 1 or 
+Accounts.Contacts.addressPostalCode.Flag_empty=1 or 
+Accounts.Contacts.addressCity.Flag_empty=1
+);
+
+
+
+
+//DSE Fehler
+
+NoConcatenate    
+DSE_temp:
+Load distinct 
+		[%accountId],
+        %contactId
+        
+resident Accounts;
+
+Left join (DSE_temp)
+Load distinct 
+  	 [%contactId],
+    '1' as Flag_DSE_EMail
+Resident DataPrivacyInformation where DataPrivacyInformation.contactEmail = 'true';
+
+Left join (DSE_temp)
+Load distinct 
+  	 [%contactId],
+    '1' as Flag_DSE_Post
+Resident DataPrivacyInformation where DataPrivacyInformation.contactLetter = 'true';
+
+Left join (DSE_temp)
+Load distinct 
+  	 [%contactId],
+    '1' as Flag_DSE_Tel
+Resident DataPrivacyInformation where DataPrivacyInformation.contactPhoneMessengerService = 'true';
+
+
+
+
+Left join (DSE_temp)
+Load distinct 
+	[%accountId],
+     '1' as Flag_Email_falsch
+resident Accounts where 
+((Accounts.emailPrivate.Flag_vollständig = 0 ) and
+(Accounts.emailBusiness.Flag_vollständig = 0 ) and (Accounts.customerMainType='Individual' or Accounts.customerMainType='Self-Employed'))
+///Neu
+or 
+(not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization') 
+and (Accounts.Contacts.emailPrivate.Flag_vollständig = 0 ) and
+(Accounts.Contacts.emailBusiness.Flag_vollständig = 0 ));
+
+
+
+
+Left join (DSE_temp)
+Load distinct 
+	[%accountId],
+    '1' as Flag_Phone_falsch
+resident Accounts where 
+(([Accounts.phonePrivate.Flag_vollständig] = 0 ) and 
+([Accounts.phoneBusiness.Flag_vollständig] = 0 ) and 
+([Accounts.mobilePrivate.Flag_vollständig] = 0) and 
+([Accounts.mobileBusiness.Flag_vollständig] =0 ) and (Accounts.customerMainType='Individual' or Accounts.customerMainType='Self-Employed'))
+or 
+(not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization') 
+and (
+([Accounts.Contacts.phonePrivate.Flag_vollständig] = 0 ) and 
+([Accounts.Contacts.phoneBusiness.Flag_vollständig] = 0 ) and 
+(Accounts.Contacts.mobilePrivate.Flag_vollständig = 0 ) and 
+(Accounts.Contacts.mobileBusiness.Flag_vollständig =0 )
+));
+
+
+// [Customer.Flag_HomePhone_vollständig] = 0 and [Customer.Flag_MobilePhone_vollständig] = 0 and [Customer.Flag_Phone_vollständig] =0;
+
+
+
+Left join (DSE_temp)
+Load distinct 
+	[%accountId],
+    '1' as Flag_Adresse_falsch
+resident Accounts where
+(([Accounts.privateAddress.Flag_vollständig] = 0 ) and
+([Accounts.businessAddress.Flag_vollständig] = 0 ) and (Accounts.customerMainType='Individual' or Accounts.customerMainType='Self-Employed'))
+or 
+(not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization') 
+and (Accounts.Contacts.address.Flag_vollständig = 0 ));
+
+
+
+// where [Customer.Flag_Adresse_vollständig] = 0;
+
+
+
+
+//DSE ohne befüllung Kanal
+Concatenate(Fehler_RSP)
+Load distinct 
+		[%accountId],
+        'Ansprechpartner' as Quelle,
+    'DSE E-Mail mit Fehler' as Fehler_RSP.Fehler,
+     2 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+resident DSE_temp where Flag_DSE_EMail = '1' and Flag_Email_falsch = '1';
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	[%accountId],
+    'Ansprechpartner' as Quelle,
+    'DSE Post mit Fehler' as Fehler_RSP.Fehler,
+     2 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+resident DSE_temp where Flag_DSE_Post = 1 and Flag_Adresse_falsch = '1';
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Ansprechpartner' as Quelle,
+    'DSE Telefon mit Fehler' as Fehler_RSP.Fehler,
+     2 as Fehler_RSP.Stufe,
+     'Fehler' as Fehler_RSP.Art
+resident DSE_temp where Flag_DSE_Tel = '1' and Flag_Phone_falsch = '1';
+
+// // Qualify *;
+// // Unqualify '%*';
+
+drop table DSE_temp;
+
+NoConcatenate    
+DSE_temp_vorlage:
+Load distinct 
+		[%accountId],
+        %contactId
+        
+resident Accounts;
+
+// Left join (DSE_temp_vorlage)
+// Load distinct 
+//     [%accountId],
+//     'Contact' as Quelle,
+//     '1' as Flag_vorlage_dse
+// Resident Accounts where 
+// (Accounts.Contacts.dataPrivacyInformation.Flag_erklärung_vorgelegt=1 and (not isNull(Accounts.contactId) and (Accounts.customerMainType='Dealer' or Accounts.customerMainType='Organization')));
+
+
+Left join (DSE_temp_vorlage)
+Load distinct 
+    [%accountId],
+    'Account' as Quelle,
+    '1' as Flag_vorlage_dse
+Resident Accounts where
+(Accounts.dataPrivacyInformation.Flag_erklärung_vorgelegt=1);// and (Accounts.customerMainType='Individual' or Accounts.customerMainType='Self-Employed'))
+
+
+
+Concatenate(Fehler_RSP)
+Load distinct 
+	%accountId,
+    'Ansprechpartner' as Quelle,
+    'Keine DSE' as Fehler_RSP.Fehler,
+     2 as Fehler_RSP.Stufe,
+     'Unvollst.' as Fehler_RSP.Art
+resident DSE_temp_vorlage where isNull(Flag_vorlage_dse);
+
+drop table DSE_temp_vorlage;
+
+
+   Qualify *;
+Unqualify '%*';
+
+// drop field [%Kundennummer] from Fehler_RSP;
+---------------------------------------------Kalender-----------------------------------------------
+
+Unqualify *;
+
+//*************** Kalender ***************
+LET v_Starttag =  left(num(date(YearStart(AddYears(Today(), -5)))), 5);
+//LET v_Endetag = left(num(date('09.11.2021')), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_Endetag = left(num(date(today())), 5);//left(num(date(YearEnd(today()))), 5);
+LET v_AnzTage = $(v_Endetag) - $(v_Starttag);
+
+Let v_Heute= num(today());
+
+KalenderTMP:
+LOAD
+	$(v_Starttag) + RowNo() - 1 as %DatumNum
+AUTOGENERATE($(v_AnzTage));
+
+
+// GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE GEDE 
+
+
+Kalender_RSP_temp:
+LOAD
+	*,
+	'KW ' & week(%DatumNum) & '/' & weekyear(%DatumNum) as EindeutigeWoche,
+	weekyear(%DatumNum) * 100 +  week(%DatumNum)		as EindeutigeWocheNum,
+	Jahr & '-' & Monat									as EindeutigerMonat,
+	Jahr * 100 + Monat									as EindeutigerMonatNum,
+// 	Jahr & '-' & Quartal								as EindeutigesQuartal,
+	
+	%DatumNum - $(v_Heute)											as TageVonHeute,
+	(weekstart(%DatumNum) - weekstart($(v_Heute))) / 7				as WochenVonHeute,
+	(Jahr - year($(v_Heute))) * 12 + (Monat - month($(v_Heute))) 	as MonateVonHeute,
+	Jahr - year($(v_Heute))											as JahreVonHeute,
+	
+	KWJahr - weekyear($(v_Heute))									as KWJahreVonHeute,
+	-networkdays(%DatumNum, $(v_Heute))	+ 1				as ArbeitstageVonHeute,
+	
+	InYearToDate(%DatumNum, $(v_Heute), 0) * -1			as Flag_YTDAktuellesJahr,
+	InYearToDate(%DatumNum, $(v_Heute), -1) * -1		as Flag_YTDVorigesJahr,
+	
+	1													as Anz_Tage
+	;
+LOAD
+	%DatumNum,
+    %DatumNum												as %DatumNum_RSP,
+	date(%DatumNum)										as Datum,
+	weekday(%DatumNum) & ' ' & date(%DatumNum, 'DD.MM.')as WochentagDatum,
+	weekday(%DatumNum)									as Wochentag,
+	month(%DatumNum)									as Monat,
+// 	applymap('Map_Quartale', month(%DatumNum), '---') 	as Quartal,
+	year(%DatumNum)										as Jahr,
+	week(%DatumNum)										as Woche,
+	weekyear(%DatumNum)									as KWJahr
+RESIDENT KalenderTMP; 
+
+drop Field [%DatumNum] from Kalender_RSP_temp;
+
+drop table KalenderTMP;
+
+Qualify*;
+Unqualify '%*';
+
+NoConcatenate
+Kalender_RSP:
+Load
+	*
+Resident Kalender_RSP_temp;
+
+drop table Kalender_RSP_temp;
+
+---------------------------------------------Hobbies-----------------------------------------------
+
+Hobbies:
+LOAD
+    @Value as bezeichnung,
+    accountId as %accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_hobbies.qvd]
+(qvd);
+---------------------------------------------Outlets-----------------------------------------------
+
+Outlets:
+LOAD
+    outletId,
+    outletName,
+    outletLegalEntityKey,
+    outletPartnerNumber as %outletPartnerNumber,
+    addressStreet,
+    addressPostalCode,
+    addressCity,
+    addressCountry
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_Outlet.qvd]
+(qvd);
+---------------------------------------------AccountCustomerCares-----------------------------------------------
+
+AccountCustomerCares:
+LOAD
+    accountCustomerCareId,
+    accountId as %accountId,
+    careIntensity,
+    customerCareType,
+    outletPartnerNumber as %outletPartnerNumber,
+    employeeId,
+    employeeName
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accountCustomerCares.qvd]
+(qvd);
+---------------------------------------------Store QVD-----------------------------------------------
+
+Store * from Outlets into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_Outlets.qvd] (qvd);
+
+
+Store * from Fehler_RSP into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_Fehler_RSP.qvd] (qvd);
+
+
+Store * from Hobbies into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_Hobbies.qvd] (qvd);
+
+
+Store * from DataPrivacyInformation into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_DataPrivacyInformation.qvd] (qvd);
+
+
+Store * from AccountCustomerCares into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_AccountCustomerCares.qvd] (qvd);
+
+
+Store * from Kalender_RSP into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_Kalender_RSP.qvd] (qvd);
+
+
+Store * from Accounts into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_Accounts.qvd] (qvd);
+
+
+Store * from LegalEntityInformation into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_legalEntityInformation.qvd] (qvd);
