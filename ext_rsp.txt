@@ -1,0 +1,1251 @@
+-----------------------------Account Customer Cares -----------------------------------
+
+sub accountCustomerCares
+
+[accountCustomerCares_batch]:
+LOAD	[batchId],
+	[jobId],
+	[numberOfRecords],
+	[state],
+	[url]
+RESIDENT RestConnectorMasterTable;
+
+
+DROP TABLE RestConnectorMasterTable;
+
+
+let v_info_accountCustomerCares_batch = Peek('url', 0, 'accountCustomerCares_batch');
+
+
+Sleep(120000);
+
+drop table accountCustomerCares_batch;
+
+----------------------------------------
+// 
+LIB Connect TO '$(v_connect)';
+
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"id",
+		"numberRecordsProcessed",
+		"numberRecordsFailed",
+		"state",
+		"__FK_batchId"
+	FROM "batchId" FK "__FK_batchId"),
+	(SELECT 
+		"url",
+		"__FK_endpoints"
+	FROM "endpoints" FK "__FK_endpoints")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "$(v_info_accountCustomerCares_batch)");
+
+[accountCustomerCares_batch_status]:
+LOAD	[id],
+	[numberRecordsProcessed],
+	[numberRecordsFailed],
+	[state]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_batchId]);
+
+
+[accountCustomerCares_batch_info]:
+LOAD	[url]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_endpoints]);
+
+
+DROP TABLE RestConnectorMasterTable;
+
+-------------------------------------------
+sub getAccountCustomerCares(p_batch)
+
+    let var_batch = p_batch;
+
+
+
+
+// 
+LIB Connect TO '$(v_connect)';
+
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"accountCustomerCareId",
+	"accountId",
+	"careIntensity",
+	"customerCareType",
+	"outletPartnerNumber",
+	"employeeId",
+	"employeeName"
+FROM JSON (wrap on) "root"
+WITH CONNECTION(Url "$(var_batch)");
+
+Concatenate(accountCustomerCares)
+LOAD	[accountCustomerCareId],
+	[accountId],
+	[careIntensity],
+	[customerCareType],
+	[outletPartnerNumber],
+	[employeeId],
+	[employeeName]
+RESIDENT RestConnectorMasterTable;
+
+
+DROP TABLE RestConnectorMasterTable;
+
+
+
+end sub
+
+-------------------------------------
+
+let v_anzahl = NoOfRows('accountCustomerCares_batch_info');
+
+NoConcatenate
+accountCustomerCares:
+Load * inline [
+	accountCustomerCareId
+];
+
+for id_row=0 to ($(v_anzahl)-1)
+	let v_batch = peek('url', id_row,'accountCustomerCares_batch_info');
+    
+    let v_batch_bereinigt = replace('$(v_batch)', 'jobinfo', 'jobresult');
+    
+    trace $(v_batch);
+    
+	
+	call getAccountCustomerCares('$(v_batch)');
+next
+
+Store * from accountCustomerCares into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accountCustomerCares.qvd] (qvd);
+drop table accountCustomerCares;
+
+
+drop table accountCustomerCares_batch_info;
+
+drop table accountCustomerCares_batch_status;
+
+
+end sub
+
+-------------------------------------------------
+
+// 
+LIB Connect TO '$(v_connect)';
+
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"batchId",
+	"jobId",
+	"numberOfRecords",
+	"state",
+	"url"
+FROM JSON (wrap on) "root"
+WITH CONNECTION(Url "https://api.rspretailcrm.bmwgroup.com/marketing/api/v2/accountCustomerCares");
+// WITH CONNECTION(Url "https://api.rspretailcrm.bmwgroup.com/marketing/api/v2/outlets");
+
+
+if NoOfRows('RestConnectorMasterTable') = 1 then
+
+call accountCustomerCares;
+
+
+ElseIf NoOfRows('RestConnectorMasterTable') = 0 then
+
+drop table RestConnectorMasterTable;
+
+trace Andere Logik verwenden!;
+
+Else
+	trace Fehler!;
+
+EndIf
+
+--------------------------------------------------------Contacts-------------------------------------------------------------------------
+sub contacts
+
+[contacts_batch]:
+LOAD	[batchId],
+	[jobId],
+	[numberOfRecords],
+	[state],
+	[url]
+RESIDENT RestConnectorMasterTable;
+
+
+DROP TABLE RestConnectorMasterTable;
+
+
+
+
+let v_info_contacts_batch = Peek('url', 0, 'contacts_batch');
+
+
+
+Sleep(60000);
+
+drop table contacts_batch;
+
+---------------------------------------------------------------
+
+LIB Connect TO '$(v_connect)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"id",
+		"numberRecordsProcessed",
+		"numberRecordsFailed",
+		"state",
+		"__FK_batchId"
+	FROM "batchId" FK "__FK_batchId"),
+	(SELECT 
+		"url",
+		"__FK_endpoints"
+	FROM "endpoints" FK "__FK_endpoints")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "$(v_info_contacts_batch)");
+
+[contacts_batch_status]:
+LOAD	[id],
+	[numberRecordsProcessed],
+	[numberRecordsFailed],
+	[state],
+	[__FK_batchId] AS [__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_batchId]);
+
+
+[contacts_batch_info]:
+LOAD	[url]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_endpoints]);
+
+
+DROP TABLE RestConnectorMasterTable;
+--------------------------------------------
+sub getContacts(p_batch)
+
+    let var_batch = p_batch;
+    
+LIB Connect TO '$(v_connect)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"accountId",
+	"contactId",
+	"contactNumber",
+	"birthdate",
+	"isPersonAccount",
+	"privacyBlockDealer",
+	"privacyBlockWholesale",
+	"__KEY_root",
+	(SELECT 
+		"addressStreet",
+		"addressPostalCode",
+		"addressCity",
+		"addressState",
+		"addressCountry",
+		"addressPostBox",
+		"__FK_address"
+	FROM "address" FK "__FK_address"),
+	(SELECT 
+		"phonePrivate",
+		"phoneBusiness",
+		"mobilePrivate",
+		"mobileBusiness",
+		"emailPrivate",
+		"emailBusiness",
+		"language",
+		"__FK_connection"
+	FROM "connection" FK "__FK_connection"),
+	(SELECT 
+		"salutation",
+		"title",
+		"firstName",
+		"middleName",
+		"lastName",
+		"suffix",
+		"nameInitials",
+		"fullName",
+		"name",
+		"__FK_name"
+	FROM "name" FK "__FK_name")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "$(var_batch)");
+
+
+NoConcatenate
+address_temp:
+LOAD	[addressStreet],
+	[addressPostalCode],
+	[addressCity],
+	[addressState],
+	[addressCountry],
+	[addressPostBox],
+	[__FK_address] AS [__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_address]);
+
+
+NoConcatenate
+connection_temp:
+LOAD	[phonePrivate],
+	[phoneBusiness],
+	[mobilePrivate],
+	[mobileBusiness],
+	[emailPrivate],
+	[emailBusiness],
+	[language],
+	[__FK_connection] AS [__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_connection]);
+
+
+NoConcatenate
+name_temp:
+LOAD	[salutation],
+	[title],
+	[firstName],
+	[middleName],
+	[lastName],
+	[suffix],
+	[nameInitials],
+	[fullName],
+	[name],
+	[__FK_name] AS [__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_name]);
+
+NoConcatenate
+contacts_temp:
+LOAD	[accountId],
+	[contactId],
+	[contactNumber],
+	[birthdate],
+	[isPersonAccount],
+	[privacyBlockDealer],
+	[privacyBlockWholesale],
+	[__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__KEY_root]);
+
+
+DROP TABLE RestConnectorMasterTable;
+
+
+
+
+left join (address_temp)
+load
+    [__KEY_root],
+    accountId,
+    contactId,
+    contactNumber
+Resident contacts_temp;
+
+left join (connection_temp)
+load
+    [__KEY_root],
+    accountId,
+    contactId,
+    contactNumber
+Resident contacts_temp;
+
+left join (name_temp)
+load
+    [__KEY_root],
+    accountId,
+    contactId,
+    contactNumber
+Resident contacts_temp;
+ 
+    
+    
+Concatenate(address)
+Load
+*
+resident address_temp;
+drop table address_temp;
+
+Concatenate(connection)
+Load
+*
+resident connection_temp;
+drop table connection_temp;
+
+Concatenate(name)
+Load
+*
+resident name_temp;
+drop table name_temp;
+
+Concatenate(contacts)
+Load
+*
+resident contacts_temp;
+drop table contacts_temp;
+
+
+
+    
+end sub
+
+--------------------------------------------------------
+let v_anzahl = NoOfRows('contacts_batch_info');
+
+NoConcatenate
+address:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+connection:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+name:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+contacts:
+Load * inline [
+	__KEY_root
+];
+
+
+for id_row=0 to ($(v_anzahl)-1)
+	let v_batch = peek('url', id_row,'contacts_batch_info');
+    
+    let v_batch_bereinigt = replace('$(v_batch)', 'jobinfo', 'jobresult');
+    
+    trace $(v_batch);
+    
+	
+	call getContacts('$(v_batch_bereinigt)');
+next
+
+Store * from address into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts_address.qvd] (qvd);
+drop table address;
+
+Store * from connection into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts_connection.qvd] (qvd);
+drop table connection;
+
+Store * from name into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts_name.qvd] (qvd);
+drop table name;
+
+Store * from contacts into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts.qvd] (qvd);
+// drop table contacts;
+
+
+// drop table contacts_batch_status;
+// drop table contacts_batch_info;
+
+end sub;
+-----------------------------------------------------------------
+
+LIB Connect TO '$(v_connect)';
+
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"batchId",
+	"jobId",
+	"numberOfRecords",
+	"state",
+	"url"
+FROM JSON (wrap on) "root"
+WITH CONNECTION(Url "https://api.rspretailcrm.bmwgroup.com/marketing/api/v2/contacts");
+
+
+if NoOfRows('RestConnectorMasterTable') = 1 then
+
+call contacts;
+
+
+ElseIf NoOfRows('RestConnectorMasterTable') = 0 then
+
+drop table RestConnectorMasterTable;
+
+trace Andere Logik verwenden!;
+
+Else
+	trace Fehler!;
+
+EndIf
+
+---------------------------------------------------Accounts------------------------------------------------
+
+sub accounts
+
+[accounts_batch]:
+LOAD	[batchId],
+	[jobId],
+	[numberOfRecords],
+	[state],
+	[url]
+RESIDENT RestConnectorMasterTable;
+
+
+DROP TABLE RestConnectorMasterTable;
+
+
+let v_info_accounts_batch = Peek('url', 0, 'accounts_batch');
+
+
+Sleep(60000);
+
+---------------------------
+
+LIB Connect TO '$(v_connect)';
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"__KEY_root",
+	(SELECT 
+		"id",
+		"numberRecordsProcessed",
+		"numberRecordsFailed",
+		"state",
+		"__FK_batchId"
+	FROM "batchId" FK "__FK_batchId"),
+	(SELECT 
+		"url",
+		"__FK_endpoints"
+	FROM "endpoints" FK "__FK_endpoints")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "$(v_info_accounts_batch)");
+
+[accounts_batch_status]:
+LOAD	[id],
+	[numberRecordsProcessed],
+	[numberRecordsFailed],
+	[state],
+	[__FK_batchId] AS [__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_batchId]);
+
+
+[accounts_batch_info]:
+LOAD	[url]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_endpoints]);
+
+
+DROP TABLE RestConnectorMasterTable;
+
+
+Drop Table accounts_batch;
+---------------------------------------
+
+sub getAccounts(p_batch)
+
+    let var_batch = p_batch;
+    
+// 
+LIB Connect TO '$(v_connect)';
+
+
+    RestConnectorMasterTable:
+    SQL SELECT 
+        "lastSalesActivity",
+        "personBirthdate",
+        "accountId",
+        "accountNumber",
+        "accountNumberFs",
+        "accountNumberWholesaleCar",
+        "accountNumberWholesaleMotorcycle",
+        "buyReason",
+        "keyAccountNumber",
+        "accountStatus",
+        "salesArea",
+        "openOpportunities",
+        "civilStatus",
+        "contactId" AS "contactId_u0",
+        "customerMainType",
+        "customerSubType",
+        "customerType",
+        "deleteStatus",
+        "employment",
+        "hobbiesValid",
+        "industry",
+        "isActive",
+        "isPersonAccount",
+        "mainAddress",
+        "motorcycleLicense",
+        "nationality",
+        "negativePool",
+        "numberOfIndividualsInHousehold",
+        "numberOfVehiclesInHousehold",
+        "ucid",
+        "personLeadSource",
+        "personDoNotCall",
+        "privacyDealerBlock",
+        "privacyWholesaleBlock",
+        "dataPrivacyInformation",
+        "hobbies",
+        "__KEY_root",
+        (SELECT 
+            "addressStreet",
+            "addressStreetNumber",
+            "addressStreetType",
+            "addressPostalCode",
+            "addressCity",
+            "addressState",
+            "addressCountry",
+            "addressPostBox",
+            "addressComplement",
+            "__FK_additionalAddress"
+        FROM "additionalAddress" FK "__FK_additionalAddress"),
+        (SELECT 
+            "addressStreet" AS "addressStreet_u0",
+            "addressStreetNumber" AS "addressStreetNumber_u0",
+            "addressStreetType" AS "addressStreetType_u0",
+            "addressPostalCode" AS "addressPostalCode_u0",
+            "addressCity" AS "addressCity_u0",
+            "addressState" AS "addressState_u0",
+            "addressCountry" AS "addressCountry_u0",
+            "addressPostBox" AS "addressPostBox_u0",
+            "addressComplement" AS "addressComplement_u0",
+            "__FK_businessAddress"
+        FROM "businessAddress" FK "__FK_businessAddress"),
+        (SELECT 
+            "phonePrivate",
+            "phoneBusiness",
+            "mobilePrivate",
+            "mobileBusiness",
+            "emailPrivate",
+            "emailBusiness",
+            "language",
+            "__FK_connection"
+        FROM "connection" FK "__FK_connection"),
+        (SELECT 
+            "salutation",
+            "title",
+            "firstName",
+            "middleName",
+            "lastName",
+            "suffix",
+            "nameInitials",
+            "fullName",
+            "name",
+            "nameAdditional",
+            "__FK_name"
+        FROM "name" FK "__FK_name"),
+        (SELECT 
+            "addressStreet" AS "addressStreet_u1",
+            "addressStreetNumber" AS "addressStreetNumber_u1",
+            "addressStreetType" AS "addressStreetType_u1",
+            "addressPostalCode" AS "addressPostalCode_u1",
+            "addressCity" AS "addressCity_u1",
+            "addressState" AS "addressState_u1",
+            "addressCountry" AS "addressCountry_u1",
+            "addressPostBox" AS "addressPostBox_u1",
+            "addressComplement" AS "addressComplement_u1",
+            "__FK_privateAddress"
+        FROM "privateAddress" FK "__FK_privateAddress"),
+        (SELECT 
+            "createdDate",
+            "lastModifiedDate",
+            "recordTypeName",
+            "ownerId",
+            "ownerName",
+            "__FK_systemInfo"
+        FROM "systemInfo" FK "__FK_systemInfo"),
+        (SELECT 
+            "privacyConsentDataControllerId",
+            "contactId",
+            "createdDate" AS "createdDate_u0",
+            "consentDate",
+            "contactEmail",
+            "contactInCar",
+            "contactLetter",
+            "contactPhoneMessengerService",
+            "createCustomerProfiles",
+            "dataController",
+            "dataControllerLegalEntityPN",
+            "dataControllerNSCLegalEntityPartnerNum",
+            "dataProcessing",
+            "isValid",
+            "__FK_dataPrivacyInformation"
+        FROM "dataPrivacyInformation" FK "__FK_dataPrivacyInformation"),
+        (SELECT 
+            "personalDmsId",
+            "legalEntityPartnerNr",
+            "__FK_legalEntityInformation"
+        FROM "legalEntityInformation" FK "__FK_legalEntityInformation"),
+        (SELECT 
+            "@Value",
+            "__FK_hobbies"
+        FROM "hobbies" FK "__FK_hobbies" ArrayValueAlias "@Value")
+    FROM JSON (wrap on) "root" PK "__KEY_root"
+    WITH CONNECTION(Url "$(var_batch)");
+    
+//     Qualify *;
+//     Unqualify '__KEY_root';
+    
+
+//     Concatenate(additionalAddress)
+	NoConcatenate
+	additionalAddress_temp:
+    LOAD	[addressStreet],
+        [addressStreetNumber],
+        [addressStreetType],
+        [addressPostalCode],
+        [addressCity],
+        [addressState],
+        [addressCountry],
+        [addressPostBox],
+        [addressComplement],
+        [__FK_additionalAddress] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_additionalAddress]);
+
+
+//     Concatenate(businessAddress)
+NoConcatenate
+	businessAddress_temp:
+    LOAD	[addressStreet_u0] AS [addressStreet_u0],
+        [addressStreetNumber_u0] AS [addressStreetNumber_u0],
+        [addressStreetType_u0] AS [addressStreetType_u0],
+        [addressPostalCode_u0] AS [addressPostalCode_u0],
+        [addressCity_u0] AS [addressCity_u0],
+        [addressState_u0] AS [addressState_u0],
+        [addressCountry_u0] AS [addressCountry_u0],
+        [addressPostBox_u0] AS [addressPostBox_u0],
+        [addressComplement_u0] AS [addressComplement_u0],
+        [__FK_businessAddress] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_businessAddress]);
+
+
+//     Concatenate(connection)
+NoConcatenate
+    connection_temp:
+    LOAD	[phonePrivate],
+        [phoneBusiness],
+        [mobilePrivate],
+        [mobileBusiness],
+        [emailPrivate],
+        [emailBusiness],
+        [language],
+        [__FK_connection] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_connection]);
+
+
+// //     Concatenate(name)
+NoConcatenate
+	name_temp:
+    LOAD	[salutation],
+        [title],
+        [firstName],
+        [middleName],
+        [lastName],
+        [suffix],
+        [nameInitials],
+        [fullName],
+        [name],
+        [nameAdditional],
+        [__FK_name] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_name]);
+
+
+// //     Concatenate(privateAddress)
+NoConcatenate
+	privateAddress_temp:
+    LOAD	[addressStreet_u1] AS [addressStreet_u1],
+        [addressStreetNumber_u1] AS [addressStreetNumber_u1],
+        [addressStreetType_u1] AS [addressStreetType_u1],
+        [addressPostalCode_u1] AS [addressPostalCode_u1],
+        [addressCity_u1] AS [addressCity_u1],
+        [addressState_u1] AS [addressState_u1],
+        [addressCountry_u1] AS [addressCountry_u1],
+        [addressPostBox_u1] AS [addressPostBox_u1],
+        [addressComplement_u1] AS [addressComplement_u1],
+        [__FK_privateAddress] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_privateAddress]);
+
+
+// //     Concatenate(systemInfo)
+NoConcatenate
+	systemInfo_temp:
+    LOAD	[createdDate],
+        [lastModifiedDate],
+        [recordTypeName],
+        [ownerId],
+        [ownerName],
+        [__FK_systemInfo] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_systemInfo]);
+
+
+//     Concatenate(dataPrivacyInformation)
+NoConcatenate
+	dataPrivacyInformation_temp:
+    LOAD	[privacyConsentDataControllerId],
+        [contactId],
+        [createdDate_u0] AS [createdDate_u0],
+        [consentDate],
+        [contactEmail],
+        [contactInCar],
+        [contactLetter],
+        [contactPhoneMessengerService],
+        [createCustomerProfiles],
+        [dataController],
+        [dataControllerLegalEntityPN],
+        [dataControllerNSCLegalEntityPartnerNum],
+        [dataProcessing],
+        [isValid],
+        [__FK_dataPrivacyInformation] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_dataPrivacyInformation]);
+
+
+//     Concatenate(legalEntityInformation)
+NoConcatenate
+	legalEntityInformation_temp:
+    LOAD	[personalDmsId],
+        [legalEntityPartnerNr],
+        [__FK_legalEntityInformation] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_legalEntityInformation]);
+
+
+//     Concatenate(hobbies)
+NoConcatenate
+	hobbies_temp:
+    LOAD	[@Value],
+        [__FK_hobbies] AS [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__FK_hobbies]);
+
+
+//     Concatenate(Accounts)
+// Unqualify*;
+
+NoConcatenate
+	Accounts_temp:
+    LOAD	[lastSalesActivity],
+        [personBirthdate],
+        [accountId],
+        [accountNumber],
+        [accountNumberFs],
+        [accountNumberWholesaleCar],
+        [accountNumberWholesaleMotorcycle],
+        [buyReason],
+        [keyAccountNumber],
+        [accountStatus],
+        [salesArea],
+        [openOpportunities],
+        [civilStatus],
+        [contactId_u0] AS [contactId_u0],
+        [customerMainType],
+        [customerSubType],
+        [customerType],
+        [deleteStatus],
+        [employment],
+        [hobbiesValid],
+        [industry],
+        [isActive],
+        [isPersonAccount],
+        [mainAddress],
+        [motorcycleLicense],
+        [nationality],
+        [negativePool],
+        [numberOfIndividualsInHousehold],
+        [numberOfVehiclesInHousehold],
+        [ucid],
+        [personLeadSource],
+        [personDoNotCall],
+        [privacyDealerBlock],
+        [privacyWholesaleBlock],
+        [dataPrivacyInformation],
+        [hobbies],
+        [__KEY_root]
+    RESIDENT RestConnectorMasterTable
+    WHERE NOT IsNull([__KEY_root]);
+
+
+    DROP TABLE RestConnectorMasterTable;
+    
+    left join (additionalAddress_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table additionalAddress;
+    
+    left join (businessAddress_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table businessAddress;
+    
+    left join (connection_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table connection;
+    
+    left join (name_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table name;
+    
+    left join (privateAddress_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table privateAddress;
+    
+    left join (systemInfo_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table systemInfo;
+    
+    left join (dataPrivacyInformation_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table dataPrivacyInformation;
+    
+    left join (legalEntityInformation_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table legalEntityInformation;
+    
+    left join (hobbies_temp)
+    load
+    	[__KEY_root],
+        accountId
+    Resident Accounts_temp;
+//     drop table hobies;
+    
+    
+    
+    
+    Concatenate(Accounts)
+    Load
+    	*
+    resident Accounts_temp;
+    drop table Accounts_temp;
+    
+    Concatenate(additionalAddress)
+    Load
+    	*
+    resident additionalAddress_temp;
+    drop table additionalAddress_temp;
+    
+    Concatenate(businessAddress)
+    Load
+    	*
+    resident businessAddress_temp;
+    drop table businessAddress_temp;
+    
+    Concatenate(connection)
+    Load
+    	*
+    resident connection_temp;
+    drop table connection_temp;
+    
+    Concatenate(name)
+    Load
+    	*
+    resident name_temp;
+    drop table name_temp;
+    
+    Concatenate(privateAddress)
+    Load
+    	*
+    resident privateAddress_temp;
+    drop table privateAddress_temp;
+    
+    Concatenate(systemInfo)
+    Load
+    	*
+    resident systemInfo_temp;
+    drop table systemInfo_temp;
+    
+    Concatenate(dataPrivacyInformation)
+    Load
+    	*
+    resident dataPrivacyInformation_temp;
+    drop table dataPrivacyInformation_temp;
+    
+    Concatenate(legalEntityInformation)
+    Load
+    	*
+    resident legalEntityInformation_temp;
+    drop table legalEntityInformation_temp;
+    
+    Concatenate(hobbies)
+    Load
+    	*
+    resident hobbies_temp;
+    drop table hobbies_temp;
+
+end sub
+-----------------------------------
+
+let v_anzahl = NoOfRows('accounts_batch_info');
+
+NoConcatenate
+Accounts:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+additionalAddress:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+businessAddress:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+connection:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+name:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+privateAddress:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+systemInfo:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+dataPrivacyInformation:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+legalEntityInformation:
+Load * inline [
+	__KEY_root
+];
+
+NoConcatenate
+hobbies:
+Load * inline [
+	__KEY_root
+];
+
+
+for id_row=0 to ($(v_anzahl)-1)
+	let v_batch = peek('url', id_row,'accounts_batch_info');
+    
+    let v_batch_bereinigt = replace('$(v_batch)', 'jobinfo', 'jobresult');
+    
+    trace $(v_batch_bereinigt);
+    
+	
+	call getAccounts('$(v_batch_bereinigt)');
+//     Sleep(20000);
+next
+
+Store * from Accounts into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts.qvd] (qvd);
+drop table Accounts;
+
+Store * from additionalAddress into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_additionalAddress.qvd] (qvd);
+drop table additionalAddress;
+
+Store * from businessAddress into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_businessAddress.qvd] (qvd);
+drop table businessAddress;
+
+Store * from name into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_name.qvd] (qvd);
+drop table name;
+
+Store * from privateAddress into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_privateAddress.qvd] (qvd);
+drop table privateAddress;
+
+Store * from systemInfo into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_systemInfo.qvd] (qvd);
+drop table systemInfo;
+
+Store * from dataPrivacyInformation into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_dataPrivacyInformation.qvd] (qvd);
+drop table dataPrivacyInformation;
+
+Store * from legalEntityInformation into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_legalEntityInformation.qvd] (qvd);
+drop table legalEntityInformation;
+
+Store * from hobbies into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_hobbies.qvd] (qvd);
+drop table hobbies;
+
+Store * from connection into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_connection.qvd] (qvd);
+drop table connection;
+
+
+drop table accounts_batch_info;
+drop table accounts_batch_status;
+
+end sub
+
+-----------------------------------
+
+// 
+LIB Connect TO '$(v_connect)';
+
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"batchId",
+	"jobId",
+	"numberOfRecords",
+	"state",
+	"url"
+FROM JSON (wrap on) "root"
+WITH CONNECTION(Url "https://api.rspretailcrm.bmwgroup.com/marketing/api/v2/accounts");
+// WITH CONNECTION(Url "https://api.rspretailcrm.bmwgroup.com/marketing/api/v2/outlets");
+
+// exit script;
+
+if NoOfRows('RestConnectorMasterTable') = 1 then
+
+// drop table RestConnectorMasterTable;
+
+call accounts;
+
+
+ElseIf NoOfRows('RestConnectorMasterTable') = 0 then
+
+drop table RestConnectorMasterTable;
+
+trace Andere Logik verwenden!;
+
+Else
+	trace Fehler!;
+
+EndIf
+
+-------------------------------------Outlets-------------------------------------
+
+sub outlets_standard
+// 
+LIB Connect TO '$(v_connect)';
+
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"outletId",
+	"outletName",
+	"outletLegalEntityKey",
+	"outletPartnerNumber",
+	"__KEY_root",
+	(SELECT 
+		"addressStreet",
+		"addressPostalCode",
+		"addressCity",
+		"addressCountry",
+		"__FK_address"
+	FROM "address" FK "__FK_address")
+FROM JSON (wrap on) "root" PK "__KEY_root"
+WITH CONNECTION(Url "https://api.rspretailcrm.bmwgroup.com/marketing/api/v2/outlets");
+
+
+
+
+[Outlet]:
+LOAD	[outletId],
+	[outletName],
+	[outletLegalEntityKey],
+	[outletPartnerNumber],
+	[__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__KEY_root]);
+
+left join (Outlet)
+LOAD	[addressStreet],
+	[addressPostalCode],
+	[addressCity],
+	[addressCountry],
+	[__FK_address] AS [__KEY_root]
+RESIDENT RestConnectorMasterTable
+WHERE NOT IsNull([__FK_address]);
+
+drop field [__KEY_root];
+
+
+DROP TABLE RestConnectorMasterTable;
+
+Store * from Outlet into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_Outlet.qvd] (qvd);
+
+drop table Outlet;
+
+
+end sub
+--------------------------------------------
+
+// 
+LIB Connect TO '$(v_connect)';
+
+
+RestConnectorMasterTable:
+SQL SELECT 
+	"batchId",
+	"jobId",
+	"numberOfRecords",
+	"state",
+	"url"
+FROM JSON (wrap on) "root"
+WITH CONNECTION(Url "https://api.rspretailcrm.bmwgroup.com/marketing/api/v2/outlets");
+
+
+if NoOfRows('RestConnectorMasterTable') = 1 then
+
+trace Andere Logik verwenden!;
+
+
+ElseIf NoOfRows('RestConnectorMasterTable') = 0 then
+
+drop table RestConnectorMasterTable;
+
+call outlets_standard;
+
+Else
+	trace Fehler!;
+
+EndIf
+
