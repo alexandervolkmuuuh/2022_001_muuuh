@@ -1,0 +1,1109 @@
+-----------------------------------------------CONTACTS-----------------------------------------
+
+Contacts_temp:
+LOAD
+    __KEY_root,
+    accountId,
+    contactId,
+    contactNumber,
+    birthdate,
+    isPersonAccount,
+    privacyBlockDealer,
+    privacyBlockWholesale
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts.qvd]
+(qvd);
+
+left join (Contacts_temp)
+LOAD
+    __KEY_root,
+    addressStreet,
+    addressPostalCode,
+    addressCity,
+    addressState,
+    addressCountry,
+    addressPostBox,
+    accountId,
+    contactId,
+    contactNumber
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts_address.qvd]
+(qvd);
+
+left join (Contacts_temp)
+LOAD
+    __KEY_root,
+    phonePrivate,
+    phoneBusiness,
+    mobilePrivate,
+    mobileBusiness,
+    emailPrivate,
+    emailBusiness,
+    language,
+    accountId,
+    contactId,
+    contactNumber
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts_connection.qvd]
+(qvd);
+
+
+left join (Contacts_temp)
+LOAD
+    __KEY_root,
+    salutation,
+    title,
+    firstName,
+    middleName,
+    lastName,
+    suffix,
+    nameInitials,
+    fullName,
+    name,
+    accountId,
+    contactId,
+    contactNumber
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_contacts_name.qvd]
+(qvd);
+
+left join(Contacts_temp)
+LOAD
+//     privacyConsentDataControllerId,
+    contactId,
+//     createdDate_u0 as createdDate,
+    max(consentDate) as consentDate,
+    max(replace(replace(contactEmail, 'true', 1), 'false', 0)) as contactEmail,
+    max(replace(replace(contactInCar, 'true', 1), 'false', 0)) as contactInCar,
+    max(replace(replace(contactLetter, 'true', 1), 'false', 0)) as contactLetter,
+    max(replace(replace(contactPhoneMessengerService, 'true', 1), 'false', 0)) as contactPhoneMessengerService
+//     createCustomerProfiles,
+//     dataController,
+//     dataControllerLegalEntityPN,
+//     dataControllerNSCLegalEntityPartnerNum,
+//     dataProcessing,
+//     isValid,
+//     accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_dataPrivacyInformation.qvd]
+(qvd) where isValid = 'true' and dataController= 'Dealer' group by contactId;
+
+
+---------------------------------------------------------ACCOUNTS----------------------------------------------------------
+
+Accounts_temp:
+LOAD
+    lastSalesActivity,
+    personBirthdate,
+    accountId,
+    accountNumber,
+    accountNumberFs,
+    accountNumberWholesaleCar,
+    accountNumberWholesaleMotorcycle,
+    buyReason,
+    keyAccountNumber,
+    accountStatus,
+    salesArea,
+    openOpportunities,
+    civilStatus,
+    contactId_u0,
+    customerMainType,
+    customerSubType,
+    customerType,
+    deleteStatus,
+    employment,
+    hobbiesValid,
+    industry,
+    isActive,
+    isPersonAccount,
+    mainAddress,
+    motorcycleLicense,
+    nationality,
+    negativePool,
+    numberOfIndividualsInHousehold,
+    numberOfVehiclesInHousehold,
+    ucid,
+    personLeadSource,
+    personDoNotCall,
+    privacyDealerBlock,
+    privacyWholesaleBlock,
+    dataPrivacyInformation,
+    hobbies
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts.qvd]
+(qvd);
+
+left join (Accounts_temp)
+LOAD
+    addressStreet as additionalAddress.addressStreet,
+    addressStreetNumber as additionalAddress.addressStreetNumber,
+    addressStreetType as additionalAddress.addressStreetType,
+    addressPostalCode as additionalAddress.addressPostalCode,
+    addressCity as additionalAddress.addressCity,
+    addressState as additionalAddress.addressState,
+    addressCountry as additionalAddress.addressCountry,
+    addressPostBox as additionalAddress.addressPostBox,
+    addressComplement as additionalAddress.addressComplement,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_additionalAddress.qvd]
+(qvd);
+
+left join (Accounts_temp)
+LOAD
+    addressStreet_u1 as privateAddress.addressStreet,
+    addressStreetNumber_u1 as privateAddress.addressStreetNumber,
+    addressStreetType_u1 as privateAddress.addressStreetType,
+    addressPostalCode_u1 as privateAddress.addressPostalCode,
+    addressCity_u1 as privateAddress.addressCity,
+    addressState_u1 as privateAddress.addressState,
+    addressCountry_u1 as privateAddress.addressCountry,
+    addressPostBox_u1 as privateAddress.addressPostBox,
+    addressComplement_u1 as privateAddress.addressComplement,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_privateAddress.qvd]
+(qvd);
+
+left join (Accounts_temp)
+LOAD
+    addressStreet_u0 as businessAddress.addressStreet,
+    addressStreetNumber_u0 as businessAddress.addressStreetNumber,
+    addressStreetType_u0 as businessAddress.addressStreetType,
+    addressPostalCode_u0 as businessAddress.addressPostalCode,
+    addressCity_u0 as businessAddress.addressCity,
+    addressState_u0 as businessAddress.addressState,
+    addressCountry_u0 as businessAddress.addressCountry,
+    addressPostBox_u0 as businessAddress.addressPostBox,
+    addressComplement_u0 as businessAddress.addressComplement,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_businessAddress.qvd]
+(qvd);
+
+left join (Accounts_temp)
+LOAD
+    salutation as name.salutation,
+    title as name.title,
+    firstName as name.firstName,
+    middleName as name.middleName,
+    lastName as name.lastName,
+    suffix as name.suffix,
+    nameInitials as name.nameInitials,
+    fullName as name.fullName,
+    name as name.name,
+    nameAdditional as name.nameAdditional,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_name.qvd]
+(qvd);
+
+
+left join (Accounts_temp)
+LOAD
+    createdDate as systemInfo.createdDate,
+    lastModifiedDate as systemInfo.lastModifiedDate,
+    recordTypeName as systemInfo.recordTypeName,
+    ownerId as systemInfo.ownerId,
+    ownerName as systemInfo.ownerName,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_systemInfo.qvd]
+(qvd);
+
+left join (Accounts_temp)
+LOAD
+    phonePrivate as connection.phonePrivate,
+    phoneBusiness as connection.phoneBusiness,
+    mobilePrivate as connection.mobilePrivate,
+    mobileBusiness as connection.mobileBusiness,
+    emailPrivate as connection.emailPrivate,
+    emailBusiness as connection.emailBusiness,
+    language as connection.language,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_connection.qvd]
+(qvd);
+
+// 	NoConcatenate
+    left join(Accounts_temp)
+    //Contacts:
+    Load
+    
+    accountId,
+    contactId,
+    contactNumber as Contacts.contactNumber,
+    birthdate as Contacts.birthdate,
+    isPersonAccount as Contacts.isPersonAccount,
+    privacyBlockDealer as Contacts.privacyBlockDealer,
+    privacyBlockWholesale as Contacts.privacyBlockWholesale,
+    addressStreet as Contacts.addressStreet,
+    addressPostalCode as Contacts.addressPostalCode,
+    addressCity as Contacts.addressCity,
+    addressState as Contacts.addressState, 
+    addressCountry as Contacts.addressCountry,
+    addressPostBox as Contacts.addressPostBox,
+    
+    phonePrivate as Contacts.phonePrivate,
+    phoneBusiness as Contacts.phoneBusiness,
+    mobilePrivate as Contacts.mobilePrivate,
+    mobileBusiness as Contacts.mobileBusiness,
+    emailPrivate as Contacts.emailPrivate,
+    emailBusiness as Contacts.emailBusiness,
+    salutation as Contacts.salutation,
+    firstName as Contacts.firstName,
+    middleName as Contacts.middleName,
+    lastName as Contacts.lastName,
+    nameInitials as Contacts.nameInitials,
+    name as Contacts.name,
+    fullName as Contacts.fullName ,
+    
+   
+    consentDate as Contacts.consentDate,
+    contactEmail as Contacts.contactEmail,
+    contactInCar as Contacts.contactInCar,
+    contactLetter as Contacts.contactLetter,
+    contactPhoneMessengerService as Contacts.contactPhoneMessengerService
+    
+resident Contacts_temp;
+
+drop table Contacts_temp;
+
+left join (Accounts_temp)
+// Hobbies:
+LOAD
+    maxstring(@Value) as max_hobby,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_hobbies.qvd]
+(qvd) group by accountId;
+
+
+left join(Accounts_temp)
+LOAD
+//     privacyConsentDataControllerId,
+//     contactId,
+//     createdDate_u0 as createdDate,
+    max(consentDate) as consentDate,
+    max(replace(replace(contactEmail, 'true', 1), 'false', 0)) as contactEmail,
+    max(replace(replace(contactInCar, 'true', 1), 'false', 0)) as contactInCar,
+    max(replace(replace(contactLetter, 'true', 1), 'false', 0)) as contactLetter,
+    max(replace(replace(contactPhoneMessengerService, 'true', 1), 'false', 0)) as contactPhoneMessengerService,
+//     createCustomerProfiles,
+//     dataController,
+//     dataControllerLegalEntityPN,
+//     dataControllerNSCLegalEntityPartnerNum,
+//     dataProcessing,
+//     isValid,
+    accountId
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_dataPrivacyInformation.qvd]
+(qvd) where isValid = 'true' and dataController= 'Dealer' group by accountId;
+
+NoConcatenate
+Accounts:
+Load
+	lastSalesActivity,
+    personBirthdate,
+    accountId,
+    accountNumber,
+    accountNumberFs,
+    accountNumberWholesaleCar,
+    accountNumberWholesaleMotorcycle,
+    buyReason,
+    keyAccountNumber,
+    accountStatus,
+    salesArea,
+    openOpportunities,
+    civilStatus,
+    contactId_u0,
+    contactId,
+    customerMainType,
+    customerSubType,
+    customerType,
+    deleteStatus,
+    employment,
+    hobbiesValid,
+    industry,
+    isActive,
+    isPersonAccount,
+    mainAddress,
+    motorcycleLicense,
+    nationality,
+    negativePool,
+    numberOfIndividualsInHousehold,
+    numberOfVehiclesInHousehold,
+    ucid,
+    personLeadSource,
+    personDoNotCall,
+    privacyDealerBlock,
+    privacyWholesaleBlock,
+    dataPrivacyInformation,
+    hobbies,
+    
+    
+    additionalAddress.addressStreet,
+    additionalAddress.addressStreetNumber,
+    additionalAddress.addressStreetType,
+    additionalAddress.addressPostalCode,
+    additionalAddress.addressCity,
+    additionalAddress.addressState,
+    additionalAddress.addressCountry,
+    additionalAddress.addressPostBox,
+    additionalAddress.addressComplement,
+    
+    //addressPostalCode
+//     if(IsNull(additionalAddress.addressPostalCode) or len(additionalAddress.addressPostalCode) = 0,1,0) as additionalAddress.addressPostalCode.Flag_empty,
+//     //Muss min. 3 und max. 7 Zahlen enthalten
+//     if(len(KeepChar(additionalAddress.addressPostalCode, '0123456789')) > 2 and len(KeepChar(additionalAddress.addressPostalCode, '0123456789')) < 8 and not IsNull(additionalAddress.addressPostalCode) and len(additionalAddress.addressPostalCode) > 0, 1, 0) as additionalAddress.addressPostalCode.Flag_Länge,
+//     //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+//     if(len(PurgeChar(additionalAddress.addressPostalCode, '0')) = 0 and len(KeepChar(additionalAddress.addressPostalCode, '0')) > 0 or len(PurgeChar(additionalAddress.addressPostalCode, '0123456789')) > 0 or IsNull(additionalAddress.addressPostalCode) or len(additionalAddress.addressPostalCode) = 0, 0,1) as additionalAddress.addressPostalCode.Flag_valideZahlen,
+
+	
+    if(additionalAddress.addressCountry = 'DE',
+     	if(IsNull("additionalAddress.addressPostalCode") or len("additionalAddress.addressPostalCode") = 0,1,0),
+
+  		if(IsNull("additionalAddress.addressPostalCode") or len("additionalAddress.addressPostalCode") = 0,1,0)
+	)as additionalAddress.addressPostalCode.Flag_empty,
+
+    //Muss min. 3 und max. 7 Zahlen enthalten
+    if(additionalAddress.addressCountry = 'DE',
+        if(len(KeepChar("additionalAddress.addressPostalCode", '0123456789')) = 5 and not IsNull("additionalAddress.addressPostalCode") and len("additionalAddress.addressPostalCode") > 0, 1, 0),
+
+        if(len(KeepChar(lower("additionalAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) >= 3 and len(KeepChar(lower("additionalAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) <= 10 and not IsNull("additionalAddress.addressPostalCode") and len("additionalAddress.addressPostalCode") > 0, 1, 0)
+    )as additionalAddress.addressPostalCode.Flag_Länge,
+        
+    //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+    if(additionalAddress.addressCountry = 'DE',
+        if(len(PurgeChar("additionalAddress.addressPostalCode", '0')) = 0 or len(PurgeChar("additionalAddress.addressPostalCode", '0123456789')) > 0 or IsNull("additionalAddress.addressPostalCode") or len("additionalAddress.addressPostalCode") = 0, 0,1),
+
+        if(len(PurgeChar("additionalAddress.addressPostalCode", '0')) = 0 or len(PurgeChar(lower("additionalAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) > 0 or IsNull("additionalAddress.addressPostalCode") or len("additionalAddress.addressPostalCode") = 0, 0,1)
+    )as additionalAddress.addressPostalCode.Flag_valideZahlen,
+
+
+
+    //addressCity
+//     if(IsNull(additionalAddress.addressCity) or len(additionalAddress.addressCity) = 0,1,0) as additionalAddress.addressCity.Flag_empty,
+//     //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+//     if(len(additionalAddress.addressCity)> 2 and not IsNull(additionalAddress.addressCity) and len(additionalAddress.addressCity) > 0,1,0) as additionalAddress.addressCity.Länge,
+//     if(len(KeepChar(lower(additionalAddress.addressCity), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(additionalAddress.addressCity) and len(additionalAddress.addressCity) > 0, 1,0) as additionalAddress.addressCity.Flag_valid,
+    
+    if(additionalAddress.addressCountry = 'DE',
+        if(IsNull(additionalAddress.addressCity) or len(additionalAddress.addressCity) = 0,1,0),
+
+        if(IsNull(additionalAddress.addressCity) or len(additionalAddress.addressCity) = 0,1,0)
+    )as additionalAddress.addressCity.Flag_empty,
+
+    //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+    if(additionalAddress.addressCountry = 'DE',
+        if(len(additionalAddress.addressCity)> 2 and not IsNull(additionalAddress.addressCity),1,0),
+
+        if(len(additionalAddress.addressCity)> 2 and not IsNull(additionalAddress.addressCity),1,0)
+    )as additionalAddress.addressCity.Länge,
+
+    if(additionalAddress.addressCountry = 'DE',
+        if(len(KeepChar(lower(additionalAddress.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(additionalAddress.addressCity) and len(additionalAddress.addressCity) > 0, 1,0),
+
+        if(len(KeepChar(lower(additionalAddress.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(additionalAddress.addressCity) and len(additionalAddress.addressCity) > 0, 1,0)
+    )as additionalAddress.addressCity.Flag_valid,
+        
+    
+    
+    //addressStreet
+//     if(IsNull(additionalAddress.addressStreet) or len(additionalAddress.addressStreet) = 0,1,0) as additionalAddress.addressStreet.Flag_empty,
+//     //Darf nur Buchstaben und bestimmte Sonderzeichen enthalten
+//     if(len(PurgeChar(lower(additionalAddress.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß.,()-/"`´ ')) = 0 and not IsNull(additionalAddress.addressStreet) and len(additionalAddress.addressStreet) > 0, 1,0) as additionalAddress.addressStreet.Flag_valid,
+//     if(len(KeepChar(lower(additionalAddress.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(additionalAddress.addressStreet) and len(additionalAddress.addressStreet) > 0, 1,0) as additionalAddress.addressStreet.Flag_länge,
+    
+    if(additionalAddress.addressCountry = 'DE',
+        if(IsNull(additionalAddress.addressStreet) or len(additionalAddress.addressStreet) = 0,1,0),
+
+        if(IsNull(additionalAddress.addressStreet) or len(additionalAddress.addressStreet) = 0,1,0)
+    )as additionalAddress.addressStreet.Flag_empty,
+
+    if(additionalAddress.addressCountry = 'DE',
+        if(not isNull(additionalAddress.addressStreet) and len(additionalAddress.addressStreet) > 0,
+            if(lower(left(additionalAddress.addressStreet, 1)) >= 'a' and lower(left(additionalAddress.addressStreet, 1)) <= 'z' and 
+                len(PurgeChar(lower(additionalAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                len(KeepChar(lower(additionalAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3, 
+            1, 0),
+        0) ,
+
+        if(not isNull(additionalAddress.addressStreet) and len(additionalAddress.addressStreet) > 0,
+            if( len(PurgeChar(lower(additionalAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                len(KeepChar(lower(additionalAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´` ' & chr(39))) >= 3, 
+            1, 0), 
+        0)
+    ) as additionalAddress.addressStreet.Flag_valid,
+
+    if(additionalAddress.addressCountry = 'DE',    
+        if(len(KeepChar(lower(additionalAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(additionalAddress.addressStreet) and len(additionalAddress.addressStreet) > 0, 1,0), 
+
+        if(len(KeepChar(lower(additionalAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(additionalAddress.addressStreet) and len(additionalAddress.addressStreet) > 0, 1,0) 
+    )as additionalAddress.addressStreet.Flag_länge,
+        
+        
+    //addressStreetNumber
+//     if(IsNull(additionalAddress.addressStreetNumber) or len(additionalAddress.addressStreetNumber) = 0,1,0) as additionalAddress.addressStreetNumber.Flag_empty,
+//     //Address No_ darf nur Zahlen enthalten
+//     if(len(PurgeChar(lower(additionalAddress.addressStreetNumber), '0123456789 ')) = 0 and not IsNull(additionalAddress.addressStreetNumber) and len(additionalAddress.addressStreetNumber) > 0, 1,0) as additionalAddress.addressStreetNumber.Flag_nur_Zahlen,
+//     //Address No_ Zahl zwischen 0 und 999.999
+//     if(additionalAddress.addressStreetNumber < 1000000 and additionalAddress.addressStreetNumber >= 0 and not IsNull(additionalAddress.addressStreetNumber) and len(additionalAddress.addressStreetNumber) > 0, 1,0) as additionalAddress.addressStreetNumber.Flag_valid,
+    
+    if(additionalAddress.addressCountry = 'DE',
+        if(IsNull(additionalAddress.addressStreetNumber) or len(additionalAddress.addressStreetNumber) = 0,1,0),
+
+        if(IsNull(additionalAddress.addressStreetNumber) or len(additionalAddress.addressStreetNumber) = 0,1,0)
+    )as additionalAddress.addressStreetNumber.Flag_empty,
+
+    //Address No_ darf nur Zahlen enthalten
+    if(additionalAddress.addressCountry = 'DE',
+        if(len(PurgeChar(lower(additionalAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(additionalAddress.addressStreetNumber) and len(additionalAddress.addressStreetNumber) > 0, 1,0),
+
+        if(len(PurgeChar(lower(additionalAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(additionalAddress.addressStreetNumber) and len(additionalAddress.addressStreetNumber) > 0, 1,0)
+    )as additionalAddress.addressStreetNumber.Flag_nur_Zahlen,
+
+    if(additionalAddress.addressCountry = 'DE',
+        if(len(PurgeChar(lower(additionalAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(additionalAddress.addressStreetNumber) and len(additionalAddress.addressStreetNumber) > 0, 1,0),
+
+        if(len(PurgeChar(lower(additionalAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(additionalAddress.addressStreetNumber) and len(additionalAddress.addressStreetNumber) > 0, 1,0)
+    )as additionalAddress.addressStreetNumber.Flag_valid,
+        
+        
+    
+    privateAddress.addressStreet,
+    privateAddress.addressStreetNumber,
+    privateAddress.addressStreetType,
+    privateAddress.addressPostalCode,
+    privateAddress.addressCity,
+    privateAddress.addressState,
+    privateAddress.addressCountry,
+    privateAddress.addressPostBox,
+    privateAddress.addressComplement,
+    
+    //addressPostalCode
+//     if(IsNull(privateAddress.addressPostalCode) or len(privateAddress.addressPostalCode) = 0,1,0) as privateAddress.addressPostalCode.Flag_empty,
+//     //Muss min. 3 und max. 7 Zahlen enthalten
+//     if(len(KeepChar(privateAddress.addressPostalCode, '0123456789')) > 2 and len(KeepChar(privateAddress.addressPostalCode, '0123456789')) < 8 and not IsNull(privateAddress.addressPostalCode) and len(privateAddress.addressPostalCode) > 0, 1, 0) as privateAddress.addressPostalCode.Flag_Länge,
+//     //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+//     if(len(PurgeChar(privateAddress.addressPostalCode, '0')) = 0 and len(KeepChar(privateAddress.addressPostalCode, '0')) > 0 or len(PurgeChar(privateAddress.addressPostalCode, '0123456789')) > 0 or IsNull(privateAddress.addressPostalCode) or len(privateAddress.addressPostalCode) = 0, 0,1) as privateAddress.addressPostalCode.Flag_valideZahlen,
+
+
+	if(privateAddress.addressCountry = 'DE',
+     	if(IsNull("privateAddress.addressPostalCode") or len("privateAddress.addressPostalCode") = 0,1,0),
+
+  		if(IsNull("privateAddress.addressPostalCode") or len("privateAddress.addressPostalCode") = 0,1,0)
+	)as privateAddress.addressPostalCode.Flag_empty,
+
+    //Muss min. 3 und max. 7 Zahlen enthalten
+    if(privateAddress.addressCountry = 'DE',
+        if(len(KeepChar("privateAddress.addressPostalCode", '0123456789')) = 5 and not IsNull("privateAddress.addressPostalCode") and len("privateAddress.addressPostalCode") > 0, 1, 0),
+
+        if(len(KeepChar(lower("privateAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) >= 3 and len(KeepChar(lower("privateAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) <= 10 and not IsNull("privateAddress.addressPostalCode") and len("privateAddress.addressPostalCode") > 0, 1, 0)
+    )as privateAddress.addressPostalCode.Flag_Länge,
+        
+    //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+    if(privateAddress.addressCountry = 'DE',
+        if(len(PurgeChar("privateAddress.addressPostalCode", '0')) = 0 or len(PurgeChar("privateAddress.addressPostalCode", '0123456789')) > 0 or IsNull("privateAddress.addressPostalCode") or len("privateAddress.addressPostalCode") = 0, 0,1),
+
+        if(len(PurgeChar("privateAddress.addressPostalCode", '0')) = 0 or len(PurgeChar(lower("privateAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) > 0 or IsNull("privateAddress.addressPostalCode") or len("privateAddress.addressPostalCode") = 0, 0,1)
+    )as privateAddress.addressPostalCode.Flag_valideZahlen,
+    
+    
+
+    //addressCity
+//     if(IsNull(privateAddress.addressCity) or len(privateAddress.addressCity) = 0,1,0) as privateAddress.addressCity.Flag_empty,
+//     //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+//     if(len(privateAddress.addressCity)> 2 and not IsNull(privateAddress.addressCity) and len(privateAddress.addressCity) > 0,1,0) as privateAddress.addressCity.Länge,
+//     if(len(KeepChar(lower(privateAddress.addressCity), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(privateAddress.addressCity) and len(privateAddress.addressCity) > 0, 1,0) as privateAddress.addressCity.Flag_valid,
+    
+    if(privateAddress.addressCountry = 'DE',
+        if(IsNull(privateAddress.addressCity) or len(privateAddress.addressCity) = 0,1,0),
+
+        if(IsNull(privateAddress.addressCity) or len(privateAddress.addressCity) = 0,1,0)
+    )as privateAddress.addressCity.Flag_empty,
+
+    //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+    if(privateAddress.addressCountry = 'DE',
+        if(len(privateAddress.addressCity)> 2 and not IsNull(privateAddress.addressCity),1,0),
+
+        if(len(privateAddress.addressCity)> 2 and not IsNull(privateAddress.addressCity),1,0)
+    )as privateAddress.addressCity.Länge,
+
+    if(privateAddress.addressCountry = 'DE',
+        if(len(KeepChar(lower(privateAddress.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(privateAddress.addressCity) and len(privateAddress.addressCity) > 0, 1,0),
+
+        if(len(KeepChar(lower(privateAddress.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(privateAddress.addressCity) and len(privateAddress.addressCity) > 0, 1,0)
+    )as privateAddress.addressCity.Flag_valid,
+    
+    
+    //addressStreet
+//     if(IsNull(privateAddress.addressStreet) or len(privateAddress.addressStreet) = 0,1,0) as privateAddress.addressStreet.Flag_empty,
+//     //Darf nur Buchstaben und bestimmte Sonderzeichen enthalten
+//     if(len(PurgeChar(lower(privateAddress.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß.,()-/"`´ ')) = 0 and not IsNull(privateAddress.addressStreet) and len(privateAddress.addressStreet) > 0, 1,0) as privateAddress.addressStreet.Flag_valid,
+//     if(len(KeepChar(lower(privateAddress.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(privateAddress.addressStreet) and len(privateAddress.addressStreet) > 0, 1,0) as privateAddress.addressStreet.Flag_länge,
+    
+    if(privateAddress.addressCountry = 'DE',
+        if(IsNull(privateAddress.addressStreet) or len(privateAddress.addressStreet) = 0,1,0),
+
+        if(IsNull(privateAddress.addressStreet) or len(privateAddress.addressStreet) = 0,1,0)
+    )as privateAddress.addressStreet.Flag_empty,
+
+    if(privateAddress.addressCountry = 'DE',
+        if(not isNull(privateAddress.addressStreet) and len(privateAddress.addressStreet) > 0,
+            if(lower(left(privateAddress.addressStreet, 1)) >= 'a' and lower(left(privateAddress.addressStreet, 1)) <= 'z' and 
+                len(PurgeChar(lower(privateAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                len(KeepChar(lower(privateAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3, 
+            1, 0),
+        0) ,
+
+        if(not isNull(privateAddress.addressStreet) and len(privateAddress.addressStreet) > 0,
+            if( len(PurgeChar(lower(privateAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                len(KeepChar(lower(privateAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´` ' & chr(39))) >= 3, 
+            1, 0), 
+        0)
+    ) as privateAddress.addressStreet.Flag_valid,
+
+    if(privateAddress.addressCountry = 'DE',    
+        if(len(KeepChar(lower(privateAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(privateAddress.addressStreet) and len(privateAddress.addressStreet) > 0, 1,0), 
+
+        if(len(KeepChar(lower(privateAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(privateAddress.addressStreet) and len(privateAddress.addressStreet) > 0, 1,0) 
+    )as privateAddress.addressStreet.Flag_länge,
+    
+    
+    //addressStreetNumber
+//     if(IsNull(privateAddress.addressStreetNumber) or len(privateAddress.addressStreetNumber) = 0,1,0) as privateAddress.addressStreetNumber.Flag_empty,
+//     //Address No_ darf nur Zahlen enthalten
+// 	if(len(PurgeChar(lower(privateAddress.addressStreetNumber), '0123456789 ')) = 0 and not IsNull(privateAddress.addressStreetNumber) and len(privateAddress.addressStreetNumber) > 0, 1,0) as privateAddress.addressStreetNumber.Flag_nur_Zahlen,
+//     //Address No_ Zahl zwischen 0 und 999.999
+//     if(privateAddress.addressStreetNumber < 1000000 and privateAddress.addressStreetNumber >= 0 and not IsNull(privateAddress.addressStreetNumber) and len(privateAddress.addressStreetNumber) > 0, 1,0) as privateAddress.addressStreetNumber.Flag_valid,
+    
+    if(privateAddress.addressCountry = 'DE',
+        if(IsNull(privateAddress.addressStreetNumber) or len(privateAddress.addressStreetNumber) = 0,1,0),
+
+        if(IsNull(privateAddress.addressStreetNumber) or len(privateAddress.addressStreetNumber) = 0,1,0)
+    )as privateAddress.addressStreetNumber.Flag_empty,
+
+    //Address No_ darf nur Zahlen enthalten
+    if(privateAddress.addressCountry = 'DE',
+        if(len(PurgeChar(lower(privateAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(privateAddress.addressStreetNumber) and len(privateAddress.addressStreetNumber) > 0, 1,0),
+
+        if(len(PurgeChar(lower(privateAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(privateAddress.addressStreetNumber) and len(privateAddress.addressStreetNumber) > 0, 1,0)
+    )as privateAddress.addressStreetNumber.Flag_nur_Zahlen,
+
+    if(privateAddress.addressCountry = 'DE',
+        if(len(PurgeChar(lower(privateAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(privateAddress.addressStreetNumber) and len(privateAddress.addressStreetNumber) > 0, 1,0),
+
+        if(len(PurgeChar(lower(privateAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(privateAddress.addressStreetNumber) and len(privateAddress.addressStreetNumber) > 0, 1,0)
+    )as privateAddress.addressStreetNumber.Flag_valid,
+    
+    
+    businessAddress.addressStreet,
+    businessAddress.addressStreetNumber,
+    businessAddress.addressStreetType,
+    businessAddress.addressPostalCode,
+    businessAddress.addressCity,
+    businessAddress.addressState,
+    businessAddress.addressCountry,
+    businessAddress.addressPostBox,
+    businessAddress.addressComplement,
+    
+    //addressPostalCode
+//     if(IsNull(businessAddress.addressPostalCode) or len(businessAddress.addressPostalCode) = 0,1,0) as businessAddress.addressPostalCode.Flag_empty,
+//     //Muss min. 3 und max. 7 Zahlen enthalten
+//     if(len(KeepChar(businessAddress.addressPostalCode, '0123456789')) > 2 and len(KeepChar(businessAddress.addressPostalCode, '0123456789')) < 8 and not IsNull(businessAddress.addressPostalCode) and len(businessAddress.addressPostalCode) > 0, 1, 0) as businessAddress.addressPostalCode.Flag_Länge,
+//     //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+//     if(len(PurgeChar(businessAddress.addressPostalCode, '0')) = 0 and len(KeepChar(businessAddress.addressPostalCode, '0')) > 0 or len(PurgeChar(businessAddress.addressPostalCode, '0123456789')) > 0 or IsNull(businessAddress.addressPostalCode) or len(businessAddress.addressPostalCode) = 0, 0,1) as businessAddress.addressPostalCode.Flag_valideZahlen,
+
+	if(businessAddress.addressCountry = 'DE',
+     	if(IsNull("businessAddress.addressPostalCode") or len("businessAddress.addressPostalCode") = 0,1,0),
+
+  		if(IsNull("businessAddress.addressPostalCode") or len("businessAddress.addressPostalCode") = 0,1,0)
+	)as businessAddress.addressPostalCode.Flag_empty,
+
+    //Muss min. 3 und max. 7 Zahlen enthalten
+    if(businessAddress.addressCountry = 'DE',
+        if(len(KeepChar("businessAddress.addressPostalCode", '0123456789')) = 5 and not IsNull("businessAddress.addressPostalCode") and len("businessAddress.addressPostalCode") > 0, 1, 0),
+
+        if(len(KeepChar(lower("businessAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) >= 3 and len(KeepChar(lower("businessAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) <= 10 and not IsNull("businessAddress.addressPostalCode") and len("businessAddress.addressPostalCode") > 0, 1, 0)
+    )as businessAddress.addressPostalCode.Flag_Länge,
+        
+    //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+    if(businessAddress.addressCountry = 'DE',
+        if(len(PurgeChar("businessAddress.addressPostalCode", '0')) = 0 or len(PurgeChar("businessAddress.addressPostalCode", '0123456789')) > 0 or IsNull("businessAddress.addressPostalCode") or len("businessAddress.addressPostalCode") = 0, 0,1),
+
+        if(len(PurgeChar("businessAddress.addressPostalCode", '0')) = 0 or len(PurgeChar(lower("businessAddress.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) > 0 or IsNull("businessAddress.addressPostalCode") or len("businessAddress.addressPostalCode") = 0, 0,1)
+    )as businessAddress.addressPostalCode.Flag_valideZahlen,
+    
+    
+    
+    
+
+    //addressCity
+//     if(IsNull(businessAddress.addressCity) or len(businessAddress.addressCity) = 0,1,0) as businessAddress.addressCity.Flag_empty,
+//     //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+//     if(len(businessAddress.addressCity)> 2 and not IsNull(businessAddress.addressCity) and len(businessAddress.addressCity) > 0,1,0) as businessAddress.addressCity.Länge,
+//     if(len(KeepChar(lower(businessAddress.addressCity), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(businessAddress.addressCity) and len(businessAddress.addressCity) > 0, 1,0) as businessAddress.addressCity.Flag_valid,
+    
+    if(businessAddress.addressCountry = 'DE',
+        if(IsNull(businessAddress.addressCity) or len(businessAddress.addressCity) = 0,1,0),
+
+        if(IsNull(businessAddress.addressCity) or len(businessAddress.addressCity) = 0,1,0)
+    )as businessAddress.addressCity.Flag_empty,
+
+    //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+    if(businessAddress.addressCountry = 'DE',
+        if(len(businessAddress.addressCity)> 2 and not IsNull(businessAddress.addressCity),1,0),
+
+        if(len(businessAddress.addressCity)> 2 and not IsNull(businessAddress.addressCity),1,0)
+    )as businessAddress.addressCity.Länge,
+
+    if(businessAddress.addressCountry = 'DE',
+        if(len(KeepChar(lower(businessAddress.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(businessAddress.addressCity) and len(businessAddress.addressCity) > 0, 1,0),
+
+        if(len(KeepChar(lower(businessAddress.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(businessAddress.addressCity) and len(businessAddress.addressCity) > 0, 1,0)
+    )as businessAddress.addressCity.Flag_valid,
+    
+    
+    
+    //addressStreet
+//     if(IsNull(businessAddress.addressStreet) or len(businessAddress.addressStreet) = 0,1,0) as businessAddress.addressStreet.Flag_empty,
+//     //Darf nur Buchstaben und bestimmte Sonderzeichen enthalten
+//     if(len(PurgeChar(lower(businessAddress.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß.,()-/"`´ ')) = 0 and not IsNull(businessAddress.addressStreet) and len(businessAddress.addressStreet) > 0, 1,0) as businessAddress.addressStreet.Flag_valid,
+//     if(len(KeepChar(lower(businessAddress.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(businessAddress.addressStreet) and len(businessAddress.addressStreet) > 0, 1,0) as businessAddress.addressStreet.Flag_länge,
+    
+    if(businessAddress.addressCountry = 'DE',
+        if(IsNull(businessAddress.addressStreet) or len(businessAddress.addressStreet) = 0,1,0),
+
+        if(IsNull(businessAddress.addressStreet) or len(businessAddress.addressStreet) = 0,1,0)
+    )as businessAddress.addressStreet.Flag_empty,
+
+    if(businessAddress.addressCountry = 'DE',
+        if(not isNull(businessAddress.addressStreet) and len(businessAddress.addressStreet) > 0,
+            if(lower(left(businessAddress.addressStreet, 1)) >= 'a' and lower(left(businessAddress.addressStreet, 1)) <= 'z' and 
+                len(PurgeChar(lower(businessAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                len(KeepChar(lower(businessAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3, 
+            1, 0),
+        0) ,
+
+        if(not isNull(businessAddress.addressStreet) and len(businessAddress.addressStreet) > 0,
+            if( len(PurgeChar(lower(businessAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) = 0 and
+                len(KeepChar(lower(businessAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´` ' & chr(39))) >= 3, 
+            1, 0), 
+        0)
+    ) as businessAddress.addressStreet.Flag_valid,
+
+    if(businessAddress.addressCountry = 'DE',    
+        if(len(KeepChar(lower(businessAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(businessAddress.addressStreet) and len(businessAddress.addressStreet) > 0, 1,0), 
+
+        if(len(KeepChar(lower(businessAddress.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`' & chr(39))) >= 3 and not IsNull(businessAddress.addressStreet) and len(businessAddress.addressStreet) > 0, 1,0) 
+    )as businessAddress.addressStreet.Flag_länge,
+    
+    
+    //addressStreetNumber
+//     if(IsNull(businessAddress.addressStreetNumber) or len(businessAddress.addressStreetNumber) = 0,1,0) as businessAddress.addressStreetNumber.Flag_empty,
+//     //Address No_ darf nur Zahlen enthalten
+// 	if(len(PurgeChar(lower(businessAddress.addressStreetNumber), '0123456789 ')) = 0 and not IsNull(businessAddress.addressStreetNumber) and len(businessAddress.addressStreetNumber) > 0, 1,0) as businessAddress.addressStreetNumber.Flag_nur_Zahlen,
+//     //Address No_ Zahl zwischen 0 und 999.999
+//     if(businessAddress.addressStreetNumber < 1000000 and businessAddress.addressStreetNumber >= 0 and not IsNull(businessAddress.addressStreetNumber) and len(businessAddress.addressStreetNumber) > 0, 1,0) as businessAddress.addressStreetNumber.Flag_valid,
+    
+    if(businessAddress.addressCountry = 'DE',
+        if(IsNull(businessAddress.addressStreetNumber) or len(businessAddress.addressStreetNumber) = 0,1,0),
+
+        if(IsNull(businessAddress.addressStreetNumber) or len(businessAddress.addressStreetNumber) = 0,1,0)
+    )as businessAddress.addressStreetNumber.Flag_empty,
+
+    //Address No_ darf nur Zahlen enthalten
+    if(businessAddress.addressCountry = 'DE',
+        if(len(PurgeChar(lower(businessAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(businessAddress.addressStreetNumber) and len(businessAddress.addressStreetNumber) > 0, 1,0),
+
+        if(len(PurgeChar(lower(businessAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(businessAddress.addressStreetNumber) and len(businessAddress.addressStreetNumber) > 0, 1,0)
+    )as businessAddress.addressStreetNumber.Flag_nur_Zahlen,
+
+    if(businessAddress.addressCountry = 'DE',
+        if(len(PurgeChar(lower(businessAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/')) = 0 and not IsNull(businessAddress.addressStreetNumber) and len(businessAddress.addressStreetNumber) > 0, 1,0),
+
+        if(len(PurgeChar(lower(businessAddress.addressStreetNumber), ' 0123456789abcdefghijklmnopqrstuvwxyz-/ ')) = 0 and not IsNull(businessAddress.addressStreetNumber) and len(businessAddress.addressStreetNumber) > 0, 1,0)
+    )as businessAddress.addressStreetNumber.Flag_valid,
+    
+    
+    name.salutation,
+    name.title,
+    name.firstName,
+    name.middleName,
+    name.lastName,
+    name.suffix,
+    name.nameInitials,
+    name.fullName,
+    name.name,
+    name.nameAdditional,
+    
+    //firstName
+    if(IsNull(name.firstName) or len(name.firstName) = 0,1,0) as firstName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(name.firstName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name.firstName) and len(name.firstName) > 0, 1,0) as firstName.Flag_valid,
+    
+    //middleName
+    if(IsNull(name.middleName) or len(name.middleName) = 0,1,0) as middleName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(name.middleName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name.middleName) and len(name.middleName) > 0, 1,0) as middleName.Flag_valid,
+    
+    //lastName
+    if(IsNull(name.lastName) or len(name.lastName) = 0,1,0) as lastName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(name.lastName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name.lastName) and len(name.lastName) > 0, 1,0) as lastName.Flag_valid,
+    
+    //fullName
+    if(IsNull(name.fullName) or len(name.fullName) = 0,1,0) as fullName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(name.fullName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name.fullName) and len(name.fullName) > 0, 1,0) as fullName.Flag_valid,
+    
+    //name
+    if(IsNull(name.name) or len(name.name) = 0,1,0) as name.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(name.name), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(name.name) and len(name.name) > 0, 1,0) as name.Flag_valid,
+    
+    
+    systemInfo.createdDate,
+    systemInfo.lastModifiedDate,
+    systemInfo.recordTypeName,
+    systemInfo.ownerId,
+    systemInfo.ownerName,
+    
+    connection.phonePrivate,
+    connection.phoneBusiness,
+    connection.mobilePrivate,
+    connection.mobileBusiness,
+    connection.emailPrivate,
+    connection.emailBusiness,
+    connection.language,
+    
+    //phonePrivate
+    if(IsNull(connection.phonePrivate) or len(connection.phonePrivate) = 0,1,0) as phonePrivate.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(connection.phonePrivate), '0123456789-/+() ')) = 0 and not IsNull(connection.phonePrivate) and len(connection.phonePrivate) > 0, 1,0) as phonePrivate.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(connection.phonePrivate, '0123456789')) > 6 and not IsNull(connection.phonePrivate) and len(connection.phonePrivate) > 0, 1, 0) as phonePrivate.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(connection.phonePrivate, '+')) < 2 and not IsNull(connection.phonePrivate) and len(connection.phonePrivate) > 0, 1, 0) as phonePrivate.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(connection.phonePrivate, '0')) = 0 and len(KeepChar(connection.phonePrivate, '0')) > 0 or IsNull(connection.phonePrivate) or len(connection.phonePrivate) = 0, 0,1) as phonePrivate.Flag_valideZahlen,
+    
+    //phoneBusiness
+    if(IsNull(connection.phoneBusiness) or len(connection.phoneBusiness) = 0,1,0) as phoneBusiness.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(connection.phoneBusiness), '0123456789-/+() ')) = 0 and not IsNull(connection.phoneBusiness) and len(connection.phoneBusiness) > 0, 1,0) as phoneBusiness.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(connection.phoneBusiness, '0123456789')) > 6 and not IsNull(connection.phoneBusiness) and len(connection.phoneBusiness) > 0, 1, 0) as phoneBusiness.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(connection.phoneBusiness, '+')) < 2 and not IsNull(connection.phoneBusiness) and len(connection.phoneBusiness) > 0, 1, 0) as phoneBusiness.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(connection.phoneBusiness, '0')) = 0 and len(KeepChar(connection.phoneBusiness, '0')) > 0 or IsNull(connection.phoneBusiness) or len(connection.phoneBusiness) = 0, 0,1) as phoneBusiness.Flag_valideZahlen,
+    
+    //mobilePrivate
+    if(IsNull(connection.mobilePrivate) or len(connection.mobilePrivate) = 0,1,0) as mobilePrivate.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(connection.mobilePrivate), '0123456789-/+() ')) = 0 and not IsNull(connection.mobilePrivate) and len(connection.mobilePrivate) > 0, 1,0) as mobilePrivate.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(connection.mobilePrivate, '0123456789')) > 6 and not IsNull(connection.mobilePrivate) and len(connection.mobilePrivate) > 0, 1, 0) as mobilePrivate.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(connection.mobilePrivate, '+')) < 2 and not IsNull(connection.mobilePrivate) and len(connection.mobilePrivate) > 0, 1, 0) as mobilePrivate.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(connection.mobilePrivate, '0')) = 0 and len(KeepChar(connection.mobilePrivate, '0')) > 0 or IsNull(connection.mobilePrivate) or len(connection.mobilePrivate) = 0, 0,1) as mobilePrivate.Flag_valideZahlen,
+    
+    //mobileBusiness
+    if(IsNull(connection.mobileBusiness) or len(connection.mobileBusiness) = 0,1,0) as mobileBusiness.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower(connection.mobileBusiness), '0123456789-/+() ')) = 0 and not IsNull(connection.mobileBusiness) and len(connection.mobileBusiness) > 0, 1,0) as mobileBusiness.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar(connection.mobileBusiness, '0123456789')) > 6 and not IsNull(connection.mobileBusiness) and len(connection.mobileBusiness) > 0, 1, 0) as mobileBusiness.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar(connection.mobileBusiness, '+')) < 2 and not IsNull(connection.mobileBusiness) and len(connection.mobileBusiness) > 0, 1, 0) as mobileBusiness.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar(connection.mobileBusiness, '0')) = 0 and len(KeepChar(connection.mobileBusiness, '0')) > 0 or IsNull(connection.mobileBusiness) or len(connection.mobileBusiness) = 0, 0,1) as mobileBusiness.Flag_valideZahlen,
+    
+    //emailPrivate
+    if(IsNull(connection.emailPrivate) or len(connection.emailPrivate) = 0,1,0) as emailPrivate.Flag_empty,
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len(connection.emailPrivate) < 255 and len(connection.emailPrivate) > 5 and not IsNull(connection.emailPrivate) and len(connection.emailPrivate) > 0, 1,0) as emailPrivate.Flag_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower(connection.emailPrivate), '@')) = 1 and not IsNull(connection.emailPrivate) and len(connection.emailPrivate) > 0, 1,0) as emailPrivate.Flag_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower(connection.emailPrivate), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull(connection.emailPrivate) and len(connection.emailPrivate) > 0, 1,0) as emailPrivate.Flag_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left(connection.emailPrivate, Index( connection.emailPrivate,'@') -1 )) > 0 and len(Left(connection.emailPrivate, Index( connection.emailPrivate,'@') -1 )) < 65 and not IsNull(connection.emailPrivate) and len(connection.emailPrivate) > 0, 1,0) as emailPrivate.Flag_Lokalteil_valid,
+    //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+    if(len(Right(connection.emailPrivate, Index( connection.emailPrivate,'@') +1 )) > 1 and wildmatch(Right(connection.emailPrivate, len(connection.emailPrivate)-Index(connection.emailPrivate,'@')), '*.*') and not IsNull(connection.emailPrivate) and len(connection.emailPrivate) > 0, 1,0) as emailPrivate.Flag_Domainteil_valid,
+    
+    //emailBusiness
+    if(IsNull(connection.emailBusiness) or len(connection.emailBusiness) = 0,1,0) as emailBusiness.Flag_empty,
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len(connection.emailBusiness) < 255 and len(connection.emailBusiness) > 5 and not IsNull(connection.emailBusiness) and len(connection.emailBusiness) > 0, 1,0) as emailBusiness.Flag_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower(connection.emailBusiness), '@')) = 1 and not IsNull(connection.emailBusiness) and len(connection.emailBusiness) > 0, 1,0) as emailBusiness.Flag_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower(connection.emailBusiness), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull(connection.emailBusiness) and len(connection.emailBusiness) > 0, 1,0) as emailBusiness.Flag_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left(connection.emailBusiness, Index( connection.emailBusiness,'@') -1 )) > 0 and len(Left(connection.emailBusiness, Index( connection.emailBusiness,'@') -1 )) < 65 and not IsNull(connection.emailBusiness) and len(connection.emailBusiness) > 0, 1,0) as emailBusiness.Flag_Lokalteil_valid,
+    //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+    if(len(Right(connection.emailBusiness, Index( connection.emailBusiness,'@') +1 )) > 1 and wildmatch(Right(connection.emailBusiness, len(connection.emailBusiness)-Index(connection.emailBusiness,'@')), '*.*') and not IsNull(connection.emailBusiness) and len(connection.emailBusiness) > 0, 1,0) as emailBusiness.Flag_Domainteil_valid,
+    
+    
+    
+    if(isNull(max_hobby), 1, 0) as hobby.Flag_empty,
+    
+    if(isNull(civilStatus), 1, 0) as civilStatus.Flag_empty,
+    
+    if(isNull(personBirthdate) or num(date(personBirthdate)) > num(addyears(date(today()), -15)), 0, 1) as personBirthdate.Flag_vaild,
+    
+    if(isNull(consentDate), 0, 1) as dataPrivacyInformation.Flag_erklärung_vorgelegt,
+    if(contactEmail=1, 1, 0) as dataPrivacyInformation.Email,
+    if(contactLetter=1, 1, 0) as dataPrivacyInformation.Letter,
+    if(contactPhoneMessengerService=1, 1, 0) as dataPrivacyInformation.PhoneSms,
+    
+    
+    
+    ////ADDRESS CONTACT
+    
+    //addressPostalCode
+//     if(IsNull( Contacts.addressPostalCode) or len( Contacts.addressPostalCode) = 0,1,0) as  Contacts.addressPostalCode.Flag_empty,
+//     //Muss min. 3 und max. 7 Zahlen enthalten
+//     if(len(KeepChar( Contacts.addressPostalCode, '0123456789')) > 2 and len(KeepChar( Contacts.addressPostalCode, '0123456789')) < 8 and not IsNull( Contacts.addressPostalCode) and len( Contacts.addressPostalCode) > 0, 1, 0) as  Contacts.addressPostalCode.Flag_Länge,
+//     //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+//     if(len(PurgeChar( Contacts.addressPostalCode, '0')) = 0 and len(KeepChar( Contacts.addressPostalCode, '0')) > 0 or len(PurgeChar( Contacts.addressPostalCode, '0123456789')) > 0 or IsNull( Contacts.addressPostalCode) or len( Contacts.addressPostalCode) = 0, 0,1) as  Contacts.addressPostalCode.Flag_valideZahlen,
+	
+    if(Contacts.addressCountry = 'DE',
+     	if(IsNull("Contacts.addressPostalCode") or len("Contacts.addressPostalCode") = 0,1,0),
+
+  		if(IsNull("Contacts.addressPostalCode") or len("Contacts.addressPostalCode") = 0,1,0)
+	)as Contacts.addressPostalCode.Flag_empty,
+
+    //Muss min. 3 und max. 7 Zahlen enthalten
+    if(Contacts.addressCountry = 'DE',
+        if(len(KeepChar("Contacts.addressPostalCode", '0123456789')) = 5 and not IsNull("Contacts.addressPostalCode") and len("Contacts.addressPostalCode") > 0, 1, 0),
+
+        if(len(KeepChar(lower("Contacts.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) >= 3 and len(KeepChar(lower("Contacts.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) <= 10 and not IsNull("Contacts.addressPostalCode") and len("Contacts.addressPostalCode") > 0, 1, 0)
+    )as Contacts.addressPostalCode.Flag_Länge,
+        
+    //Darf nicht nur aus Nullen bestehen und nur aus Zahlen
+    if(Contacts.addressCountry = 'DE',
+        if(len(PurgeChar("Contacts.addressPostalCode", '0')) = 0 or len(PurgeChar("Contacts.addressPostalCode", '0123456789')) > 0 or IsNull("Contacts.addressPostalCode") or len("Contacts.addressPostalCode") = 0, 0,1),
+
+        if(len(PurgeChar("Contacts.addressPostalCode", '0')) = 0 or len(PurgeChar(lower("Contacts.addressPostalCode"), ' 0123456789abcdefghijklmnopqrstuvwxyz-')) > 0 or IsNull("Contacts.addressPostalCode") or len("Contacts.addressPostalCode") = 0, 0,1)
+    )as Contacts.addressPostalCode.Flag_valideZahlen,
+    
+    
+    //addressCity
+//     if(IsNull( Contacts.addressCity) or len( Contacts.addressCity) = 0,1,0) as  Contacts.addressCity.Flag_empty,
+//     //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+//     if(len( Contacts.addressCity)> 2 and not IsNull( Contacts.addressCity) and len( Contacts.addressCity) > 0,1,0) as  Contacts.addressCity.Länge,
+//     if(len(KeepChar(lower( Contacts.addressCity), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull( Contacts.addressCity) and len( Contacts.addressCity) > 0, 1,0) as  Contacts.addressCity.Flag_valid,
+    
+    if(Contacts.addressCountry = 'DE',
+        if(IsNull(Contacts.addressCity) or len(Contacts.addressCity) = 0,1,0),
+
+        if(IsNull(Contacts.addressCity) or len(Contacts.addressCity) = 0,1,0)
+    )as Contacts.addressCity.Flag_empty,
+
+    //City muss eine Länge > 2 haben, aus min. zwei Buchstaben/Zahlen bestehen
+    if(Contacts.addressCountry = 'DE',
+        if(len(Contacts.addressCity)> 2 and not IsNull(Contacts.addressCity),1,0),
+
+        if(len(Contacts.addressCity)> 2 and not IsNull(Contacts.addressCity),1,0)
+    )as Contacts.addressCity.Länge,
+
+    if(Contacts.addressCountry = 'DE',
+        if(len(KeepChar(lower(Contacts.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(Contacts.addressCity) and len(Contacts.addressCity) > 0, 1,0),
+
+        if(len(KeepChar(lower(Contacts.addressCity), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/' & chr(39))) > 2 and not IsNull(Contacts.addressCity) and len(Contacts.addressCity) > 0, 1,0)
+    )as Contacts.addressCity.Flag_valid,
+    
+    
+    //addressStreet
+//     if(IsNull( Contacts.addressStreet) or len( Contacts.addressStreet) = 0,1,0) as  Contacts.addressStreet.Flag_empty,
+//     //Darf nur Buchstaben und bestimmte Sonderzeichen enthalten
+//     if(len(PurgeChar(lower( Contacts.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß0123456789.,()-/"`´ ')) = 0 and not IsNull( Contacts.addressStreet) and len( Contacts.addressStreet) > 0, 1,0) as  Contacts.addressStreet.Flag_valid,
+//     if(len(KeepChar(lower( Contacts.addressStreet), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull( Contacts.addressStreet) and len( Contacts.addressStreet) > 0, 1,0) as  Contacts.addressStreet.Flag_länge,
+    
+    if(IsNull(Contacts.addressStreet) or len(Contacts.addressStreet) = 0,1,0) as Contacts.addressStreet.Flag_empty,
+    
+    if([Contacts.addressCountry] = 'D',
+    	if(not isNull(Contacts.addressStreet) and len(Contacts.addressStreet) > 0,
+            if(lower(left(Contacts.addressStreet, 1)) >= 'a' and lower(left(Contacts.addressStreet, 1)) <= 'z' and 
+                len(PurgeChar(lower(Contacts.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) = 0 and
+                len(KeepChar(lower(Contacts.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 3, 
+            1, 0),
+        0) ,
+
+        if(not isNull(Contacts.addressStreet) and len(Contacts.addressStreet) > 0,
+            if( len(PurgeChar(lower(Contacts.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) = 0 and
+                len(KeepChar(lower(Contacts.addressStreet), ' abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿß0123456789!"&,-.´`/+' & chr(39))) >= 3, 
+            1, 0), 
+        0)
+    ) as Contacts.addressStreet.Flag_valid,
+
+        
+	//Enthält einer der letzten vier Zeichen der Adresse eine Zahl
+	if([Contacts.addressCountry] = 'D',
+          if(len(KeepChar(right(Contacts.addressStreet, 4), '0123456789')) > 0 and not IsNull(Contacts.addressStreet) > 0,1,0),
+          if(len(KeepChar(Contacts.addressStreet, '0123456789')) > 0 and not IsNull(Contacts.addressStreet) > 0,1,0)
+    )as Contacts.addressStreet.Flag_Address_Zahl_enthalten,
+    
+//     //addressStreetNumber
+//     if(IsNull( addressStreetNumber) or len( addressStreetNumber) = 0,1,0) as  addressStreetNumber.Flag_empty,
+//     //Address No_ darf nur Zahlen enthalten
+//     if(len(PurgeChar(lower( addressStreetNumber), '0123456789 ')) = 0 and not IsNull( addressStreetNumber) and len( addressStreetNumber) > 0, 1,0) as  addressStreetNumber.Flag_nur_Zahlen,
+//     //Address No_ Zahl zwischen 0 und 999.999
+//     if( addressStreetNumber < 1000000 and  addressStreetNumber >= 0 and not IsNull( addressStreetNumber) and len( addressStreetNumber) > 0, 1,0) as  addressStreetNumber.Flag_valid,
+    
+    
+    ///NAME CONTACT
+  
+    //firstName
+    if(IsNull(  Contacts.firstName) or len(  Contacts.firstName) = 0,1,0) as Contacts.firstName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(  Contacts.firstName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(  Contacts.firstName) and len(  Contacts.firstName) > 0, 1,0) as Contacts.firstName.Flag_valid,
+    
+    //middleName
+    if(IsNull(  Contacts.middleName) or len(  Contacts.middleName) = 0,1,0) as Contacts.middleName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(  Contacts.middleName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(  Contacts.middleName) and len(  Contacts.middleName) > 0, 1,0) as Contacts.middleName.Flag_valid,
+    
+    //lastName
+    if(IsNull(  Contacts.lastName) or len(  Contacts.lastName) = 0,1,0) as Contacts.lastName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(  Contacts.lastName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(  Contacts.lastName) and len(  Contacts.lastName) > 0, 1,0) as Contacts.lastName.Flag_valid,
+    
+    //fullName
+    if(IsNull(  Contacts.fullName) or len(  Contacts.fullName) = 0,1,0) as Contacts.fullName.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(  Contacts.fullName), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(  Contacts.fullName) and len(  Contacts.fullName) > 0, 1,0) as Contacts.fullName.Flag_valid,
+    
+    //name
+    if(IsNull(  Contacts.name) or len(  Contacts.name) = 0,1,0) as   Contacts.name.Flag_empty,
+    //Name1 muss min. zwei Buchstaben enthalten
+    if(len(KeepChar(lower(  Contacts.name), 'abcdefghijklmnopqrstuvwxyzüäöß ')) > 2 and not IsNull(  Contacts.name) and len(  Contacts.name) > 0, 1,0) as   Contacts.name.Flag_valid,
+    
+  
+    //PHONE CONTACT	
+    
+    //phonePrivate
+    if(IsNull( Contacts.phonePrivate) or len( Contacts.phonePrivate) = 0,1,0) as Contacts.phonePrivate.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower( Contacts.phonePrivate), '0123456789-/+() ')) = 0 and not IsNull( Contacts.phonePrivate) and len( Contacts.phonePrivate) > 0, 1,0) as Contacts.phonePrivate.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar( Contacts.phonePrivate, '0123456789')) > 6 and not IsNull( Contacts.phonePrivate) and len( Contacts.phonePrivate) > 0, 1, 0) as Contacts.phonePrivate.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar( Contacts.phonePrivate, '+')) < 2 and not IsNull( Contacts.phonePrivate) and len( Contacts.phonePrivate) > 0, 1, 0) as Contacts.phonePrivate.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar( Contacts.phonePrivate, '0')) = 0 and len(KeepChar(Contacts.phonePrivate, '0')) > 0 or IsNull( Contacts.phonePrivate) or len( Contacts.phonePrivate) = 0, 0,1) as Contacts.phonePrivate.Flag_valideZahlen,
+    
+    //phoneBusiness
+    if(IsNull( Contacts.phoneBusiness) or len( Contacts.phoneBusiness) = 0,1,0) as Contacts.phoneBusiness.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower( Contacts.phoneBusiness), '0123456789-/+() ')) = 0 and not IsNull( Contacts.phoneBusiness) and len( Contacts.phoneBusiness) > 0, 1,0) as Contacts.phoneBusiness.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar( Contacts.phoneBusiness, '0123456789')) > 6 and not IsNull( Contacts.phoneBusiness) and len( Contacts.phoneBusiness) > 0, 1, 0) as Contacts.phoneBusiness.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar( Contacts.phoneBusiness, '+')) < 2 and not IsNull( Contacts.phoneBusiness) and len( Contacts.phoneBusiness) > 0, 1, 0) as Contacts.phoneBusiness.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar( Contacts.phoneBusiness, '0')) = 0 and len(KeepChar( Contacts.phoneBusiness, '0')) > 0 or IsNull( Contacts.phoneBusiness) or len( Contacts.phoneBusiness) = 0, 0,1) as Contacts.phoneBusiness.Flag_valideZahlen,
+    
+     //mobilePrivate
+    if(IsNull( Contacts.mobilePrivate) or len( Contacts.mobilePrivate) = 0,1,0) as Contacts.mobilePrivate.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower( Contacts.mobilePrivate), '0123456789-/+() ')) = 0 and not IsNull( Contacts.mobilePrivate) and len( Contacts.mobilePrivate) > 0, 1,0) as Contacts.mobilePrivate.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar( Contacts.mobilePrivate, '0123456789')) > 6 and not IsNull( Contacts.mobilePrivate) and len( Contacts.mobilePrivate) > 0, 1, 0) as Contacts.mobilePrivate.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar( Contacts.mobilePrivate, '+')) < 2 and not IsNull( Contacts.mobilePrivate) and len( Contacts.mobilePrivate) > 0, 1, 0) as Contacts.mobilePrivate.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar( Contacts.mobilePrivate, '0')) = 0 and len(KeepChar( Contacts.mobilePrivate, '0')) > 0 or IsNull( Contacts.mobilePrivate) or len( Contacts.mobilePrivate) = 0, 0,1) as Contacts.mobilePrivate.Flag_valideZahlen,
+    
+    //mobileBusiness
+    if(IsNull( Contacts.mobileBusiness) or len( Contacts.mobileBusiness) = 0,1,0) as Contacts.mobileBusiness.Flag_empty,
+    //PhoneNo darf nur Zahlen und bestimmte Sonderzeichen enthalten
+    if(len(PurgeChar(lower( Contacts.mobileBusiness), '0123456789-/+() ')) = 0 and not IsNull( Contacts.mobileBusiness) and len( Contacts.mobileBusiness) > 0, 1,0) as Contacts.mobileBusiness.Flag_valid,
+    //Muss min. 6 Zahlen enthalten
+    if(len(KeepChar( Contacts.mobileBusiness, '0123456789')) > 6 and not IsNull( Contacts.mobileBusiness) and len( Contacts.mobileBusiness) > 0, 1, 0) as Contacts.mobileBusiness.Flag_Länge,
+    //Darf maximal ein + enthalten
+    if(len(KeepChar( Contacts.mobileBusiness, '+')) < 2 and not IsNull( Contacts.mobileBusiness) and len( Contacts.mobileBusiness) > 0, 1, 0) as Contacts.mobileBusiness.Flag_MaximalEinPlus,
+    //Darf nicht nur aus Nullen bestehen
+    if(len(PurgeChar( Contacts.mobileBusiness, '0')) = 0 and len(KeepChar( Contacts.mobileBusiness, '0')) > 0 or IsNull( Contacts.mobileBusiness) or len( Contacts.mobileBusiness) = 0, 0,1) as Contacts.mobileBusiness.Flag_valideZahlen,
+    
+    
+    
+    ////EMAIL CONTACT
+    
+    
+    //emailPrivate
+    if(IsNull( Contacts.emailPrivate) or len( Contacts.emailPrivate) = 0,1,0) as Contacts.emailPrivate.Flag_empty,
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len( Contacts.emailPrivate) < 255 and len( Contacts.emailPrivate) > 5 and not IsNull( Contacts.emailPrivate) and len( Contacts.emailPrivate) > 0, 1,0) as Contacts.emailPrivate.Flag_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower( Contacts.emailPrivate), '@')) = 1 and not IsNull( Contacts.emailPrivate) and len( Contacts.emailPrivate) > 0, 1,0) as Contacts.emailPrivate.Flag_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower( Contacts.emailPrivate), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull( Contacts.emailPrivate) and len( Contacts.emailPrivate) > 0, 1,0) as Contacts.emailPrivate.Flag_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left( Contacts.emailPrivate, Index(  Contacts.emailPrivate,'@') -1 )) > 0 and len(Left( Contacts.emailPrivate, Index(  Contacts.emailPrivate,'@') -1 )) < 65 and not IsNull( Contacts.emailPrivate) and len( Contacts.emailPrivate) > 0, 1,0) as Contacts.emailPrivate.Flag_Lokalteil_valid,
+    //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+    if(len(Right( Contacts.emailPrivate, Index(  Contacts.emailPrivate,'@') +1 )) > 1 and wildmatch(Right( Contacts.emailPrivate, len( Contacts.emailPrivate)-Index( Contacts.emailPrivate,'@')), '*.*') and not IsNull( Contacts.emailPrivate) and len( Contacts.emailPrivate) > 0, 1,0) as Contacts.emailPrivate.Flag_Domainteil_valid,
+    
+    
+    
+    
+    //emailBusiness
+    if(IsNull( Contacts.emailBusiness) or len( Contacts.emailBusiness) = 0,1,0) as Contacts.emailBusiness.Flag_empty,
+    //Gesamte E-Mail muss zwischen 6 und 254 Zeichen lang sein
+    if(len( Contacts.emailBusiness) < 255 and len( Contacts.emailBusiness) > 5 and not IsNull( Contacts.emailBusiness) and len( Contacts.emailBusiness) > 0, 1,0) as Contacts.emailBusiness.Flag_Länge,
+    //E-Mail muss genau ein @ enthalten
+    if(len(KeepChar(lower( Contacts.emailBusiness), '@')) = 1 and not IsNull( Contacts.emailBusiness) and len( Contacts.emailBusiness) > 0, 1,0) as Contacts.emailBusiness.Flag_@_valid,
+    //Darf nur gültige Zeichen enthalten
+    if(len(PurgeChar(lower( Contacts.emailBusiness), '0123456789abcdefghijklmnopqrstuvwxyzäüöß.!#$%&’*+-/=?^_`{|}~@ ')) = 0 and not IsNull( Contacts.emailBusiness) and len( Contacts.emailBusiness) > 0, 1,0) as Contacts.emailBusiness.Flag_valid,
+    //Lokalteil muss zwischen 1 und 64 Zeichen lang sein
+    if(len(Left( Contacts.emailBusiness, Index(  Contacts.emailBusiness,'@') -1 )) > 0 and len(Left( Contacts.emailBusiness, Index(  Contacts.emailBusiness,'@') -1 )) < 65 and not IsNull( Contacts.emailBusiness) and len( Contacts.emailBusiness) > 0, 1,0) as Contacts.emailBusiness.Flag_Lokalteil_valid,
+    //Domainteil muss mindestens zwei Zeichen lang sein und einen Punkt enthalten  
+    if(len(Right( Contacts.emailBusiness, Index(  Contacts.emailBusiness,'@') +1 )) > 1 and wildmatch(Right( Contacts.emailBusiness, len( Contacts.emailBusiness)-Index( Contacts.emailBusiness,'@')), '*.*') and not IsNull( Contacts.emailBusiness) and len( Contacts.emailBusiness) > 0, 1,0) as Contacts.emailBusiness.Flag_Domainteil_valid,
+    
+    
+    ////DSE CONTACT
+    
+    
+    if(isNull(Contacts.birthdate) or num(date(Contacts.birthdate)) > num(addyears(date(today()), -15)), 0, 1) as Contacts.birthdate.Flag_vaild,
+    
+    if(isNull(Contacts.consentDate), 0, 1) as Contacts.dataPrivacyInformation.Flag_erklärung_vorgelegt,
+    if(Contacts.contactEmail=1, 1, 0) as Contacts.dataPrivacyInformation.Email,
+    if(Contacts.contactLetter=1, 1, 0) as Contacts.dataPrivacyInformation.Letter,
+    if(Contacts.contactPhoneMessengerService=1, 1, 0) as Contacts.dataPrivacyInformation.PhoneSms,
+    
+    
+    Contacts.contactNumber,
+    Contacts.birthdate,
+    Contacts.isPersonAccount,
+    Contacts.privacyBlockDealer,
+    Contacts.privacyBlockWholesale,
+    Contacts.addressStreet,
+    Contacts.addressPostalCode,
+    Contacts.addressCity,
+    Contacts.addressState, 
+    Contacts.addressCountry,
+    Contacts.addressPostBox,
+    
+    Contacts.phonePrivate,
+    Contacts.phoneBusiness,
+    Contacts.mobilePrivate,
+    Contacts.mobileBusiness,
+    Contacts.emailPrivate,
+    Contacts.emailBusiness,
+    Contacts.salutation,
+    Contacts.firstName,
+    Contacts.middleName,
+    Contacts.lastName,
+    Contacts.nameInitials,
+    Contacts.name,
+    Contacts.fullName ,
+    
+   
+    Contacts.consentDate,
+    Contacts.contactEmail,
+    Contacts.contactInCar,
+    Contacts.contactLetter,
+    Contacts.contactPhoneMessengerService
+    
+    
+    
+resident Accounts_temp;
+
+drop table Accounts_temp;
+    
+    
+    
+    
+store * from Accounts into [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_06_RSP_Accounts.qvd] (qvd);
+
