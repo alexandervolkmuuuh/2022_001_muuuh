@@ -1,4 +1,4 @@
------------------------------Account Customer Cares -----------------------------------
+//-----------------------------Account Customer Cares -----------------------------------
 
 sub accountCustomerCares
 
@@ -21,7 +21,7 @@ Sleep(120000);
 
 drop table accountCustomerCares_batch;
 
-----------------------------------------
+//----------------------------------------
 // 
 LIB Connect TO '$(v_connect)';
 
@@ -60,7 +60,7 @@ WHERE NOT IsNull([__FK_endpoints]);
 
 DROP TABLE RestConnectorMasterTable;
 
--------------------------------------------
+//-------------------------------------------
 sub getAccountCustomerCares(p_batch)
 
     let var_batch = p_batch;
@@ -101,7 +101,7 @@ DROP TABLE RestConnectorMasterTable;
 
 end sub
 
--------------------------------------
+//-------------------------------------
 
 let v_anzahl = NoOfRows('accountCustomerCares_batch_info');
 
@@ -133,7 +133,7 @@ drop table accountCustomerCares_batch_status;
 
 end sub
 
--------------------------------------------------
+//-------------------------------------------------
 
 // 
 LIB Connect TO '$(v_connect)';
@@ -167,7 +167,7 @@ Else
 
 EndIf
 
---------------------------------------------------------Contacts-------------------------------------------------------------------------
+//--------------------------------------------------------Contacts-------------------------------------------------------------------------
 sub contacts
 
 [contacts_batch]:
@@ -192,7 +192,7 @@ Sleep(60000);
 
 drop table contacts_batch;
 
----------------------------------------------------------------
+//---------------------------------------------------------------
 
 LIB Connect TO '$(v_connect)';
 
@@ -230,7 +230,7 @@ WHERE NOT IsNull([__FK_endpoints]);
 
 
 DROP TABLE RestConnectorMasterTable;
---------------------------------------------
+//--------------------------------------------
 sub getContacts(p_batch)
 
     let var_batch = p_batch;
@@ -398,7 +398,7 @@ drop table contacts_temp;
     
 end sub
 
---------------------------------------------------------
+//--------------------------------------------------------
 let v_anzahl = NoOfRows('contacts_batch_info');
 
 NoConcatenate
@@ -454,7 +454,7 @@ Store * from contacts into [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext
 // drop table contacts_batch_info;
 
 end sub;
------------------------------------------------------------------
+//-----------------------------------------------------------------
 
 LIB Connect TO '$(v_connect)';
 
@@ -486,7 +486,7 @@ Else
 
 EndIf
 
----------------------------------------------------Accounts------------------------------------------------
+//---------------------------------------------------Accounts------------------------------------------------
 
 sub accounts
 
@@ -507,7 +507,7 @@ let v_info_accounts_batch = Peek('url', 0, 'accounts_batch');
 
 Sleep(60000);
 
----------------------------
+//---------------------------
 
 LIB Connect TO '$(v_connect)';
 
@@ -548,7 +548,7 @@ DROP TABLE RestConnectorMasterTable;
 
 
 Drop Table accounts_batch;
----------------------------------------
+//---------------------------------------
 
 sub getAccounts(p_batch)
 
@@ -1010,7 +1010,7 @@ NoConcatenate
     drop table hobbies_temp;
 
 end sub
------------------------------------
+//-----------------------------------
 
 let v_anzahl = NoOfRows('accounts_batch_info');
 
@@ -1123,7 +1123,7 @@ drop table accounts_batch_status;
 
 end sub
 
------------------------------------
+//-----------------------------------
 
 // 
 LIB Connect TO '$(v_connect)';
@@ -1160,7 +1160,7 @@ Else
 
 EndIf
 
--------------------------------------Outlets-------------------------------------
+//-------------------------------------Outlets-------------------------------------
 
 sub outlets_standard
 // 
@@ -1216,7 +1216,7 @@ drop table Outlet;
 
 
 end sub
---------------------------------------------
+//--------------------------------------------
 
 // 
 LIB Connect TO '$(v_connect)';
