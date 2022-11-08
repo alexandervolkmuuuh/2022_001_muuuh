@@ -1,4 +1,4 @@
----------------------------------------------DataPrivacyInformation-----------------------------------------------
+//---------------------------------------------DataPrivacyInformation-----------------------------------------------
 
 DataPrivacyInformation:
 LOAD
@@ -20,7 +20,7 @@ LOAD
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_dataPrivacyInformation.qvd]
 (qvd);
 
----------------------------------------------LegalEntityInformation-----------------------------------------------
+//---------------------------------------------LegalEntityInformation-----------------------------------------------
 LegalEntityInformation:
 LOAD
     personalDmsId,
@@ -29,7 +29,7 @@ LOAD
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_legalEntityInformation.qvd]
 (qvd);
 
------------------------------------------------------Account------------------------------------------------------
+//-----------------------------------------------------Account------------------------------------------------------
 Accounts:
 LOAD
     lastSalesActivity,
@@ -689,7 +689,7 @@ LOAD
     
  from [lib://$(v_bereich):DataFiles/$(v_start_datei)_02_Trans_06_RSP_Accounts.qvd] (qvd);
 
----------------------------------------------Fehler RSP-----------------------------------------------
+//---------------------------------------------Fehler RSP-----------------------------------------------
 
 
 Unqualify*;
@@ -1006,7 +1006,7 @@ drop table DSE_temp_vorlage;
 Unqualify '%*';
 
 // drop field [%Kundennummer] from Fehler_RSP;
----------------------------------------------Kalender-----------------------------------------------
+//---------------------------------------------Kalender-----------------------------------------------
 
 Unqualify *;
 
@@ -1077,7 +1077,7 @@ Resident Kalender_RSP_temp;
 
 drop table Kalender_RSP_temp;
 
----------------------------------------------Hobbies-----------------------------------------------
+//---------------------------------------------Hobbies-----------------------------------------------
 
 Hobbies:
 LOAD
@@ -1085,7 +1085,7 @@ LOAD
     accountId as %accountId
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accounts_hobbies.qvd]
 (qvd);
----------------------------------------------Outlets-----------------------------------------------
+//---------------------------------------------Outlets-----------------------------------------------
 
 Outlets:
 LOAD
@@ -1099,7 +1099,7 @@ LOAD
     addressCountry
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_Outlet.qvd]
 (qvd);
----------------------------------------------AccountCustomerCares-----------------------------------------------
+//---------------------------------------------AccountCustomerCares-----------------------------------------------
 
 AccountCustomerCares:
 LOAD
@@ -1112,7 +1112,7 @@ LOAD
     employeeName
 FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_01_Ext_06_RSP_accountCustomerCares.qvd]
 (qvd);
----------------------------------------------Store QVD-----------------------------------------------
+//---------------------------------------------Store QVD-----------------------------------------------
 
 Store * from Outlets into [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_Outlets.qvd] (qvd);
 
