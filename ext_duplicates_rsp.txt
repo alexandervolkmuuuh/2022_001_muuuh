@@ -1,0 +1,14 @@
+Customer:
+LOAD distinct
+    %accountId,
+    Accounts.name.name as Kundenname,
+    if(Accounts.mainAddress='Private Address', Accounts.privateAddress.addressStreet&' '&Accounts.privateAddress.addressStreetNumber, Accounts.businessAddress.addressStreet&' '&Accounts.businessAddress.addressStreetNumber ) as Addresse,
+    if(Accounts.mainAddress='Private Address', Accounts.privateAddress.addressPostalCode, Accounts.businessAddress.addressPostalCode) as PLZ,
+    if(Accounts.mainAddress='Private Address', Accounts.privateAddress.addressCity, Accounts.businessAddress.addressCity) as Ort
+FROM [lib://$(v_bereich):DataFiles/$(v_start_datei)_03_RSP_Accounts.qvd]
+(qvd);
+
+
+
+
+STORE * from Customer INTO [lib://DataHub-Sharepoint/Downloads/OwnerDataHub/Duplikate/$(v_bereich)_data_duplicates_RSP_$(v_start_datei).csv] (txt);
